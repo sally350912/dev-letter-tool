@@ -252,7 +252,10 @@
       </div>
     </div>
     <div class="flex items-center gap-1.5 sm:gap-2">
-      <span class="hidden sm:inline text-xs text-slate-500 mr-1">主色：</span>
+      <button id="helpBtn" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-sm transition hover:scale-105" style="background:#7A5C4A">
+        📖 <span class="hidden sm:inline">使用說明</span>
+      </button>
+      <span class="hidden sm:inline text-xs text-slate-500 mr-1 ml-1">主色：</span>
       <button data-theme="navy" title="深藍" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ring-2 ring-offset-2 ring-slate-800" style="background:#1e293b"></button>
       <button data-theme="emerald" title="新綠" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#589B4B"></button>
       <button data-theme="wine" title="正紅" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#C82D26"></button>
@@ -421,6 +424,93 @@
 </main>
 
 <div id="printArea" class="hidden print:block"></div>
+
+<!-- 使用說明 Modal -->
+<div id="helpModal" class="no-print fixed inset-0 z-50 hidden items-center justify-center p-4" style="background:rgba(61,43,31,.55);backdrop-filter:blur(4px)">
+  <div class="rounded-2xl shadow-2xl max-w-lg w-full max-h-[92vh] overflow-y-auto scroll-thin" style="background:#FAF6EF;font-family:'Noto Sans TC',sans-serif" onclick="event.stopPropagation()">
+    <!-- Header bar -->
+    <div class="px-6 py-4 flex items-center justify-between rounded-t-2xl sticky top-0" style="background:linear-gradient(135deg,#7A5C4A 0%,#C4783A 100%)">
+      <h2 class="text-lg font-bold flex items-center gap-2" style="color:#F5EDD6;font-family:'Noto Serif TC',serif">📖 使用說明</h2>
+      <button id="helpClose" class="text-2xl leading-none hover:opacity-70 w-8 h-8 flex items-center justify-center rounded-full" style="color:#F5EDD6;background:rgba(245,237,214,.15)">×</button>
+    </div>
+    <div class="px-6 py-5 space-y-5" style="color:#3D2B1F">
+      <p class="text-sm leading-relaxed" style="color:#7A6553">
+        30 秒上手 ✦ 5 分鐘批次生成全年 13 種開發信
+      </p>
+
+      <!-- 4 STEPS -->
+      <div class="space-y-3">
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">1</div>
+          <div>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">填寫業務員資料</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">姓名、店名、電話為必填，其他選填。資料自動存於你的瀏覽器，下次開啟自動帶入。</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">2</div>
+          <div>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">選擇月份範本</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">13 套情境（一般 + 1-12 月），每月有專屬節慶大標、副標、成功案例天數。</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">3</div>
+          <div>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">貼上屋主名單</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">一行一筆（如：王先生），自動帶入「屋主王先生」抬頭。沒填則顯示「屋主您好」。</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">4</div>
+          <div>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">列印 / 存 PDF</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">點 🖨️ → 列印對話框「目的地」選「另存為 PDF」、邊界選「無」、勾選「背景圖形」。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 進階技巧 -->
+      <div class="rounded-xl p-4" style="background:#F5EDD6;border-left:4px solid #E8C96A">
+        <h3 class="font-bold mb-2 flex items-center gap-1.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">💡 進階技巧</h3>
+        <ul class="text-sm space-y-1.5" style="color:#3D2B1F">
+          <li>• <code class="px-1.5 py-0.5 rounded text-xs" style="background:#fff;color:#C4783A">**字**</code> = 螢光重點（自介用黃、案例用紅）</li>
+          <li>• <code class="px-1.5 py-0.5 rounded text-xs" style="background:#fff;color:#C4783A">{{caseStudyDays}}</code> = 自動帶入該月成交天數</li>
+          <li>• 4 色主題切換（深藍 / 新綠 / 正紅 / 金黃）</li>
+          <li>• 上傳店頭 LOGO、大頭照、自訂 QR Code</li>
+          <li>• 自動生成 vCard QR（屋主一掃存名片）</li>
+        </ul>
+      </div>
+
+      <!-- 隱私 -->
+      <div class="text-xs rounded-xl p-3 flex gap-2" style="background:#fff;border:1px solid #EDE0D4;color:#7A6553">
+        <span>🔒</span>
+        <span>所有資料僅儲存於你的瀏覽器，<strong>不會上傳任何伺服器</strong>。換電腦或清除瀏覽器資料會消失，建議重要資料另外備份。</span>
+      </div>
+
+      <!-- CTA -->
+      <div class="space-y-2 pt-1">
+        <a id="notionGuideLink" href="#" target="_blank" rel="noopener"
+           class="block text-center px-4 py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
+           style="background:linear-gradient(135deg,#7A5C4A 0%,#C4783A 100%)">
+          📖 看 Notion 完整版教學（含實際案例）
+        </a>
+        <div class="flex gap-2">
+          <a href="https://www.instagram.com/sally.lifestyle.ttt/" target="_blank" rel="noopener"
+             class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 hover:opacity-90 transition">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            Instagram
+          </a>
+          <a href="https://www.threads.com/@sally.lifestyle.ttt" target="_blank" rel="noopener"
+             class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-slate-700 transition">
+            <svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.781 3.631 2.695 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.74-1.757-.504-.586-1.283-.883-2.317-.89h-.029c-.831 0-1.959.227-2.679 1.301L7.7 6.34c.969-1.443 2.541-2.235 4.428-2.235h.044c3.157.02 5.036 1.953 5.222 5.325.108.046.214.094.318.143 1.469.692 2.544 1.74 3.11 3.029.79 1.799.863 4.733-1.527 7.071-1.825 1.788-4.045 2.598-7.108 2.62Zm1.286-11.31c-.236.001-.475.007-.717.02-1.815.103-2.948.946-2.866 2.146.084 1.235 1.46 1.81 2.84 1.732 1.292-.072 2.969-.61 3.279-3.937a10.916 10.916 0 0 0-2.535-.32Z"/></svg>
+            Threads
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <footer class="no-print px-4 pb-8 pt-4">
   <div class="max-w-md mx-auto bg-white rounded-2xl border border-stone-200 shadow-sm p-5 text-center">
@@ -989,12 +1079,28 @@ function flash(msg){
   flashTimer = setTimeout(()=>{ el.style.opacity='0'; }, 2200);
 }
 
+function bindHelpModal(){
+  const modal = document.getElementById('helpModal');
+  const open = ()=>{ modal.classList.remove('hidden'); modal.classList.add('flex'); };
+  const close = ()=>{ modal.classList.add('hidden'); modal.classList.remove('flex'); };
+  document.getElementById('helpBtn').addEventListener('click', open);
+  document.getElementById('helpClose').addEventListener('click', close);
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !modal.classList.contains('hidden')) close(); });
+  // 首次造訪自動跳出
+  if(!localStorage.getItem('devLetterTool.seenHelp')){
+    setTimeout(open, 600);
+    localStorage.setItem('devLetterTool.seenHelp','1');
+  }
+}
+
 loadAgent();
 renderTemplateList();
 bindAgentInputs();
 bindNavigation();
 bindTheme();
 bindActions();
+bindHelpModal();
 parseRecipients();
 renderPreview();
 </script>
