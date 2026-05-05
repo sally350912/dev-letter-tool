@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>房仲開發信批次生產工具</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap');
+  body{font-family:'Noto Sans TC',sans-serif;background:#f5f3ef}
+
+  .letter{
+    width:210mm;height:297mm;padding:0 0 12mm;background:#fff;
+    box-shadow:0 6px 28px rgba(0,0,0,.1);margin:0 auto 16px;line-height:1.7;
+    color:#1a1a1a;position:relative;overflow:hidden;box-sizing:border-box
+  }
+  .letter:last-child{margin-bottom:0}
+
+  /* === 抬頭橫幅 === */
+  .banner{
+    background:#1e293b;color:#fff;padding:22px 36px 18px;position:relative;
+    overflow:hidden;margin-bottom:8px
+  }
+  .banner::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 80% 0%,rgba(241,205,87,.18),transparent 60%);
+    pointer-events:none
+  }
+  .ribbon{
+    position:absolute;top:14px;right:-30px;width:120px;text-align:center;
+    background:linear-gradient(135deg,#C82D26,#8b1f1c);color:#fff;
+    transform:rotate(35deg);padding:4px 0;font-size:11px;font-weight:600;
+    letter-spacing:.1em;box-shadow:0 2px 6px rgba(0,0,0,.25)
+  }
+  .brand{
+    display:inline-flex;align-items:center;gap:8px;
+    color:rgba(255,255,255,.85);font-size:13px;font-weight:500;
+    letter-spacing:.04em;margin-bottom:8px;max-width:60%
+  }
+  .brand img{max-height:36px;max-width:160px;object-fit:contain;display:block}
+  .theme-gold .brand{color:#1e293b}
+  .recipient-tag{
+    display:inline-block;font-size:12px;color:#F1CD57;
+    background:rgba(241,205,87,.15);padding:3px 12px;border-radius:99px;
+    margin-bottom:14px;letter-spacing:.05em
+  }
+  .banner-title{
+    font-family:'Noto Serif TC',serif;
+    font-size:26px;font-weight:900;line-height:1.35;margin:0 0 8px;
+    color:#fff;letter-spacing:.02em
+  }
+  .banner-subtitle{
+    text-align:center;color:#F1CD57;font-size:14px;font-weight:500;
+    letter-spacing:.08em;margin:6px 0 0
+  }
+
+  /* === 內容區 === */
+  .body-wrap{padding:12px 36px 0}
+
+  /* 分隔線 */
+  .divider{
+    display:flex;align-items:center;gap:12px;margin:30px 0 16px;
+    color:#475569;font-size:13px;font-weight:600;letter-spacing:.18em
+  }
+  .divider::before,.divider::after{
+    content:'';flex:1;height:1px;background:#cbd5e1
+  }
+
+  /* 自我介紹段 */
+  .intro-text{
+    font-size:15px;line-height:1.85;text-align:justify;
+    color:#1a1a1a;margin:0
+  }
+  .intro-text .emph{
+    font-weight:700;color:#1e293b;
+    background-image:linear-gradient(to top,rgba(241,205,87,.55) 35%,transparent 35%);
+    padding:0 2px
+  }
+
+  /* 五欄卡片 */
+  .feature-grid{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+    background:#fef6e7;border-radius:12px;padding:14px 10px;margin:14px 0
+  }
+  .feature-card{text-align:center}
+  .feature-icon{
+    width:36px;height:36px;border-radius:50%;margin:0 auto 6px;
+    background:linear-gradient(135deg,#e85852,#C82D26);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;box-shadow:0 3px 8px rgba(200,45,38,.25)
+  }
+  .feature-icon svg{width:17px;height:17px;stroke:#fff}
+  .feature-title{font-size:12.5px;font-weight:700;color:#1e293b;margin-bottom:2px;line-height:1.3}
+  .feature-desc{font-size:10.5px;color:#64748b;line-height:1.5}
+
+  /* 成功案例（斜體・引言式拉開） */
+  .case-study{
+    font-style:italic;font-size:14.5px;line-height:2;
+    color:#475569;margin:22px 0 28px;
+    padding:10px 4px 10px 16px;
+    border-left:3px solid rgba(200,45,38,.3);
+    text-align:justify
+  }
+  .case-study .emph{
+    font-style:normal;font-weight:700;color:#C82D26;
+    border-bottom:1px solid rgba(200,45,38,.4)
+  }
+
+  /* 急尋物件面板 */
+  .urgent-panel{
+    background:#1e293b;color:#fff;border-radius:12px;
+    padding:16px 22px;margin:22px 0;position:relative;overflow:hidden
+  }
+  .urgent-panel::after{
+    content:'';position:absolute;right:-30px;bottom:-30px;
+    width:160px;height:160px;
+    background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='1.5'><path d='M3 9.5L12 2l9 7.5V20a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V9.5z'/></svg>") no-repeat center/contain;
+    opacity:.06;pointer-events:none
+  }
+  .urgent-title{
+    font-size:14px;font-weight:600;margin-bottom:10px;
+    display:flex;align-items:center;gap:6px
+  }
+  .urgent-title svg{width:16px;height:16px;stroke:currentColor}
+  .urgent-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:10px;
+    position:relative;z-index:1
+  }
+  .urgent-label{
+    font-size:10.5px;color:#94a3b8;letter-spacing:.1em;margin-bottom:3px
+  }
+  .urgent-value{
+    font-family:'Noto Serif TC',serif;font-size:18px;font-weight:700;color:#fff
+  }
+  .urgent-cta{
+    font-size:11.5px;color:#cbd5e1;margin:6px 0 0;line-height:1.6;
+    border-top:1px solid rgba(255,255,255,.1);padding-top:8px
+  }
+
+  /* 聯絡方式 */
+  .contact-grid{
+    display:flex;align-items:center;gap:18px;
+    background:#faf3e8;border-radius:12px;
+    padding:14px 18px;margin:10px 0
+  }
+  .photo-cell img{
+    width:72px;height:72px;border-radius:50%;object-fit:cover;
+    border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15);display:block
+  }
+  .contact-info{flex:1;min-width:0}
+  .contact-info p{
+    margin:4px 0;font-size:13.5px;color:#1e293b;
+    display:flex;align-items:center;gap:8px
+  }
+  .contact-info p svg{width:14px;height:14px;stroke:#475569;flex-shrink:0}
+  .contact-info .name{
+    font-family:'Noto Serif TC',serif;font-size:18px;font-weight:700;
+    color:#1e293b;margin-bottom:6px
+  }
+  .contact-info .name svg{width:16px;height:16px;stroke:#1e293b}
+  .qr-cell{text-align:center}
+  .qr-cell .qr{
+    width:84px;height:84px;background:#fff;padding:4px;border-radius:6px;
+    border:1px solid #e5e5e5
+  }
+  .qr-cell .qr-label{font-size:9.5px;color:#64748b;margin-top:3px}
+
+  /* 備註 */
+  .footer-note{
+    text-align:center;font-size:11.5px;color:#94a3b8;
+    border-top:1px dashed #e2e8f0;padding-top:10px;margin-top:12px;line-height:1.6
+  }
+
+  .recipient-tag svg{width:13px;height:13px;stroke:currentColor;display:inline-block;vertical-align:-2px;margin-right:2px}
+
+  /* === 4 色主題（共用黃#F1CD57 紅#C82D26） === */
+  .theme-navy .banner, .theme-navy .urgent-panel{background:#1e293b}
+  .theme-emerald .banner, .theme-emerald .urgent-panel{background:#589B4B}
+  .theme-wine .banner, .theme-wine .urgent-panel{background:#C82D26}
+
+  /* 金黃主題：黃底時改為深色字 */
+  .theme-gold .banner, .theme-gold .urgent-panel{background:#F1CD57}
+  .theme-gold .banner-title{color:#1e293b}
+  .theme-gold .banner-subtitle{color:#C82D26}
+  .theme-gold .recipient-tag{color:#C82D26;background:rgba(200,45,38,.12)}
+  .theme-gold .urgent-title,
+  .theme-gold .urgent-value{color:#1e293b}
+  .theme-gold .urgent-label{color:#5b3a16}
+  .theme-gold .urgent-cta{color:#5b3a16;border-top-color:rgba(0,0,0,.12)}
+  .theme-gold .urgent-panel::after{opacity:.08}
+  .theme-gold .banner svg{color:#1e293b}
+
+  /* UI 控制項 */
+  .month-btn{transition:all .15s}
+  .month-btn.active{background:#1e293b;color:#fff;border-color:#1e293b;transform:translateY(-1px);box-shadow:0 4px 10px rgba(30,41,59,.25)}
+  textarea,input{transition:border-color .15s,box-shadow .15s}
+  textarea:focus,input:focus{outline:none;border-color:#1e293b;box-shadow:0 0 0 3px rgba(30,41,59,.1)}
+  .scroll-thin::-webkit-scrollbar{width:8px;height:8px}
+  .scroll-thin::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+
+  /* 強制列印與 PDF 顯示底色，所有主要彩色元素都加上 */
+  .letter,.banner,.urgent-panel,.feature-grid,.contact-grid,.ribbon,.feature-icon,.intro-text .emph,.case-study .emph{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    color-adjust:exact!important
+  }
+
+  /* === 手機 / 平板 響應式預覽（不影響列印） === */
+  @media (max-width: 1023px){
+    #previewBox{padding:8px}
+    #previewBox .letter{
+      zoom:.6;
+      box-shadow:0 4px 14px rgba(0,0,0,.08)
+    }
+  }
+  @media (max-width: 768px){
+    #previewBox .letter{zoom:.48}
+  }
+  @media (max-width: 480px){
+    #previewBox .letter{zoom:.36}
+    .letter{margin-bottom:8px}
+  }
+  /* 手機讓表單 input 字級加大、避免 iOS 自動放大 */
+  @media (max-width: 640px){
+    input[type=text],textarea{font-size:16px!important}
+    .scroll-thin{font-size:13px!important}
+  }
+
+  @media print{
+    html,body{background:#fff;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+    .no-print{display:none!important}
+    .letter{
+      box-shadow:none;margin:0;width:210mm;height:297mm;
+      page-break-after:always;page-break-inside:avoid;overflow:hidden;
+      border:none!important
+    }
+    .letter:last-child{page-break-after:auto}
+    @page{size:A4;margin:0}
+  }
+</style>
+</head>
+<body class="theme-navy">
+
+<header class="no-print bg-white border-b border-stone-200 sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2 flex-wrap">
+    <div class="flex items-center gap-2 min-w-0">
+      <div class="w-9 h-9 shrink-0 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white text-lg">✉️</div>
+      <div class="min-w-0">
+        <h1 class="text-base sm:text-lg font-bold text-slate-800 leading-tight truncate">房仲開發信批次生產工具</h1>
+        <p class="hidden sm:block text-xs text-slate-500">質感版 · 一鍵生成全年 13 種開發信</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      <span class="hidden sm:inline text-xs text-slate-500 mr-1">主色：</span>
+      <button data-theme="navy" title="深藍" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ring-2 ring-offset-2 ring-slate-800" style="background:#1e293b"></button>
+      <button data-theme="emerald" title="新綠" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#589B4B"></button>
+      <button data-theme="wine" title="正紅" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#C82D26"></button>
+      <button data-theme="gold" title="金黃" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#F1CD57"></button>
+    </div>
+  </div>
+</header>
+
+<main class="no-print max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 grid grid-cols-12 gap-3 sm:gap-5">
+
+  <section class="col-span-12 lg:col-span-3 bg-white rounded-xl border border-stone-200 p-4">
+    <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+      <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">1</span>
+      月份範本
+    </h2>
+    <div id="templateList" class="grid grid-cols-2 sm:grid-cols-2 gap-1.5"></div>
+  </section>
+
+  <section class="col-span-12 lg:col-span-4 bg-white rounded-xl border border-stone-200 p-4">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">2</span>
+        業務員資料
+      </h2>
+      <span class="text-[11px] text-slate-400">自動儲存</span>
+    </div>
+    <div class="space-y-2.5">
+      <div class="grid grid-cols-2 gap-2">
+        <label class="block">
+          <span class="text-xs text-slate-600">姓名 <span class="text-rose-500">*</span></span>
+          <input id="agentName" type="text" placeholder="王小明" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+        <label class="block">
+          <span class="text-xs text-slate-600">家鄉</span>
+          <input id="hometown" type="text" placeholder="彰化" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+      </div>
+      <label class="block">
+        <span class="text-xs text-slate-600">店名 <span class="text-rose-500">*</span></span>
+        <input id="storeName" type="text" placeholder="XX房屋 台北旗艦店" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+      </label>
+      <label class="block">
+        <span class="text-xs text-slate-600 flex items-center justify-between">
+          <span>店頭 LOGO（可選，沒上傳則顯示店名）</span>
+          <button type="button" id="clearLogo" class="text-[11px] text-rose-600 hover:underline">清除</button>
+        </span>
+        <input id="logoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+        <div id="logoPreview" class="mt-1 hidden"><img class="h-9 max-w-[180px] object-contain border border-stone-200 rounded bg-stone-50 p-1"></div>
+      </label>
+      <div class="grid grid-cols-2 gap-2">
+        <label class="block">
+          <span class="text-xs text-slate-600 flex items-center justify-between">
+            <span>大頭照（圓形）</span>
+            <button type="button" id="clearPhoto" class="text-[11px] text-rose-600 hover:underline">清除</button>
+          </span>
+          <input id="photoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+          <div id="photoPreview" class="mt-1 hidden"><img class="w-12 h-12 rounded-full object-cover border border-stone-200"></div>
+        </label>
+        <label class="block">
+          <span class="text-xs text-slate-600 flex items-center justify-between">
+            <span>自訂 QR（覆蓋預設）</span>
+            <button type="button" id="clearQr" class="text-[11px] text-rose-600 hover:underline">清除</button>
+          </span>
+          <input id="qrFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+          <div id="qrPreview" class="mt-1 hidden"><img class="w-12 h-12 object-contain border border-stone-200 rounded bg-white p-1"></div>
+        </label>
+      </div>
+      <label class="block">
+        <span class="text-xs text-slate-600">服務區域</span>
+        <input id="serviceRegion" type="text" placeholder="台北市大安區" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+      </label>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <label class="block">
+          <span class="text-xs text-slate-600">服務年資</span>
+          <input id="serviceYears" type="text" placeholder="5" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+        <label class="block">
+          <span class="text-xs text-slate-600">獎項年份</span>
+          <input id="awardYear" type="text" placeholder="2025" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+        <label class="block col-span-2 sm:col-span-1">
+          <span class="text-xs text-slate-600">電話 <span class="text-rose-500">*</span></span>
+          <input id="phone" type="text" placeholder="0912-345-678" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+      </div>
+      <label class="block">
+        <span class="text-xs text-slate-600">獎項名稱</span>
+        <input id="awards" type="text" placeholder="年度業績冠軍" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+      </label>
+      <div class="grid grid-cols-2 gap-2">
+        <label class="block">
+          <span class="text-xs text-slate-600">LINE ID</span>
+          <input id="lineId" type="text" placeholder="@sally-realtor" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+        <label class="block">
+          <span class="text-xs text-slate-600">急尋房型</span>
+          <input id="propertyType" type="text" placeholder="2-4 房" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+      </div>
+      <label class="block">
+        <span class="text-xs text-slate-600">公司地址（可選）</span>
+        <input id="storeAddress" type="text" placeholder="台北市大安區○○路 123 號" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+      </label>
+      <label class="block">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-600">自我介紹（公版可自行修改，<code class="bg-stone-100 px-1 rounded">**字**</code>=黃色重點）</span>
+          <button type="button" id="resetIntro" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+        </div>
+        <textarea id="introText" rows="4" class="scroll-thin mt-0.5 w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
+      </label>
+      <label class="block">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-600">成功案例（<code class="bg-stone-100 px-1 rounded">{{caseStudyDays}}</code>=月份天數，<code class="bg-stone-100 px-1 rounded">**字**</code>=紅色重點）</span>
+          <button type="button" id="resetCase" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+        </div>
+        <textarea id="caseText" rows="3" class="scroll-thin mt-0.5 w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
+      </label>
+    </div>
+  </section>
+
+  <section class="col-span-12 lg:col-span-5 bg-white rounded-xl border border-stone-200 p-4">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">3</span>
+        屋主名單（一行一筆）
+      </h2>
+      <button id="loadSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
+    </div>
+    <p class="text-[11px] text-slate-500 mb-1.5">每行 = 一個屋主稱謂，自動帶入大標「屋主XXX，⋯」</p>
+    <textarea id="recipientList" rows="9" placeholder="王先生&#10;陳太太&#10;李小姐" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
+    <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
+      <span>共 <b id="recipientCount" class="text-slate-800">0</b> 封</span>
+      <span>留空時大標顯示「屋主您好」</span>
+    </div>
+  </section>
+
+  <section class="col-span-12 bg-white rounded-xl border border-stone-200 p-4">
+    <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+      <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+        📄 預覽
+        <span id="previewMeta" class="text-xs font-normal text-slate-500"></span>
+      </h2>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button id="prevPreview" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">←</button>
+        <span class="text-sm text-slate-600"><b id="previewIndex">1</b> / <span id="previewTotal">1</span></span>
+        <button id="nextPreview" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">→</button>
+        <div class="w-px h-6 bg-stone-300 mx-1"></div>
+        <button id="copyBtn" class="px-3 py-1.5 text-sm bg-stone-100 hover:bg-stone-200 rounded-md">📋 複製此封</button>
+        <button id="printBtn" class="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-900 rounded-md">🖨️ 列印 / 存成 PDF</button>
+      </div>
+    </div>
+    <div id="previewBox" class="bg-stone-100 rounded-lg p-4 overflow-auto scroll-thin" style="max-height:80vh"></div>
+  </section>
+</main>
+
+<div id="printArea" class="hidden print:block"></div>
+
+<footer class="no-print text-center text-xs text-slate-400 py-4">© 房仲開發信工具 · 資料僅儲存於您的瀏覽器</footer>
+
+<script>
+const TEMPLATES = [
+  { key:'general', label:'一般開發', emoji:'📮', ribbon:'Limited',
+    title:'屋主{{title}}，有買方正在等您的房子',
+    subtitle:'來自 {{storeName}} 的一封誠摯邀請',
+    caseStudyDays:'21'
+  },
+  { key:'jan', label:'1月 新春成家', emoji:'🧧', ribbon:'新春',
+    title:'屋主{{title}}，新的一年給家一個新起點',
+    subtitle:'來自 {{storeName}} 的新春誠摯邀請',
+    caseStudyDays:'18'
+  },
+  { key:'feb', label:'2月 開工大吉', emoji:'🎊', ribbon:'開工',
+    title:'屋主{{title}}，把握開工後的首波看屋熱潮',
+    subtitle:'來自 {{storeName}} 的年後誠摯邀請',
+    caseStudyDays:'18'
+  },
+  { key:'mar', label:'3月 春季換屋', emoji:'🌸', ribbon:'春季',
+    title:'屋主{{title}}，春暖花開正是換屋好時機',
+    subtitle:'來自 {{storeName}} 的春季誠摯邀請',
+    caseStudyDays:'21'
+  },
+  { key:'apr', label:'4月 節稅規劃', emoji:'📊', ribbon:'節稅',
+    title:'屋主{{title}}，房地產稅務與資產配置規劃',
+    subtitle:'來自 {{storeName}} 的稅務季誠摯邀請',
+    caseStudyDays:'25'
+  },
+  { key:'may', label:'5月 溫馨五月', emoji:'🌷', ribbon:'溫馨',
+    title:'屋主{{title}}，為家人尋找更大的幸福空間',
+    subtitle:'來自 {{storeName}} 的溫馨五月誠摯邀請',
+    caseStudyDays:'14'
+  },
+  { key:'jun', label:'6月 年中衝刺', emoji:'🚀', ribbon:'衝刺',
+    title:'屋主{{title}}，掌握上半年最後的成交契機',
+    subtitle:'來自 {{storeName}} 的年中誠摯邀請',
+    caseStudyDays:'17'
+  },
+  { key:'jul', label:'7月 暑期看屋', emoji:'☀️', ribbon:'暑期',
+    title:'屋主{{title}}，趁連假為您的房子找新主人',
+    subtitle:'來自 {{storeName}} 的暑期誠摯邀請',
+    caseStudyDays:'14'
+  },
+  { key:'aug', label:'8月 策略佈局', emoji:'♟️', ribbon:'佈局',
+    title:'屋主{{title}}，淡季中脫穎而出的銷售策略',
+    subtitle:'來自 {{storeName}} 的策略佈局邀請',
+    caseStudyDays:'30'
+  },
+  { key:'sep', label:'9月 中秋團圓', emoji:'🌕', ribbon:'中秋',
+    title:'屋主{{title}}，人圓月圓也是成家圓夢好時節',
+    subtitle:'來自 {{storeName}} 的中秋誠摯邀請',
+    caseStudyDays:'21'
+  },
+  { key:'oct', label:'10月 國慶成家', emoji:'🎆', ribbon:'國慶',
+    title:'屋主{{title}}，光輝十月為您的愛屋找到伯樂',
+    subtitle:'來自 {{storeName}} 的十月誠摯邀請',
+    caseStudyDays:'17'
+  },
+  { key:'nov', label:'11月 精準媒合', emoji:'🎯', ribbon:'精準',
+    title:'屋主{{title}}，目前有客戶指名要找您的房型',
+    subtitle:'來自 {{storeName}} 的精準媒合邀請',
+    caseStudyDays:'10'
+  },
+  { key:'dec', label:'12月 歲末完美收官', emoji:'🎄', ribbon:'歲末',
+    title:'屋主{{title}}，在今年完成最重要的資產大事',
+    subtitle:'來自 {{storeName}} 的歲末誠摯邀請',
+    caseStudyDays:'21'
+  }
+];
+
+const STORAGE_KEY = 'devLetterTool.agent.v4';
+
+const DEFAULT_INTRO = '您好，我是 **{{agentName}}**，來自 **{{hometown}}**，現服務於 **{{storeName}}**。專營 **{{serviceRegion}}** 房地產，累積 **{{serviceYears}} 年**實戰經驗，曾榮獲 **{{awardYear}}年{{awards}}**。';
+
+const DEFAULT_CASE = '我們最近成功協助一位屋主，原本擔心市場觀望氣氛遲遲不敢出售，透過我們的精準曝光策略，在 **{{caseStudyDays}} 天**內成交，順利完成換屋計畫。';
+
+const state = {
+  currentTemplate: 'general',
+  previewIndex: 0,
+  theme: 'navy',
+  agent: {
+    agentName:'', hometown:'', storeName:'', serviceRegion:'',
+    serviceYears:'', awardYear:'', awards:'', phone:'',
+    lineId:'', propertyType:'', storeAddress:'',
+    introText: DEFAULT_INTRO, caseText: DEFAULT_CASE,
+    logoDataUrl:'', photoDataUrl:'', customQrDataUrl:''
+  },
+  recipients: []
+};
+
+function loadAgent(){
+  try{
+    const s = localStorage.getItem(STORAGE_KEY);
+    if(s){ Object.assign(state.agent, JSON.parse(s)); }
+  }catch(e){}
+  if(!state.agent.introText) state.agent.introText = DEFAULT_INTRO;
+  if(!state.agent.caseText) state.agent.caseText = DEFAULT_CASE;
+  Object.keys(state.agent).forEach(k=>{
+    const el = document.getElementById(k);
+    if(!el) return;
+    if(el.tagName==='INPUT' && el.type==='file') return;
+    el.value = state.agent[k] || '';
+  });
+  showLogoPreview();
+}
+
+function showImagePreview(previewId, stateKey){
+  const wrap = document.getElementById(previewId);
+  if(!wrap) return;
+  const img = wrap.querySelector('img');
+  if(state.agent[stateKey]){
+    img.src = state.agent[stateKey];
+    wrap.classList.remove('hidden');
+  }else{
+    wrap.classList.add('hidden');
+  }
+}
+function showLogoPreview(){
+  showImagePreview('logoPreview','logoDataUrl');
+  showImagePreview('photoPreview','photoDataUrl');
+  showImagePreview('qrPreview','customQrDataUrl');
+}
+function bindImageUpload(fileId, clearId, previewId, stateKey){
+  document.getElementById(fileId).addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    if(file.size > 800*1024){ flash('檔案太大，請壓縮至 800KB 以下'); return; }
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      state.agent[stateKey] = reader.result;
+      saveAgent();
+      showImagePreview(previewId, stateKey);
+      renderPreview();
+      flash('已套用');
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById(clearId).addEventListener('click', ()=>{
+    state.agent[stateKey] = '';
+    document.getElementById(fileId).value = '';
+    saveAgent();
+    showImagePreview(previewId, stateKey);
+    renderPreview();
+  });
+}
+function saveAgent(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.agent)); }catch(e){}
+}
+
+function fillVars(text, recipient){
+  return text
+    .replaceAll('{{agentName}}', state.agent.agentName || '○○○')
+    .replaceAll('{{hometown}}', state.agent.hometown || '在地')
+    .replaceAll('{{storeName}}', state.agent.storeName || '○○房屋')
+    .replaceAll('{{serviceRegion}}', state.agent.serviceRegion || '本區')
+    .replaceAll('{{serviceYears}}', state.agent.serviceYears || '多')
+    .replaceAll('{{awardYear}}', state.agent.awardYear || '近年')
+    .replaceAll('{{awards}}', state.agent.awards || '多項業績獎項')
+    .replaceAll('{{phone}}', state.agent.phone || '請聯繫店內')
+    .replaceAll('{{lineId}}', state.agent.lineId || '請來電索取')
+    .replaceAll('{{propertyType}}', state.agent.propertyType || '2-4 房')
+    .replaceAll('{{title}}', recipient?.title || '您好')
+    .replaceAll('{{region}}', recipient?.region || state.agent.serviceRegion || '本區');
+}
+
+function recipientLine(r){
+  const title = r.title ? r.title : '您好';
+  return `屋主 ${title}`;
+}
+
+function vCard(){
+  const a = state.agent;
+  return [
+    'BEGIN:VCARD','VERSION:3.0',
+    `FN:${a.agentName||''}`,
+    `ORG:${a.storeName||''}`,
+    `TEL;TYPE=CELL:${a.phone||''}`,
+    a.lineId?`X-LINE:${a.lineId}`:'',
+    `ADR:;;${a.storeAddress||''};;;;`,
+    'END:VCARD'
+  ].filter(Boolean).join('\n');
+}
+
+function renderTemplateList(){
+  const wrap = document.getElementById('templateList');
+  wrap.innerHTML = TEMPLATES.map(t=>`
+    <button data-key="${t.key}" class="month-btn text-left px-2 py-1.5 text-xs border border-stone-200 rounded-md bg-white hover:border-slate-800 ${t.key===state.currentTemplate?'active':''}">
+      <span class="mr-1">${t.emoji}</span>${t.label}
+    </button>
+  `).join('');
+  wrap.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      state.currentTemplate = b.dataset.key;
+      state.previewIndex = 0;
+      renderTemplateList();
+      renderPreview();
+    });
+  });
+}
+
+function emph(text){ return `<span class="emph">${text}</span>`; }
+
+const ICONS = {
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>',
+  sparkles:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z"/></svg>',
+  clipboard:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>',
+  award:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>',
+  message:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  building:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 2l9 7.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z"/><path d="M9 22V12h6v10"/></svg>',
+  calculator:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>',
+  camera:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>'
+};
+
+function buildLetterHTML(template, recipient){
+  const t = template;
+  const a = state.agent;
+  const region = recipient?.region || a.serviceRegion || '本區';
+  const title = fillVars(t.title, recipient);
+  const subtitle = fillVars(t.subtitle, recipient);
+
+  const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
+  setTimeout(()=>{
+    const el = document.getElementById(qrId);
+    if(el && a.phone){
+      el.innerHTML='';
+      try{ new QRCode(el,{text:vCard(),width:90,height:90,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+    }
+  },0);
+
+  const escapeHTML = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]);
+  const introRaw = a.introText || DEFAULT_INTRO;
+  const introFilled = fillVars(introRaw, recipient);
+  const introParts = escapeHTML(introFilled).replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
+
+  const caseRaw = a.caseText || DEFAULT_CASE;
+  const caseFilled = fillVars(caseRaw, recipient).replaceAll('{{caseStudyDays}}', t.caseStudyDays);
+  const caseHTML = escapeHTML(caseFilled).replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
+
+  const brandBlock = a.logoDataUrl
+    ? `<div class="brand"><img src="${a.logoDataUrl}" alt="logo"></div>`
+    : (a.storeName ? `<div class="brand">▎${a.storeName}</div>` : '');
+
+  return `
+  <article class="letter">
+    <div class="banner">
+      <div class="ribbon">${t.ribbon}</div>
+      ${brandBlock}
+      <h2 class="banner-title">${title}</h2>
+      <p class="banner-subtitle">— ${subtitle} —</p>
+    </div>
+
+    <div class="body-wrap">
+      <div class="divider">自 我 介 紹</div>
+      <p class="intro-text">${introParts}</p>
+
+      <div class="divider">我 能 為 您 做 什 麼</div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">${ICONS.sparkles}</div>
+          <div class="feature-title">多元曝光</div>
+          <div class="feature-desc">短影音平台 + 網路行銷</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">${ICONS.camera}</div>
+          <div class="feature-title">專業攝影</div>
+          <div class="feature-desc">房屋專業拍攝・質感呈現</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">${ICONS.calculator}</div>
+          <div class="feature-title">稅務試算</div>
+          <div class="feature-desc">房地合一・土增稅一次算清</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">${ICONS.clipboard}</div>
+          <div class="feature-title">透明回報</div>
+          <div class="feature-desc">每週主動更新銷售進度</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">${ICONS.award}</div>
+          <div class="feature-title">售後不斷線</div>
+          <div class="feature-desc">交屋後仍持續提供各項服務</div>
+        </div>
+      </div>
+      <p class="case-study">${caseHTML}</p>
+
+      <div class="urgent-panel">
+        <div class="urgent-title">${ICONS.pin} 目前客戶急需物件</div>
+        <div class="urgent-grid">
+          <div>
+            <div class="urgent-label">目標區域</div>
+            <div class="urgent-value">${region} 周邊</div>
+          </div>
+          <div>
+            <div class="urgent-label">需求型態</div>
+            <div class="urgent-value">${a.propertyType||'2-4 房'} 房屋</div>
+          </div>
+        </div>
+        <p class="urgent-cta">若您有出售意願，或得知親友、鄰居有相關需求，懇請給我一次服務的機會。</p>
+      </div>
+
+      <div class="divider">聯 絡 方 式</div>
+      <div class="contact-grid">
+        ${a.photoDataUrl?`<div class="photo-cell"><img src="${a.photoDataUrl}" alt="agent"></div>`:''}
+        <div class="contact-info">
+          <p class="name">${ICONS.user} ${a.agentName||'○○○'}</p>
+          <p>${ICONS.phone} ${a.phone||'請填入電話'}</p>
+          <p>${ICONS.message} LINE：${a.lineId||'請來電索取'}</p>
+          ${a.storeAddress?`<p>${ICONS.pin} ${a.storeAddress}</p>`:''}
+        </div>
+        <div class="qr-cell">
+          ${a.customQrDataUrl
+            ? `<img src="${a.customQrDataUrl}" class="qr" style="object-fit:contain" alt="qr">`
+            : `<div id="${qrId}" class="qr"></div>`}
+          <div class="qr-label">${a.customQrDataUrl?'掃碼加好友':'掃碼存名片'}</div>
+        </div>
+      </div>
+
+      <p class="footer-note">本信為誠意派發，若已有合作仲介，敬請見諒。</p>
+    </div>
+  </article>`;
+}
+
+function buildLetterPlainText(template, recipient){
+  const t = template;
+  const a = state.agent;
+  const region = recipient?.region || a.serviceRegion || '本區';
+  return [
+    recipientLine(recipient),
+    '',
+    '┌─────────────────────────────────────┐',
+    '│ 【大標】 '+fillVars(t.title, recipient),
+    '│ 【副標】 '+fillVars(t.subtitle, recipient),
+    '└─────────────────────────────────────┘',
+    '',
+    '──────── 自我介紹 ────────',
+    '',
+    `您好，我是 ${a.agentName||''}，來自 ${a.hometown||''}，現服務於 ${a.storeName||''}。`,
+    `專營 ${a.serviceRegion||''} 房地產，累積 ${a.serviceYears||''} 年實戰經驗，`,
+    `曾榮獲 ${a.awardYear||''} 年${a.awards||''}。`,
+    '',
+    '──────── 我能為您做什麼 ────────',
+    '',
+    '✦ 多元曝光：短影音平台 + 網路行銷',
+    '✦ 專業攝影：房屋專業拍攝・質感呈現',
+    '✦ 稅務試算：房地合一・土增稅一次算清',
+    '✦ 透明回報：每週主動更新銷售進度',
+    '✦ 售後不斷線：交屋後仍持續服務',
+    '',
+    fillVars(a.caseText || DEFAULT_CASE, recipient).replaceAll('{{caseStudyDays}}', t.caseStudyDays).replace(/\*\*(.+?)\*\*/g, '$1'),
+    '',
+    '──────── 急尋物件 ────────',
+    '',
+    '📍 目前客戶急需：',
+    `   目標區域：${region} 周邊`,
+    `   需求型態：${a.propertyType||'2-4 房'} 房屋`,
+    '',
+    '若您有出售意願，或得知親友、鄰居有需求，懇請給我一次服務的機會。',
+    '',
+    '──────── 聯絡方式 ────────',
+    '',
+    `👤 ${a.agentName||''}`,
+    `📞 ${a.phone||''}`,
+    `💬 LINE：${a.lineId||''}`,
+    a.storeAddress?`📍 ${a.storeAddress}`:'',
+    '',
+    '本信為誠意派發，若已有合作仲介，敬請見諒。'
+  ].filter(x=>x!==undefined).join('\n');
+}
+
+function getTemplate(key){ return TEMPLATES.find(t=>t.key===key) || TEMPLATES[0]; }
+
+function getRecipientsForRender(){
+  if(state.recipients.length>0) return state.recipients;
+  return [{ region: state.agent.serviceRegion || '本區', title:'' }];
+}
+
+function renderPreview(){
+  const t = getTemplate(state.currentTemplate);
+  const recips = getRecipientsForRender();
+  if(state.previewIndex >= recips.length) state.previewIndex = 0;
+  const r = recips[state.previewIndex];
+  document.getElementById('previewBox').innerHTML = buildLetterHTML(t, r);
+  document.getElementById('previewIndex').textContent = state.previewIndex+1;
+  document.getElementById('previewTotal').textContent = recips.length;
+  document.getElementById('previewMeta').textContent = `${t.emoji} ${t.label}　|　${recips.length} 封`;
+}
+
+function parseRecipients(){
+  const raw = document.getElementById('recipientList').value;
+  state.recipients = raw.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>({
+    title: line, region:''
+  }));
+  document.getElementById('recipientCount').textContent = state.recipients.length;
+}
+
+function bindAgentInputs(){
+  Object.keys(state.agent).forEach(k=>{
+    const el = document.getElementById(k);
+    if(!el) return;
+    el.addEventListener('input', ()=>{
+      state.agent[k] = el.value;
+      saveAgent();
+      renderPreview();
+    });
+  });
+  document.getElementById('recipientList').addEventListener('input', ()=>{
+    parseRecipients();
+    renderPreview();
+  });
+}
+
+function bindNavigation(){
+  document.getElementById('prevPreview').addEventListener('click', ()=>{
+    const recips = getRecipientsForRender();
+    state.previewIndex = (state.previewIndex - 1 + recips.length) % recips.length;
+    renderPreview();
+  });
+  document.getElementById('nextPreview').addEventListener('click', ()=>{
+    const recips = getRecipientsForRender();
+    state.previewIndex = (state.previewIndex + 1) % recips.length;
+    renderPreview();
+  });
+}
+
+function bindTheme(){
+  document.querySelectorAll('.color-swatch').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const theme = b.dataset.theme;
+      state.theme = theme;
+      document.body.className = 'theme-'+theme;
+      document.querySelectorAll('.color-swatch').forEach(x=>{
+        const active = x.dataset.theme===theme;
+        x.classList.toggle('ring-2', active);
+        x.classList.toggle('ring-offset-2', active);
+        x.classList.toggle('ring-slate-800', active);
+        x.classList.toggle('ring-1', !active);
+        x.classList.toggle('ring-stone-200', !active);
+        x.classList.toggle('border-white', !active);
+      });
+      renderPreview();
+    });
+  });
+}
+
+function bindActions(){
+  document.getElementById('copyBtn').addEventListener('click', async ()=>{
+    const t = getTemplate(state.currentTemplate);
+    const r = getRecipientsForRender()[state.previewIndex];
+    const text = buildLetterPlainText(t, r);
+    try{
+      await navigator.clipboard.writeText(text);
+      flash('已複製此封內容到剪貼簿');
+    }catch(e){
+      flash('複製失敗，請手動選取');
+    }
+  });
+
+  document.getElementById('printBtn').addEventListener('click', ()=>{
+    if(!validateAgent()) return;
+    const t = getTemplate(state.currentTemplate);
+    const recips = getRecipientsForRender();
+    const html = recips.map(r=>buildLetterHTML(t,r)).join('');
+    document.getElementById('printArea').innerHTML = html;
+    flash('列印對話框：目的地選「另存為 PDF」、邊界選「無」、勾選「背景圖形」');
+    setTimeout(()=>window.print(), 600);
+  });
+
+  bindImageUpload('logoFile','clearLogo','logoPreview','logoDataUrl');
+  bindImageUpload('photoFile','clearPhoto','photoPreview','photoDataUrl');
+  bindImageUpload('qrFile','clearQr','qrPreview','customQrDataUrl');
+
+  document.getElementById('resetIntro').addEventListener('click', ()=>{
+    state.agent.introText = DEFAULT_INTRO;
+    document.getElementById('introText').value = DEFAULT_INTRO;
+    saveAgent();
+    renderPreview();
+    flash('已還原為公版自我介紹');
+  });
+
+  document.getElementById('resetCase').addEventListener('click', ()=>{
+    state.agent.caseText = DEFAULT_CASE;
+    document.getElementById('caseText').value = DEFAULT_CASE;
+    saveAgent();
+    renderPreview();
+    flash('已還原為公版成功案例');
+  });
+
+  document.getElementById('loadSample').addEventListener('click', ()=>{
+    const SAMPLE_AGENT = {
+      agentName:'王小明', hometown:'彰化',
+      storeName:'東森房屋 大安店', serviceRegion:'台北市大安區',
+      serviceYears:'5', awardYear:'2025', awards:'年度業績冠軍',
+      phone:'0912-345-678', lineId:'@xiaoming',
+      propertyType:'2-4 房', storeAddress:'台北市大安區忠孝東路四段 100 號'
+    };
+    let filled = 0;
+    Object.keys(SAMPLE_AGENT).forEach(k=>{
+      if(!state.agent[k]){
+        state.agent[k] = SAMPLE_AGENT[k];
+        const el = document.getElementById(k);
+        if(el) el.value = SAMPLE_AGENT[k];
+        filled++;
+      }
+    });
+    document.getElementById('recipientList').value = [
+      '王先生',
+      '陳太太',
+      '李小姐',
+      '張先生',
+      '林太太',
+      '黃先生',
+      '吳太太',
+      '蔡小姐'
+    ].join('\n');
+    saveAgent();
+    parseRecipients();
+    renderPreview();
+    flash(filled>0 ? `已載入範例（含 ${filled} 個業務員欄位）` : '已載入屋主名單範例');
+  });
+}
+
+function validateAgent(){
+  if(!state.agent.agentName || !state.agent.storeName || !state.agent.phone){
+    flash('請至少填寫姓名、店名、電話');
+    return false;
+  }
+  return true;
+}
+
+let flashTimer;
+function flash(msg){
+  let el = document.getElementById('toast');
+  if(!el){
+    el = document.createElement('div');
+    el.id='toast';
+    el.className='no-print fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-sm px-4 py-2 rounded-md shadow-lg z-50 transition-opacity';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity='1';
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(()=>{ el.style.opacity='0'; }, 2200);
+}
+
+loadAgent();
+renderTemplateList();
+bindAgentInputs();
+bindNavigation();
+bindTheme();
+bindActions();
+parseRecipients();
+renderPreview();
+</script>
+</body>
+</html>
