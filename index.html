@@ -14,6 +14,14 @@
   gtag('js', new Date());
   gtag('config', 'G-YSC1Q52B7G');
 </script>
+<script>
+  // Email Gate：預先判斷是否已解鎖，避免畫面閃爍
+  try{
+    if(localStorage.getItem('devLetterTool.unlocked') === '1'){
+      document.documentElement.classList.add('is-unlocked');
+    }
+  }catch(e){}
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap');
   body{font-family:'Noto Sans TC',sans-serif;background:#f5f3ef}
@@ -246,9 +254,115 @@
     .letter:last-child{page-break-after:auto}
     @page{size:A4;margin:0}
   }
+
+  /* === Email Gate 解鎖頁 === */
+  .email-gate{
+    position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+    padding:24px;background:rgba(237,224,212,.96);backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px)
+  }
+  html.is-unlocked .email-gate{display:none!important}
+  html:not(.is-unlocked) body{overflow:hidden}
+  @media print{ .email-gate{display:none!important} }
+
+  .email-gate-card{
+    width:100%;max-width:460px;background:#fff;border:1px solid #C4783A;
+    border-radius:16px;overflow:hidden;box-shadow:0 18px 48px rgba(122,92,74,.18);
+    animation:gateFadeIn .35s ease-out
+  }
+  @keyframes gateFadeIn{
+    from{opacity:0;transform:translateY(12px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .email-gate-head{
+    background:#7A5C4A;color:#fff;padding:22px 28px 20px;position:relative
+  }
+  .email-gate-head::after{
+    content:'';position:absolute;left:28px;right:28px;bottom:14px;height:1px;
+    background:rgba(232,201,106,.4)
+  }
+  .email-gate-tag{
+    font-size:11px;letter-spacing:.22em;color:#E8C96A;font-weight:600
+  }
+  .email-gate-title{
+    font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;
+    margin:6px 0 0;letter-spacing:.04em
+  }
+  .email-gate-body{padding:24px 28px 26px}
+  .email-gate-desc{
+    font-size:14px;line-height:1.85;color:#5b4636;margin:0 0 18px
+  }
+  .email-gate-desc b{color:#C4783A;font-weight:700}
+  .email-gate-form{display:flex;flex-direction:column;gap:10px}
+  .email-gate-input{
+    width:100%;padding:13px 16px;font-size:15px;border:1.5px solid #d8c5b1;
+    border-radius:10px;background:#FAF5EE;color:#3a2a1f;
+    transition:border-color .2s,background .2s;box-sizing:border-box
+  }
+  .email-gate-input:focus{
+    outline:none;border-color:#C4783A;background:#fff
+  }
+  .email-gate-btn{
+    width:100%;padding:13px 20px;font-size:15px;font-weight:700;
+    background:#C4783A;color:#fff;border:none;border-radius:10px;
+    cursor:pointer;letter-spacing:.05em;transition:transform .15s,background .2s
+  }
+  .email-gate-btn:hover:not(:disabled){background:#a8632d;transform:translateY(-1px)}
+  .email-gate-btn:disabled{background:#c9a98c;cursor:not-allowed}
+  .email-gate-msg{
+    margin-top:14px;padding:12px 14px;border-radius:8px;font-size:13px;
+    line-height:1.6;display:none
+  }
+  .email-gate-msg.is-error{
+    display:block;background:#fdecec;color:#a3322a;border-left:3px solid #C82D26
+  }
+  .email-gate-msg.is-info{
+    display:block;background:#FAF5EE;color:#7A5C4A;border-left:3px solid #C4783A
+  }
+  .email-gate-msg.is-success{
+    display:block;background:#eef7ee;color:#2d6b3a;border-left:3px solid #4f9b5e
+  }
+  .email-gate-foot{
+    margin-top:18px;padding-top:14px;border-top:1px solid #f0e3d3;
+    font-size:11px;color:#9b8470;line-height:1.7;text-align:center
+  }
+  .email-gate-foot span{color:#C4783A;font-weight:600}
+
+  @media (max-width:480px){
+    .email-gate{padding:16px}
+    .email-gate-head{padding:18px 22px 16px}
+    .email-gate-title{font-size:19px}
+    .email-gate-body{padding:20px 22px 22px}
+  }
 </style>
 </head>
 <body class="theme-navy">
+
+<!-- === Email Gate（首次解鎖） === -->
+<div id="emailGate" class="email-gate no-print" role="dialog" aria-modal="true" aria-labelledby="emailGateTitle">
+  <div class="email-gate-card">
+    <div class="email-gate-head">
+      <div class="email-gate-tag">SALLY · 房仲工具室</div>
+      <div id="emailGateTitle" class="email-gate-title">解鎖開發信工具 ✉️</div>
+    </div>
+    <div class="email-gate-body">
+      <p class="email-gate-desc">
+        留下 Email，我會寄一封歡迎信給你，<br>
+        解鎖後 <b>13 個月份範本</b>立刻可用，永久免費。
+      </p>
+      <form id="emailGateForm" class="email-gate-form" novalidate>
+        <input id="emailGateInput" class="email-gate-input" type="email" required
+               placeholder="your@email.com" autocomplete="email" inputmode="email">
+        <button id="emailGateBtn" class="email-gate-btn" type="submit">解鎖工具 →</button>
+      </form>
+      <div id="emailGateMsg" class="email-gate-msg"></div>
+      <div class="email-gate-foot">
+        所有資料只存在你瀏覽器，僅留 Email 給莎莉<br>
+        <span>不會分享給第三方，每個 Email 只會收到一次歡迎信</span>
+      </div>
+    </div>
+  </div>
+</div>
 
 <header class="no-print bg-white border-b border-stone-200 sticky top-0 z-30">
   <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2 flex-wrap">
@@ -1130,6 +1244,91 @@ function bindHelpModal(){
   }
 }
 
+// === Email Gate 解鎖邏輯 ===
+// 部署後請把這串換成你的 Apps Script Web App URL
+const EMAIL_GATE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxN8YpBCej0VfBMRcglY20mzgDKa4cgFLGWDzY5nHHJZ55V9LmBIXaHrIo6_L0ftcXo/exec';
+const UNLOCK_KEY = 'devLetterTool.unlocked';
+const UNLOCK_EMAIL_KEY = 'devLetterTool.unlockedEmail';
+
+function unlockTool(email){
+  try{
+    localStorage.setItem(UNLOCK_KEY, '1');
+    if(email) localStorage.setItem(UNLOCK_EMAIL_KEY, email);
+  }catch(e){}
+  document.documentElement.classList.add('is-unlocked');
+  try{ gtag('event', 'email_unlock', { email_domain: (email||'').split('@')[1] || '' }); }catch(e){}
+}
+
+function showGateMsg(text, type){
+  const el = document.getElementById('emailGateMsg');
+  el.className = 'email-gate-msg is-' + type;
+  el.textContent = text;
+}
+
+function bindEmailGate(){
+  const form  = document.getElementById('emailGateForm');
+  const input = document.getElementById('emailGateInput');
+  const btn   = document.getElementById('emailGateBtn');
+
+  // 已解鎖（前面 head 的 inline script 已加 is-unlocked），這裡保險再判一次
+  if(localStorage.getItem(UNLOCK_KEY) === '1'){
+    document.documentElement.classList.add('is-unlocked');
+    return;
+  }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const email = (input.value||'').trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      showGateMsg('Email 格式好像怪怪的，再檢查一下 ✏️', 'error');
+      input.focus();
+      return;
+    }
+
+    if(EMAIL_GATE_ENDPOINT.startsWith('PASTE_')){
+      showGateMsg('後端 URL 還沒設定，請先部署 Apps Script', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '送出中...';
+    showGateMsg('正在驗證 Email，請稍候...', 'info');
+
+    try{
+      // 用 text/plain 避開 CORS preflight
+      const res = await fetch(EMAIL_GATE_ENDPOINT, {
+        method:'POST',
+        headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          email: email,
+          source: 'web',
+          ua: navigator.userAgent
+        })
+      });
+      const data = await res.json();
+
+      if(data.status === 'ok'){
+        showGateMsg(data.message || '歡迎信已寄出，3 秒後自動解鎖 ✨', 'success');
+        try{ gtag('event', 'email_submit', { result:'new' }); }catch(e){}
+        setTimeout(()=>unlockTool(email), 1500);
+      } else if(data.status === 'duplicate'){
+        showGateMsg(data.message || '這個 Email 已經領取過囉，幫你直接解鎖 ✨', 'info');
+        try{ gtag('event', 'email_submit', { result:'duplicate' }); }catch(e){}
+        setTimeout(()=>unlockTool(email), 1200);
+      } else {
+        showGateMsg(data.message || '送出失敗，請稍後再試', 'error');
+        btn.disabled = false;
+        btn.textContent = '解鎖工具 →';
+      }
+    }catch(err){
+      showGateMsg('連線失敗，請檢查網路後再試一次', 'error');
+      btn.disabled = false;
+      btn.textContent = '解鎖工具 →';
+    }
+  });
+}
+
+bindEmailGate();
 loadAgent();
 renderTemplateList();
 bindAgentInputs();
