@@ -24,6 +24,11 @@ function doPost(e) {
     const body  = JSON.parse(e.postData.contents || '{}');
     const email = String(body.email || '').trim().toLowerCase();
 
+    // Honeypot：bot 會填這個隱藏欄位，人類不會。佯裝成功不浪費資源。
+    if (body.company && String(body.company).trim() !== '') {
+      return jsonOut({ status: 'ok', message: '歡迎信已寄出，請至信箱查收' });
+    }
+
     if (!isValidEmail(email)) {
       return jsonOut({ status: 'error', message: 'Email 格式不正確' });
     }
@@ -36,12 +41,13 @@ function doPost(e) {
       sheet.appendRow(['時間', 'Email', '來源', 'User-Agent']);
     }
 
-    // 取出 Email 欄（B）做重複檢查
+    // 取出 Email 欄（B）做重複檢查（normalize 後比對：去掉 +alias、Gmail 點號）
+    const normalizedNew = normalizeEmail(email);
     const lastRow = sheet.getLastRow();
     if (lastRow >= 2) {
-      const emails = sheet.getRange(2, 2, lastRow - 1, 1).getValues()
-                          .flat().map(v => String(v).trim().toLowerCase());
-      if (emails.indexOf(email) !== -1) {
+      const emails = sheet.getRange(2, 2, lastRow - 1, 1).getValues().flat();
+      const isDup = emails.some(e => normalizeEmail(String(e).trim()) === normalizedNew);
+      if (isDup) {
         return jsonOut({
           status: 'duplicate',
           message: '這個 Email 已經領取過囉，請直接使用工具 ✨'
@@ -49,12 +55,12 @@ function doPost(e) {
       }
     }
 
-    // 寫入 Sheet
+    // 寫入 Sheet（user-supplied 欄位 prefix 單引號避免 CSV 公式注入）
     sheet.appendRow([
       new Date(),
-      email,
-      body.source || 'web',
-      body.ua || ''
+      safeForSheet(email),
+      safeForSheet(body.source || 'web'),
+      safeForSheet(body.ua || '')
     ]);
 
     // 寄歡迎信
@@ -76,6 +82,26 @@ function doGet() {
 
 function isValidEmail(s) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+// CSV / 試算表公式注入防護：開頭是 = + - @ Tab CR 都會被 Sheets 當公式
+function safeForSheet(s) {
+  s = String(s || '');
+  if (/^[=+\-@\t\r]/.test(s)) return "'" + s;
+  return s;
+}
+
+// Email 正規化：去掉 +alias 段，Gmail 還要去點號
+function normalizeEmail(email) {
+  const at = email.indexOf('@');
+  if (at < 0) return email;
+  let local = email.slice(0, at).toLowerCase();
+  const domain = email.slice(at + 1).toLowerCase();
+  local = local.split('+')[0];
+  if (domain === 'gmail.com' || domain === 'googlemail.com') {
+    local = local.replace(/\./g, '');
+  }
+  return local + '@' + domain;
 }
 
 function jsonOut(obj) {

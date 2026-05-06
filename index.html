@@ -358,6 +358,9 @@
       <form id="emailGateForm" class="email-gate-form" novalidate>
         <input id="emailGateInput" class="email-gate-input" type="email" required
                placeholder="your@email.com" autocomplete="email" inputmode="email">
+        <!-- Honeypot：bot 會填，人類看不到也不會填 -->
+        <input id="emailGateHoney" type="text" name="company" tabindex="-1" autocomplete="off"
+               aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;opacity:0">
         <button id="emailGateBtn" class="email-gate-btn" type="submit">解鎖試用資格 →</button>
       </form>
       <div id="emailGateMsg" class="email-gate-msg"></div>
@@ -1301,13 +1304,15 @@ function bindEmailGate(){
 
     try{
       // 用 text/plain 避開 CORS preflight
+      const honey = (document.getElementById('emailGateHoney')||{}).value || '';
       const res = await fetch(EMAIL_GATE_ENDPOINT, {
         method:'POST',
         headers:{ 'Content-Type':'text/plain;charset=utf-8' },
         body: JSON.stringify({
           email: email,
           source: 'web',
-          ua: navigator.userAgent
+          ua: navigator.userAgent,
+          company: honey
         })
       });
       const data = await res.json();
