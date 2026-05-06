@@ -16,7 +16,7 @@ const SHEET_ID    = '1ZFZwDOj-qZD7LYl4bDzFiiR9bfbP9cVktwfX8wZI63g';
 const SHEET_NAME  = '名單';                          // 工作表分頁名
 const TOOL_URL    = 'https://dev-letter-tool.vercel.app/';
 const FROM_NAME   = '莎莉｜台東女子北漂中';
-const SUBJECT     = '🎁 你的房仲開發信工具已解鎖（13 個月份範本）';
+const SUBJECT     = '你的試用資格已解鎖 🔓｜莎莉 Sally';
 // =================================
 
 function doPost(e) {
@@ -89,29 +89,45 @@ function sendWelcomeMail(to) {
 <div style="font-family:'Noto Sans TC',Arial,sans-serif;background:#EDE0D4;padding:32px 16px;color:#3a2a1f">
   <div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #C4783A;border-radius:14px;overflow:hidden">
     <div style="background:#7A5C4A;color:#fff;padding:22px 28px">
-      <div style="font-size:12px;letter-spacing:.18em;color:#E8C96A">SALLY · LIFESTYLE</div>
-      <div style="font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;margin-top:6px">
-        歡迎你解鎖房仲開發信工具 🎉
+      <div style="font-size:12px;letter-spacing:.22em;color:#E8C96A">SALLY · LIFESTYLE</div>
+      <div style="font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;margin-top:6px;letter-spacing:.04em">
+        你的試用資格已解鎖 🔓
       </div>
     </div>
-    <div style="padding:26px 28px;line-height:1.85;font-size:15px">
-      <p>嗨，謝謝你留下 Email！</p>
-      <p>這是一份我做給房仲業務員的小工具，一次填好資料，<b>13 個月份範本</b>都能直接套用、批次列印或存 PDF。</p>
+    <div style="padding:26px 28px;line-height:1.95;font-size:15px">
+      <p style="margin:0 0 14px">嗨！</p>
+      <p style="margin:0 0 14px">你已經成功解鎖「<b style="color:#C4783A">房仲 AI 開發信工具</b>」的試用資格了 🎉</p>
+      <p style="margin:0 0 4px">這個工具是我當房仲時，每天重複寫開發信寫到崩潰，</p>
+      <p style="margin:0 0 14px">後來自己做出來的東西，希望對你有幫助 😊</p>
+
       <p style="margin:24px 0;text-align:center">
         <a href="${TOOL_URL}" style="display:inline-block;background:#C4783A;color:#fff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:99px;letter-spacing:.05em">立即進入工具 →</a>
       </p>
-      <div style="background:#FAF5EE;border-left:3px solid #C4783A;padding:14px 18px;border-radius:6px;margin:18px 0">
-        <div style="font-size:13px;color:#7A5C4A;font-weight:700;margin-bottom:6px">使用提醒</div>
-        <ul style="margin:0;padding-left:18px;font-size:14px">
-          <li>所有資料只存在你自己的瀏覽器（localStorage），不會上傳</li>
-          <li>建議搭配 Chrome / Edge 使用，列印走系統「另存為 PDF」</li>
-          <li>有任何使用問題歡迎回信給我</li>
-        </ul>
+
+      <div style="border-top:1px dashed #d8c5b1;margin:22px 0"></div>
+
+      <p style="margin:0 0 14px">目前工具還在持續開發中，之後會陸續新增更多功能。</p>
+      <p style="margin:0 0 4px">你的 Email 已經在名單裡了，</p>
+      <p style="margin:0 0 4px">每次有新工具或新功能上線，</p>
+      <p style="margin:0 0 14px">你都會是第一個收到通知的人 🎯</p>
+
+      <div style="border-top:1px dashed #d8c5b1;margin:22px 0"></div>
+
+      <p style="margin:0 0 4px">有任何使用問題或想法，</p>
+      <p style="margin:0 0 14px">直接回覆這封信告訴我，我都會看！</p>
+
+      <div style="margin-top:28px;padding-top:20px;border-top:2px solid #EDE0D4">
+        <p style="font-family:'Noto Serif TC',serif;font-style:italic;color:#7A5C4A;margin:0 0 18px;font-size:15px;letter-spacing:.04em">還在成長的你，我陪你一起走 🌱</p>
+        <p style="margin:0;font-size:14px;line-height:2">
+          <b style="color:#C4783A;font-size:15px">莎莉 Sally</b><br>
+          <span style="color:#7A5C4A">台東女子｜北漂中</span><br>
+          <span style="color:#7A5C4A">用 AI 讓工作變簡單 ⚡</span>
+        </p>
+        <p style="margin:16px 0 0;font-size:13px;line-height:2;color:#7A5C4A">
+          📷 IG：<a href="https://www.instagram.com/sally.lifestyle.ttt" style="color:#C4783A;text-decoration:none;font-weight:600">@sally.lifestyle.ttt</a><br>
+          🧵 Threads：<a href="https://www.threads.com/@sally.lifestyle.ttt" style="color:#C4783A;text-decoration:none;font-weight:600">@sally.lifestyle.ttt</a>
+        </p>
       </div>
-      <p style="font-size:13px;color:#888;margin-top:26px">
-        — 莎莉｜台東女子北漂中<br>
-        IG <a href="https://instagram.com/sally.lifestyle.ttt" style="color:#C4783A">@sally.lifestyle.ttt</a>
-      </p>
     </div>
   </div>
   <div style="text-align:center;font-size:11px;color:#9b8470;margin-top:14px">
