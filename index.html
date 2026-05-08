@@ -889,9 +889,16 @@ const ICONS = {
 function buildLetterHTML(template, recipient){
   const t = template;
   const a = state.agent;
-  const region = recipient?.region || a.serviceRegion || '本區';
-  const title = fillVars(t.title, recipient);
-  const subtitle = fillVars(t.subtitle, recipient);
+  const escHTML = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  // data: URL 白名單檢查（只允許 data:image/...）
+  const safeDataUrl = s => {
+    if(!s) return '';
+    s = String(s);
+    return /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/i.test(s) ? s : '';
+  };
+  const region = escHTML(recipient?.region || a.serviceRegion || '本區');
+  const title = escHTML(fillVars(t.title, recipient));
+  const subtitle = escHTML(fillVars(t.subtitle, recipient));
 
   const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
   setTimeout(()=>{
@@ -902,18 +909,18 @@ function buildLetterHTML(template, recipient){
     }
   },0);
 
-  const escapeHTML = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]);
   const introRaw = a.introText || DEFAULT_INTRO;
   const introFilled = fillVars(introRaw, recipient);
-  const introParts = escapeHTML(introFilled).replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
+  const introParts = escHTML(introFilled).replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
 
   const caseRaw = a.caseText || DEFAULT_CASE;
   const caseFilled = fillVars(caseRaw, recipient).replaceAll('{{caseStudyDays}}', t.caseStudyDays);
-  const caseHTML = escapeHTML(caseFilled).replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
+  const caseHTML = escHTML(caseFilled).replace(/\*\*(.+?)\*\*/g, '<span class="emph">$1</span>');
 
-  const brandBlock = a.logoDataUrl
-    ? `<div class="brand"><img src="${a.logoDataUrl}" alt="logo"></div>`
-    : (a.storeName ? `<div class="brand">▎${a.storeName}</div>` : '');
+  const safeLogo = safeDataUrl(a.logoDataUrl);
+  const brandBlock = safeLogo
+    ? `<div class="brand"><img src="${safeLogo}" alt="logo"></div>`
+    : (a.storeName ? `<div class="brand">▎${escHTML(a.storeName)}</div>` : '');
 
   return `
   <article class="letter">
@@ -967,7 +974,7 @@ function buildLetterHTML(template, recipient){
           </div>
           <div>
             <div class="urgent-label">需求型態</div>
-            <div class="urgent-value">${a.propertyType||'2-4 房'} 房屋</div>
+            <div class="urgent-value">${escHTML(a.propertyType||'2-4 房')} 房屋</div>
           </div>
         </div>
         <p class="urgent-cta">若您有出售意願，或得知親友、鄰居有相關需求，懇請給我一次服務的機會。</p>
@@ -975,18 +982,18 @@ function buildLetterHTML(template, recipient){
 
       <div class="divider">聯 絡 方 式</div>
       <div class="contact-grid">
-        ${a.photoDataUrl?`<div class="photo-cell"><img src="${a.photoDataUrl}" alt="agent"></div>`:''}
+        ${safeDataUrl(a.photoDataUrl)?`<div class="photo-cell"><img src="${safeDataUrl(a.photoDataUrl)}" alt="agent"></div>`:''}
         <div class="contact-info">
-          <p class="name">${ICONS.user} ${a.agentName||'○○○'}</p>
-          <p>${ICONS.phone} ${a.phone||'請填入電話'}</p>
-          <p>${ICONS.message} LINE：${a.lineId||'請來電索取'}</p>
-          ${a.storeAddress?`<p>${ICONS.pin} ${a.storeAddress}</p>`:''}
+          <p class="name">${ICONS.user} ${escHTML(a.agentName||'○○○')}</p>
+          <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
+          <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
+          ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
         </div>
         <div class="qr-cell">
-          ${a.customQrDataUrl
-            ? `<img src="${a.customQrDataUrl}" class="qr" style="object-fit:contain" alt="qr">`
+          ${safeDataUrl(a.customQrDataUrl)
+            ? `<img src="${safeDataUrl(a.customQrDataUrl)}" class="qr" style="object-fit:contain" alt="qr">`
             : `<div id="${qrId}" class="qr"></div>`}
-          <div class="qr-label">${a.customQrDataUrl?'掃碼加好友':'掃碼存名片'}</div>
+          <div class="qr-label">${safeDataUrl(a.customQrDataUrl)?'掃碼加好友':'掃碼存名片'}</div>
         </div>
       </div>
 

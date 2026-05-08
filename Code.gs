@@ -17,7 +17,16 @@ const SHEET_NAME  = '名單';                          // 工作表分頁名
 const TOOL_URL    = 'https://dev-letter-tool.vercel.app/';
 const FROM_NAME   = '莎莉｜台東女子北漂中';
 const SUBJECT     = '你的試用資格已解鎖 🔓｜莎莉 Sally';
+const DAILY_CAP   = 200;                             // 每日新註冊上限（防刷）
 // =================================
+
+// 拋棄式信箱黑名單（刷名單常見來源）
+const DISPOSABLE_DOMAINS = [
+  'mailinator.com','tempmail.com','10minutemail.com','guerrillamail.com',
+  'sharklasers.com','trashmail.com','yopmail.com','throwawaymail.com',
+  'getnada.com','dispostable.com','maildrop.cc','tempr.email','fakeinbox.com',
+  'mintemail.com','tempmailo.com','temp-mail.org','spambog.com','emailondeck.com'
+];
 
 function doPost(e) {
   try {
@@ -31,6 +40,24 @@ function doPost(e) {
 
     if (!isValidEmail(email)) {
       return jsonOut({ status: 'error', message: 'Email 格式不正確' });
+    }
+
+    // 拋棄式信箱：佯裝成功（不浪費 quota 也不告訴 bot 偵測規則）
+    const domain = email.split('@')[1] || '';
+    if (DISPOSABLE_DOMAINS.indexOf(domain) >= 0) {
+      return jsonOut({ status: 'ok', message: '歡迎信已寄出，請至信箱查收' });
+    }
+
+    // 每日全域配額：擋大量自動化攻擊（Apps Script 拿不到 IP，只能做總量限制）
+    const props = PropertiesService.getScriptProperties();
+    const today = Utilities.formatDate(new Date(), 'Asia/Taipei', 'yyyy-MM-dd');
+    const quotaKey = 'quota_' + today;
+    const used = parseInt(props.getProperty(quotaKey) || '0', 10);
+    if (used >= DAILY_CAP) {
+      return jsonOut({
+        status: 'error',
+        message: '今日註冊量已達上限，請明天再試 🙏'
+      });
     }
 
     const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME)
@@ -62,6 +89,9 @@ function doPost(e) {
       safeForSheet(body.source || 'web'),
       safeForSheet(body.ua || '')
     ]);
+
+    // 配額計數 +1（成功寫入後才扣）
+    props.setProperty(quotaKey, String(used + 1));
 
     // 寄歡迎信
     sendWelcomeMail(email);
