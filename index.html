@@ -299,6 +299,18 @@
     padding:32px 36px 28px 24px;text-align:right;
     position:relative;overflow:hidden
   }
+  /* 空狀態：整塊置中 */
+  .deal-hero-content.is-empty{
+    text-align:center;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding:32px 24px;color:#94a3b8
+  }
+  .deal-hero-content.is-empty .empty-icon{font-size:42px;margin-bottom:8px}
+  .deal-hero-content.is-empty .empty-text{
+    font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;
+    color:#7A6553;margin:0 0 6px;letter-spacing:.08em
+  }
+  .deal-hero-content.is-empty .empty-hint{font-size:13px;color:#94a3b8;margin:0;letter-spacing:.04em}
   .deal-hero-content::after{
     content:'成交';position:absolute;right:-20px;bottom:-30px;
     transform:rotate(-12deg);
@@ -438,7 +450,7 @@
   /* 業務員聯絡區（含 CTA 紅色橫幅） */
   .flyer-contact{
     background:#fff;border-top:2px solid #F1CD57;
-    margin-top:auto;overflow:hidden
+    overflow:hidden
   }
   /* CTA 橫幅貼在 contact 上方 */
   .flyer-contact-cta{
@@ -1405,7 +1417,8 @@ function buildFlyerHTML(){
     return /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/i.test(s) ? s : '';
   };
 
-  const deals = state.deals.length ? state.deals : [{address:'（請輸入成交資料）', size:'', price:'', roomType:'', date:''}];
+  const hasDeals = state.deals.length > 0;
+  const deals = hasDeals ? state.deals : [{address:'', size:'', price:'', roomType:'', date:''}];
   const subtitle = state.flyerSubtitle || `${a.serviceRegion||'本區'} 月度戰績`;
 
   // 派報文案變數展開 + **字** 紅色強調（空字串時也用 DEFAULT 不留白）
@@ -1438,7 +1451,7 @@ function buildFlyerHTML(){
     const main = deals[0];
     const subs = deals.slice(1, 4);
     const mainPrice = splitPriceNumberUnit(main.price);
-    const heroHTML = `
+    const heroHTML = hasDeals ? `
       <div class="deal-hero">
         <div class="deal-hero-label">
           <span class="deal-hero-label-watermark">№1</span>
@@ -1453,6 +1466,17 @@ function buildFlyerHTML(){
           </div>
           <div class="deal-hero-price">${escHTML(mainPrice.num||'—')}<span class="deal-hero-price-unit">${escHTML(mainPrice.unit||'')}</span></div>
           ${main.date?`<p class="deal-hero-date">📅 ${escHTML(main.date)} 強勢成交</p>`:''}
+        </div>
+      </div>` : `
+      <div class="deal-hero">
+        <div class="deal-hero-label">
+          <span class="deal-hero-label-watermark">№1</span>
+          <p class="deal-hero-label-text">成交資訊</p>
+        </div>
+        <div class="deal-hero-content is-empty">
+          <div class="empty-icon">📝</div>
+          <p class="empty-text">請輸入成交資料</p>
+          <p class="empty-hint">在左側「成交資料」區填入第一筆，這裡會放大顯示</p>
         </div>
       </div>`;
     const subHTML = subs.length ? `
@@ -1527,7 +1551,6 @@ function buildFlyerHTML(){
     <div class="flyer-contact">
       <div class="flyer-contact-cta">
         <span class="flyer-contact-cta-arrow">↓</span>
-        <span class="flyer-contact-cta-icon">📱</span>
         <div class="flyer-contact-cta-text">
           <p class="flyer-contact-cta-title">免費估價試算</p>
           <p class="flyer-contact-cta-sub">掃下方 QR 加 ${escHTML(a.agentName||'業務員')} 的 LINE，30 秒回覆你家市值區間</p>
