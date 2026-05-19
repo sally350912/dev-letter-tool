@@ -1457,7 +1457,7 @@ function buildFlyerHTML(){
   const hasDeals = state.deals.length > 0;
   const main = hasDeals ? state.deals[0] : {address:'', size:'', price:'', roomType:'', date:''};
   const mainPrice = splitPriceNumberUnit(main.price);
-  const subtitle = state.flyerSubtitle || `${a.serviceRegion||'本區'} 真實數據`;
+  const subtitle = (state.flyerSubtitle || '').trim();
 
   // 文案
   const dealCountText = state.deals.length || '多';
@@ -1527,7 +1527,7 @@ function buildFlyerHTML(){
         <span class="line"></span>
       </div>
       <h1 class="flyer-title">成 交 快 報</h1>
-      <p class="flyer-subtitle">${escHTML(subtitle)}</p>
+      ${subtitle?`<p class="flyer-subtitle">${escHTML(subtitle)}</p>`:''}
     </div>
 
     <!-- 2. 主秀卡片 -->
