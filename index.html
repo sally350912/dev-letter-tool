@@ -245,11 +245,14 @@
     pointer-events:none
   }
   .flyer-brand{
-    display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.85);
-    font-size:12.5px;letter-spacing:.05em;margin-bottom:8px;font-weight:500
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    color:rgba(255,255,255,.85);font-size:12.5px;letter-spacing:.05em;
+    margin-bottom:10px;font-weight:500
   }
   .flyer-brand img{max-height:30px;max-width:140px;object-fit:contain}
-  .flyer-title-row{display:flex;align-items:center;gap:14px;margin-top:6px}
+  .flyer-title-row{
+    display:flex;align-items:center;justify-content:center;gap:14px;margin-top:6px;flex-wrap:wrap
+  }
   .flyer-tag{
     background:#C82D26;color:#fff;font-size:13px;font-weight:700;
     padding:4px 14px;border-radius:3px;letter-spacing:.18em;
@@ -257,18 +260,18 @@
   }
   .flyer-title{
     font-family:'Noto Serif TC',serif;font-size:36px;font-weight:900;
-    letter-spacing:.06em;line-height:1.1;color:#fff;margin:0
+    letter-spacing:.06em;line-height:1.1;color:#fff;margin:0;text-align:center
   }
   .flyer-subtitle{
-    color:#F1CD57;font-size:13.5px;margin:8px 0 0;
-    letter-spacing:.12em;font-weight:500
+    color:#F1CD57;font-size:13.5px;margin:10px 0 0;
+    letter-spacing:.12em;font-weight:500;text-align:center
   }
 
   /* === 單筆主秀（hero）=== */
   .deal-hero{
     background:linear-gradient(135deg,#fef6e7 0%,#fff8d6 100%);
     padding:32px 36px 28px;position:relative;overflow:hidden;
-    border-bottom:3px solid #C82D26
+    border-bottom:3px solid #C82D26;text-align:center
   }
   .deal-hero::after{
     content:'成交';position:absolute;right:-30px;top:50%;
@@ -283,12 +286,17 @@
   }
   .deal-hero-address{
     font-family:'Noto Serif TC',serif;font-size:44px;font-weight:900;
-    color:#1e293b;margin:14px 0 6px;letter-spacing:.04em;line-height:1.1
+    color:#1e293b;margin:14px 0 6px;letter-spacing:.04em;line-height:1.1;
+    position:relative;z-index:1
   }
-  .deal-hero-meta{font-size:17px;color:#475569;margin:0 0 16px}
+  .deal-hero-meta{
+    font-size:17px;color:#475569;margin:0 0 16px;
+    display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;
+    position:relative;z-index:1
+  }
   .deal-hero-meta span{
     display:inline-block;padding:3px 12px;background:rgba(30,41,59,.08);
-    border-radius:4px;margin-right:6px;font-weight:600;color:#1e293b;font-size:15px
+    border-radius:4px;font-weight:600;color:#1e293b;font-size:15px
   }
   .deal-hero-price{
     font-family:'Noto Serif TC',serif;font-size:68px;font-weight:900;
@@ -298,7 +306,7 @@
   .deal-hero-price-unit{font-size:36px;margin-left:6px;font-weight:700}
   .deal-hero-date{
     font-size:13px;color:#7A5C4A;margin:12px 0 0;
-    letter-spacing:.1em;font-weight:600
+    letter-spacing:.1em;font-weight:600;position:relative;z-index:1
   }
 
   /* 次要成交（hero 模式下方）*/
