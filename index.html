@@ -154,38 +154,38 @@
     border-top:1px solid rgba(255,255,255,.1);padding-top:8px
   }
 
-  /* 聯絡方式 */
+  /* 聯絡方式（放大版） */
   .contact-grid{
-    display:flex;align-items:center;gap:18px;
+    display:flex;align-items:center;gap:22px;
     background:#faf3e8;border-radius:12px;
-    padding:14px 18px;margin:10px 0
+    padding:20px 24px;margin:14px 0
   }
   .photo-cell img{
-    width:72px;height:72px;border-radius:50%;object-fit:cover;
-    border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15);display:block
+    width:92px;height:92px;border-radius:50%;object-fit:cover;
+    border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.18);display:block
   }
   .contact-info{flex:1;min-width:0}
   .contact-info p{
-    margin:4px 0;font-size:13.5px;color:#1e293b;
-    display:flex;align-items:center;gap:8px
+    margin:6px 0;font-size:16px;color:#1e293b;
+    display:flex;align-items:center;gap:9px;font-weight:500
   }
-  .contact-info p svg{width:14px;height:14px;stroke:#475569;flex-shrink:0}
+  .contact-info p svg{width:17px;height:17px;stroke:#475569;flex-shrink:0}
   .contact-info .name{
-    font-family:'Noto Serif TC',serif;font-size:18px;font-weight:700;
-    color:#1e293b;margin-bottom:6px
+    font-family:'Noto Serif TC',serif;font-size:24px;font-weight:900;
+    color:#1e293b;margin-bottom:8px
   }
-  .contact-info .name svg{width:16px;height:16px;stroke:#1e293b}
+  .contact-info .name svg{width:20px;height:20px;stroke:#1e293b}
   .qr-cell{text-align:center}
   .qr-cell .qr{
-    width:84px;height:84px;background:#fff;padding:4px;border-radius:6px;
+    width:108px;height:108px;background:#fff;padding:4px;border-radius:8px;
     border:1px solid #e5e5e5
   }
-  .qr-cell .qr-label{font-size:9.5px;color:#64748b;margin-top:3px}
+  .qr-cell .qr-label{font-size:12px;color:#475569;margin-top:5px;font-weight:600}
 
-  /* 備註 */
+  /* 備註 — 放大版 */
   .footer-note{
-    text-align:center;font-size:11.5px;color:#94a3b8;
-    border-top:1px dashed #e2e8f0;padding-top:10px;margin-top:12px;line-height:1.6
+    text-align:center;font-size:14px;color:#64748b;font-weight:500;
+    border-top:1px dashed #cbd5e1;padding-top:14px;margin-top:16px;line-height:1.7
   }
 
   .recipient-tag svg{width:13px;height:13px;stroke:currentColor;display:inline-block;vertical-align:-2px;margin-right:2px}
@@ -250,17 +250,10 @@
     margin-bottom:10px;font-weight:500
   }
   .flyer-brand img{max-height:30px;max-width:140px;object-fit:contain}
-  .flyer-title-row{
-    display:flex;align-items:center;justify-content:center;gap:14px;margin-top:6px;flex-wrap:wrap
-  }
-  .flyer-tag{
-    background:#C82D26;color:#fff;font-size:13px;font-weight:700;
-    padding:4px 14px;border-radius:3px;letter-spacing:.18em;
-    box-shadow:0 3px 8px rgba(200,45,38,.35);flex-shrink:0
-  }
   .flyer-title{
-    font-family:'Noto Serif TC',serif;font-size:36px;font-weight:900;
-    letter-spacing:.06em;line-height:1.1;color:#fff;margin:0;text-align:center
+    font-family:'Noto Serif TC',serif;font-size:46px;font-weight:900;
+    letter-spacing:.24em;line-height:1.1;color:#fff;margin:6px 0 0;
+    text-align:center;text-indent:.24em
   }
   .flyer-subtitle{
     color:#F1CD57;font-size:13.5px;margin:10px 0 0;
@@ -270,11 +263,11 @@
   /* === 單筆主秀（hero）=== */
   .deal-hero{
     background:linear-gradient(135deg,#fef6e7 0%,#fff8d6 100%);
-    padding:32px 36px 28px;position:relative;overflow:hidden;
-    border-bottom:3px solid #C82D26;text-align:center
+    padding:32px 40px 28px 40px;position:relative;overflow:hidden;
+    border-bottom:3px solid #C82D26;text-align:right
   }
   .deal-hero::after{
-    content:'成交';position:absolute;right:-30px;top:50%;
+    content:'成交';position:absolute;left:-30px;top:50%;
     transform:translateY(-50%) rotate(-15deg);
     font-family:'Noto Serif TC',serif;font-size:200px;font-weight:900;
     color:rgba(200,45,38,.06);letter-spacing:.2em;pointer-events:none
@@ -291,7 +284,7 @@
   }
   .deal-hero-meta{
     font-size:17px;color:#475569;margin:0 0 16px;
-    display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;
+    display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;
     position:relative;z-index:1
   }
   .deal-hero-meta span{
@@ -408,57 +401,60 @@
     font-size:13px;color:#7A5C4A;letter-spacing:.1em;font-weight:600
   }
 
-  /* CTA 區 */
-  .flyer-cta{
-    background:linear-gradient(135deg,#C82D26 0%,#8b1f1c 100%);
-    color:#fff;padding:18px 32px;position:relative;overflow:hidden
+  /* 業務員聯絡區（含 CTA 紅色橫幅） */
+  .flyer-contact{
+    background:#fff;border-top:2px solid #F1CD57;
+    margin-top:auto;overflow:hidden
   }
-  .flyer-cta::before{
+  /* CTA 橫幅貼在 contact 上方 */
+  .flyer-contact-cta{
+    background:linear-gradient(135deg,#C82D26 0%,#8b1f1c 100%);
+    color:#fff;padding:18px 32px;position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;gap:14px;text-align:center
+  }
+  .flyer-contact-cta::before{
     content:'';position:absolute;inset:0;
-    background:radial-gradient(circle at 80% 50%,rgba(241,205,87,.18),transparent 60%);
+    background:radial-gradient(circle at 80% 50%,rgba(241,205,87,.2),transparent 60%);
     pointer-events:none
   }
-  .flyer-cta-title{
-    font-family:'Noto Serif TC',serif;font-size:26px;font-weight:900;
-    margin:0 0 4px;position:relative;z-index:1;letter-spacing:.04em
+  .flyer-contact-cta-icon{font-size:30px;position:relative;z-index:1}
+  .flyer-contact-cta-text{position:relative;z-index:1}
+  .flyer-contact-cta-title{
+    font-family:'Noto Serif TC',serif;font-size:24px;font-weight:900;
+    margin:0;letter-spacing:.06em;line-height:1.2
   }
-  .flyer-cta-sub{
-    font-size:13px;color:#fde9e8;margin:0;position:relative;z-index:1;letter-spacing:.05em
+  .flyer-contact-cta-sub{
+    font-size:12.5px;color:#fde9e8;margin:3px 0 0;letter-spacing:.04em
   }
-
-  /* 業務員聯絡資訊 */
-  .flyer-contact{
-    display:grid;grid-template-columns:auto 1fr auto;gap:18px;
-    align-items:center;padding:16px 32px;background:#fff;
-    border-top:2px solid #F1CD57;margin-top:auto
+  /* 業務員資訊主體 — 放大版 */
+  .flyer-contact-body{
+    display:grid;grid-template-columns:auto 1fr auto;gap:22px;
+    align-items:center;padding:22px 32px 24px
   }
   .flyer-contact-photo img{
-    width:68px;height:68px;border-radius:50%;object-fit:cover;
-    border:3px solid #F1CD57;box-shadow:0 2px 6px rgba(0,0,0,.12);display:block
+    width:90px;height:90px;border-radius:50%;object-fit:cover;
+    border:3px solid #F1CD57;box-shadow:0 3px 8px rgba(0,0,0,.15);display:block
   }
   .flyer-contact-info{min-width:0}
   .flyer-contact-info p{
-    margin:2px 0;font-size:12.5px;color:#1e293b;
-    display:flex;align-items:center;gap:6px
+    margin:5px 0;font-size:16px;color:#1e293b;
+    display:flex;align-items:center;gap:8px;font-weight:500
   }
-  .flyer-contact-info p svg{width:13px;height:13px;stroke:#475569;flex-shrink:0}
+  .flyer-contact-info p svg{width:17px;height:17px;stroke:#475569;flex-shrink:0}
   .flyer-contact-info .name{
-    font-family:'Noto Serif TC',serif;font-size:17px;font-weight:900;
-    color:#1e293b;margin:0 0 2px
+    font-family:'Noto Serif TC',serif;font-size:24px;font-weight:900;
+    color:#1e293b;margin:0 0 6px
   }
-  .flyer-contact-info .name svg{width:15px;height:15px;stroke:#1e293b}
-  .flyer-contact-info .license{font-size:10.5px;color:#7A5C4A;letter-spacing:.04em;margin:1px 0 4px}
+  .flyer-contact-info .name svg{width:20px;height:20px;stroke:#1e293b}
+  .flyer-contact-info .license{
+    font-size:12.5px;color:#7A5C4A;letter-spacing:.04em;margin:2px 0 8px;font-weight:500
+  }
   .flyer-contact-qr{text-align:center}
   .flyer-contact-qr .qr{
-    width:80px;height:80px;padding:3px;border:1px solid #e5e5e5;
-    border-radius:6px;background:#fff
+    width:108px;height:108px;padding:4px;border:1px solid #e5e5e5;
+    border-radius:8px;background:#fff
   }
-  .flyer-contact-qr .qr-label{font-size:9.5px;color:#64748b;margin:3px 0 0}
-
-  .flyer-footer{
-    text-align:center;font-size:10px;color:#94a3b8;
-    padding:6px 32px 10px;letter-spacing:.04em;background:#fff
-  }
+  .flyer-contact-qr .qr-label{font-size:12px;color:#475569;margin:5px 0 0;font-weight:600}
 
   /* mode tabs */
   .mode-tabs{display:flex;gap:4px;margin-bottom:10px}
@@ -1174,6 +1170,21 @@ function vCard(){
   ].filter(Boolean).join('\n');
 }
 
+function lineUrl(lineId){
+  if(!lineId) return '';
+  const id = String(lineId).trim();
+  if(/^https?:\/\//i.test(id)) return id;
+  if(id.startsWith('@')){
+    return 'https://line.me/R/ti/p/%40' + encodeURIComponent(id.slice(1));
+  }
+  return 'https://line.me/ti/p/~' + encodeURIComponent(id);
+}
+
+function qrPayload(){
+  const a = state.agent;
+  return a.lineId ? lineUrl(a.lineId) : vCard();
+}
+
 function renderTemplateList(){
   const wrap = document.getElementById('templateList');
   wrap.innerHTML = TEMPLATES.map(t=>`
@@ -1225,9 +1236,9 @@ function buildLetterHTML(template, recipient){
   const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
   setTimeout(()=>{
     const el = document.getElementById(qrId);
-    if(el && a.phone){
+    if(el && (a.phone || a.lineId)){
       el.innerHTML='';
-      try{ new QRCode(el,{text:vCard(),width:90,height:90,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+      try{ new QRCode(el,{text:qrPayload(),width:108,height:108,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
     }
   },0);
 
@@ -1316,7 +1327,7 @@ function buildLetterHTML(template, recipient){
           ${safeDataUrl(a.customQrDataUrl)
             ? `<img src="${safeDataUrl(a.customQrDataUrl)}" class="qr" style="object-fit:contain" alt="qr">`
             : `<div id="${qrId}" class="qr"></div>`}
-          <div class="qr-label">${safeDataUrl(a.customQrDataUrl)?'掃碼加好友':'掃碼存名片'}</div>
+          <div class="qr-label">${safeDataUrl(a.customQrDataUrl)?'掃碼加好友':(a.lineId?'掃碼加 LINE':'掃碼存名片')}</div>
         </div>
       </div>
 
@@ -1370,9 +1381,9 @@ function buildFlyerHTML(){
   const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
   setTimeout(()=>{
     const el = document.getElementById(qrId);
-    if(el && a.phone){
+    if(el && (a.phone || a.lineId)){
       el.innerHTML='';
-      try{ new QRCode(el,{text:vCard(),width:90,height:90,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+      try{ new QRCode(el,{text:qrPayload(),width:140,height:140,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
     }
   },0);
 
@@ -1454,10 +1465,7 @@ function buildFlyerHTML(){
   <article class="flyer">
     <div class="flyer-header">
       ${brandBlock}
-      <div class="flyer-title-row">
-        <span class="flyer-tag">成 交 快 報</span>
-        <h1 class="flyer-title">${escHTML(a.serviceRegion||'本區')}・實 績 公 告</h1>
-      </div>
+      <h1 class="flyer-title">成 交 快 報</h1>
       <p class="flyer-subtitle">— ${escHTML(subtitle)} —</p>
     </div>
 
@@ -1470,29 +1478,31 @@ function buildFlyerHTML(){
       ${a.agentName?`<p class="flyer-message-sign">— ${escHTML(a.agentName)} 敬上 —</p>`:''}
     </div>
 
-    <div class="flyer-cta">
-      <h2 class="flyer-cta-title">📱 免費估價試算</h2>
-      <p class="flyer-cta-sub">掃 QR 加 LINE，30 秒回覆你家市值區間</p>
-    </div>
-
     <div class="flyer-contact">
-      ${safeDataUrl(a.photoDataUrl)?`<div class="flyer-contact-photo"><img src="${safeDataUrl(a.photoDataUrl)}" alt="agent"></div>`:'<div></div>'}
-      <div class="flyer-contact-info">
-        <p class="name">${ICONS.user} ${escHTML(a.agentName||'○○○')}</p>
-        ${a.licenseNo?`<p class="license">經紀證號：${escHTML(a.licenseNo)}</p>`:''}
-        <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
-        <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
-        ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
+      <div class="flyer-contact-cta">
+        <span class="flyer-contact-cta-icon">📱</span>
+        <div class="flyer-contact-cta-text">
+          <p class="flyer-contact-cta-title">免費估價試算</p>
+          <p class="flyer-contact-cta-sub">掃下方 QR 加 ${escHTML(a.agentName||'業務員')} 的 LINE，30 秒回覆你家市值區間</p>
+        </div>
       </div>
-      <div class="flyer-contact-qr">
-        ${safeDataUrl(a.customQrDataUrl)
-          ? `<img src="${safeDataUrl(a.customQrDataUrl)}" class="qr" style="object-fit:contain" alt="qr">`
-          : `<div id="${qrId}" class="qr"></div>`}
-        <div class="qr-label">${safeDataUrl(a.customQrDataUrl)?'掃碼加好友':'掃碼存名片'}</div>
+      <div class="flyer-contact-body">
+        ${safeDataUrl(a.photoDataUrl)?`<div class="flyer-contact-photo"><img src="${safeDataUrl(a.photoDataUrl)}" alt="agent"></div>`:'<div></div>'}
+        <div class="flyer-contact-info">
+          <p class="name">${ICONS.user} ${escHTML(a.agentName||'○○○')}</p>
+          ${a.licenseNo?`<p class="license">經紀證號：${escHTML(a.licenseNo)}</p>`:''}
+          <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
+          <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
+          ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
+        </div>
+        <div class="flyer-contact-qr">
+          ${safeDataUrl(a.customQrDataUrl)
+            ? `<img src="${safeDataUrl(a.customQrDataUrl)}" class="qr" style="object-fit:contain" alt="qr">`
+            : `<div id="${qrId}" class="qr"></div>`}
+          <div class="qr-label">${safeDataUrl(a.customQrDataUrl)?'掃碼加好友':(a.lineId?'掃碼加 LINE':'掃碼存名片')}</div>
+        </div>
       </div>
     </div>
-
-    <p class="flyer-footer">本派報為誠意派發 · 資料來源：實價登錄／公司成交紀錄 · 若已有合作仲介，敬請見諒</p>
   </article>`;
 }
 
