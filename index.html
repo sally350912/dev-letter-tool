@@ -260,22 +260,56 @@
     letter-spacing:.12em;font-weight:500;text-align:center
   }
 
-  /* === 單筆主秀（hero）=== */
+  /* === 單筆主秀（hero）雙欄結構 === */
   .deal-hero{
     background:linear-gradient(135deg,#fef6e7 0%,#fff8d6 100%);
-    padding:32px 40px 28px 40px;position:relative;overflow:hidden;
-    border-bottom:3px solid #C82D26;text-align:right
+    border-bottom:3px solid #C82D26;
+    display:grid;grid-template-columns:140px 1fr;
+    align-items:stretch;position:relative;overflow:hidden;min-height:280px
   }
-  .deal-hero::after{
-    content:'成交';position:absolute;left:-30px;top:50%;
-    transform:translateY(-50%) rotate(-15deg);
-    font-family:'Noto Serif TC',serif;font-size:200px;font-weight:900;
-    color:rgba(200,45,38,.06);letter-spacing:.2em;pointer-events:none
+  /* 左欄：成交資訊章節標籤（直書） */
+  .deal-hero-label{
+    background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    padding:32px 12px;position:relative;overflow:hidden
+  }
+  .deal-hero-label::before{
+    content:'';position:absolute;top:0;left:0;width:100%;height:100%;
+    background:radial-gradient(circle at 50% 0%,rgba(241,205,87,.18),transparent 70%);
+    pointer-events:none
+  }
+  .deal-hero-label::after{
+    content:'';position:absolute;top:0;right:-1px;width:3px;height:100%;
+    background:linear-gradient(180deg,#F1CD57 0%,#C82D26 100%)
+  }
+  .deal-hero-label-text{
+    font-family:'Noto Serif TC',serif;font-size:30px;font-weight:900;
+    writing-mode:vertical-rl;text-orientation:upright;
+    letter-spacing:.4em;color:#fff;line-height:1.3;margin:0;
+    position:relative;z-index:1
+  }
+  .deal-hero-label-watermark{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%) rotate(0deg);
+    font-family:'Noto Serif TC',serif;font-size:120px;font-weight:900;
+    color:rgba(241,205,87,.06);letter-spacing:0;pointer-events:none;line-height:1
+  }
+  /* 右欄：成交內容 */
+  .deal-hero-content{
+    padding:32px 36px 28px 24px;text-align:right;
+    position:relative;overflow:hidden
+  }
+  .deal-hero-content::after{
+    content:'成交';position:absolute;right:-20px;bottom:-30px;
+    transform:rotate(-12deg);
+    font-family:'Noto Serif TC',serif;font-size:160px;font-weight:900;
+    color:rgba(200,45,38,.05);letter-spacing:.1em;pointer-events:none;line-height:1
   }
   .deal-hero-badge{
     display:inline-block;background:#C82D26;color:#fff;font-size:13px;
     font-weight:700;padding:4px 16px;border-radius:99px;
-    letter-spacing:.12em;box-shadow:0 3px 8px rgba(200,45,38,.3)
+    letter-spacing:.12em;box-shadow:0 3px 8px rgba(200,45,38,.3);
+    position:relative;z-index:1
   }
   .deal-hero-address{
     font-family:'Noto Serif TC',serif;font-size:44px;font-weight:900;
@@ -418,7 +452,12 @@
     pointer-events:none
   }
   .flyer-contact-cta-icon{font-size:30px;position:relative;z-index:1}
-  .flyer-contact-cta-text{position:relative;z-index:1}
+  .flyer-contact-cta-text{position:relative;z-index:1;text-align:center}
+  .flyer-contact-cta-arrow{
+    font-family:'Noto Serif TC',serif;font-size:40px;font-weight:900;
+    color:#F1CD57;line-height:1;position:relative;z-index:1;
+    text-shadow:0 2px 4px rgba(0,0,0,.18)
+  }
   .flyer-contact-cta-title{
     font-family:'Noto Serif TC',serif;font-size:24px;font-weight:900;
     margin:0;letter-spacing:.06em;line-height:1.2
@@ -1369,14 +1408,15 @@ function buildFlyerHTML(){
   const deals = state.deals.length ? state.deals : [{address:'（請輸入成交資料）', size:'', price:'', roomType:'', date:''}];
   const subtitle = state.flyerSubtitle || `${a.serviceRegion||'本區'} 月度戰績`;
 
-  // 派報文案變數展開 + **字** 紅色強調
+  // 派報文案變數展開 + **字** 紅色強調（空字串時也用 DEFAULT 不留白）
   const dealCountText = state.deals.length || '多';
-  const messageRaw = (state.flyerMessage || DEFAULT_FLYER_MESSAGE)
+  const rawMessage = (state.flyerMessage && state.flyerMessage.trim()) ? state.flyerMessage : DEFAULT_FLYER_MESSAGE;
+  const messageFilled = rawMessage
     .replaceAll('{{agentName}}', a.agentName || '○○○')
     .replaceAll('{{storeName}}', a.storeName || '○○房屋')
     .replaceAll('{{dealCount}}', dealCountText)
     .replaceAll('{{region}}', a.serviceRegion || '本區');
-  const messageHTML = escHTML(messageRaw).replace(/\*\*(.+?)\*\*/g, '<span class="em">$1</span>');
+  const messageHTML = escHTML(messageFilled).replace(/\*\*(.+?)\*\*/g, '<span class="em">$1</span>');
 
   const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
   setTimeout(()=>{
@@ -1400,14 +1440,20 @@ function buildFlyerHTML(){
     const mainPrice = splitPriceNumberUnit(main.price);
     const heroHTML = `
       <div class="deal-hero">
-        <span class="deal-hero-badge">🏆 重 磅 成 交</span>
-        <h2 class="deal-hero-address">${escHTML(main.address||'—')}</h2>
-        <div class="deal-hero-meta">
-          ${main.size?`<span>${escHTML(main.size)}</span>`:''}
-          ${main.roomType?`<span>${escHTML(main.roomType)}</span>`:''}
+        <div class="deal-hero-label">
+          <span class="deal-hero-label-watermark">№1</span>
+          <p class="deal-hero-label-text">成交資訊</p>
         </div>
-        <div class="deal-hero-price">${escHTML(mainPrice.num||'—')}<span class="deal-hero-price-unit">${escHTML(mainPrice.unit||'')}</span></div>
-        ${main.date?`<p class="deal-hero-date">📅 ${escHTML(main.date)} 強勢成交</p>`:''}
+        <div class="deal-hero-content">
+          <span class="deal-hero-badge">🏆 重 磅 成 交</span>
+          <h2 class="deal-hero-address">${escHTML(main.address||'—')}</h2>
+          <div class="deal-hero-meta">
+            ${main.size?`<span>${escHTML(main.size)}</span>`:''}
+            ${main.roomType?`<span>${escHTML(main.roomType)}</span>`:''}
+          </div>
+          <div class="deal-hero-price">${escHTML(mainPrice.num||'—')}<span class="deal-hero-price-unit">${escHTML(mainPrice.unit||'')}</span></div>
+          ${main.date?`<p class="deal-hero-date">📅 ${escHTML(main.date)} 強勢成交</p>`:''}
+        </div>
       </div>`;
     const subHTML = subs.length ? `
       <div class="deal-sub-list">
@@ -1480,11 +1526,13 @@ function buildFlyerHTML(){
 
     <div class="flyer-contact">
       <div class="flyer-contact-cta">
+        <span class="flyer-contact-cta-arrow">↓</span>
         <span class="flyer-contact-cta-icon">📱</span>
         <div class="flyer-contact-cta-text">
           <p class="flyer-contact-cta-title">免費估價試算</p>
           <p class="flyer-contact-cta-sub">掃下方 QR 加 ${escHTML(a.agentName||'業務員')} 的 LINE，30 秒回覆你家市值區間</p>
         </div>
+        <span class="flyer-contact-cta-arrow">↓</span>
       </div>
       <div class="flyer-contact-body">
         ${safeDataUrl(a.photoDataUrl)?`<div class="flyer-contact-photo"><img src="${safeDataUrl(a.photoDataUrl)}" alt="agent"></div>`:'<div></div>'}
