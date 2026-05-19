@@ -238,7 +238,7 @@
   /* === 1. 抬頭區 === */
   .flyer-header{
     background:linear-gradient(180deg,#1a2547 0%,#142544 100%);
-    color:#fff;padding:28px 40px 26px;
+    color:#fff;padding:20px 40px 18px;
     position:relative;overflow:hidden;text-align:center
   }
   .flyer-header::before,.flyer-header::after{
@@ -261,13 +261,13 @@
     height:1px;width:60px;background:linear-gradient(90deg,transparent,rgba(241,205,87,.6),transparent)
   }
   .flyer-title{
-    font-family:'Noto Serif TC',serif;font-size:78px;font-weight:900;
-    letter-spacing:.18em;line-height:1.05;margin:6px 0 4px;
+    font-family:'Noto Serif TC',serif;font-size:64px;font-weight:900;
+    letter-spacing:.16em;line-height:1.05;margin:4px 0 2px;
     background:linear-gradient(180deg,#F8E197 0%,#D4A537 100%);
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent;color:#F1CD57;
     text-shadow:0 4px 24px rgba(241,205,87,.25);
-    position:relative;z-index:1;text-indent:.18em
+    position:relative;z-index:1;text-indent:.16em
   }
   .flyer-subtitle{
     display:inline-flex;align-items:center;gap:14px;
@@ -281,12 +281,12 @@
   }
 
   /* === 2. 主秀卡片 === */
-  .hero-card-wrap{padding:0 22px;margin:6px 0 0}
+  .hero-card-wrap{padding:0 22px;margin:4px 0 0}
   .hero-card{
     background:#fdf8ef;border-radius:14px;
     display:grid;grid-template-columns:38% 1fr;
     overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18);
-    position:relative;min-height:320px
+    position:relative;min-height:240px
   }
   .hero-card-image{
     position:relative;overflow:hidden;
@@ -312,7 +312,7 @@
     letter-spacing:.08em;text-align:center;z-index:2;white-space:nowrap
   }
   .hero-card-info{
-    padding:32px 24px 28px;text-align:center;
+    padding:22px 22px 20px;text-align:center;
     position:relative;overflow:hidden;
     display:flex;flex-direction:column;justify-content:center;align-items:center
   }
@@ -326,35 +326,35 @@
   }
   .hero-card-info > *{position:relative;z-index:1}
   .hero-card-address{
-    font-family:'Noto Serif TC',serif;font-size:34px;font-weight:900;
-    color:#142544;margin:0 0 14px;letter-spacing:.04em;line-height:1.1;
+    font-family:'Noto Serif TC',serif;font-size:28px;font-weight:900;
+    color:#142544;margin:0 0 10px;letter-spacing:.04em;line-height:1.1;
     display:inline-flex;align-items:center;gap:8px
   }
-  .hero-card-address svg{width:28px;height:28px;color:#C82D26;flex-shrink:0}
+  .hero-card-address svg{width:24px;height:24px;color:#C82D26;flex-shrink:0}
   .hero-card-meta{
-    display:flex;gap:8px;margin:0 0 22px;flex-wrap:wrap;justify-content:center
+    display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap;justify-content:center
   }
   .hero-card-meta span{
-    display:inline-block;padding:5px 18px;
+    display:inline-block;padding:3px 14px;
     background:#e8dfd2;color:#3D2B1F;
-    border-radius:99px;font-size:15px;font-weight:600;letter-spacing:.04em
+    border-radius:99px;font-size:13px;font-weight:600;letter-spacing:.04em
   }
   .hero-card-price-label{
-    display:inline-flex;align-items:center;gap:12px;
-    font-family:'Noto Serif TC',serif;font-size:15px;
-    color:#7A5C4A;letter-spacing:.2em;margin:0 0 6px;font-weight:600
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Noto Serif TC',serif;font-size:13px;
+    color:#7A5C4A;letter-spacing:.2em;margin:0 0 4px;font-weight:600
   }
   .hero-card-price-label::before,.hero-card-price-label::after{
-    content:'';display:inline-block;width:24px;height:1px;background:#7A5C4A;opacity:.5
+    content:'';display:inline-block;width:22px;height:1px;background:#7A5C4A;opacity:.5
   }
   .hero-card-price{
-    font-family:'Noto Serif TC',serif;font-size:90px;font-weight:900;
+    font-family:'Noto Serif TC',serif;font-size:74px;font-weight:900;
     color:#C82D26;line-height:1;letter-spacing:-.02em;
-    text-shadow:2px 4px 0 rgba(0,0,0,.05);margin:0
+    text-shadow:2px 3px 0 rgba(0,0,0,.05);margin:0
   }
-  .hero-card-price-unit{font-size:38px;margin-left:8px;font-weight:700;vertical-align:bottom}
+  .hero-card-price-unit{font-size:32px;margin-left:6px;font-weight:700;vertical-align:bottom}
   .hero-card-date{
-    margin:16px 0 0;font-size:15.5px;color:#142544;
+    margin:10px 0 0;font-size:14px;color:#142544;
     font-weight:600;letter-spacing:.05em;
     display:inline-flex;align-items:center;gap:6px
   }
@@ -371,65 +371,65 @@
   /* === 3. 統計區 === */
   .flyer-stats{
     display:grid;grid-template-columns:1fr 1fr 1fr;
-    padding:28px 40px 26px;gap:16px;background:transparent
+    padding:16px 40px 14px;gap:14px;background:transparent
   }
   .flyer-stat{
-    display:flex;align-items:center;gap:14px;justify-content:center
+    display:flex;align-items:center;gap:12px;justify-content:center
   }
   .flyer-stat-icon{
-    width:60px;height:60px;border-radius:50%;
+    width:48px;height:48px;border-radius:50%;
     background:linear-gradient(135deg,#1e3a6f 0%,#142544 100%);
     display:flex;align-items:center;justify-content:center;
-    color:#F1CD57;font-size:26px;
+    color:#F1CD57;font-size:22px;
     border:2px solid rgba(241,205,87,.35);
-    flex-shrink:0;box-shadow:0 4px 10px rgba(0,0,0,.25)
+    flex-shrink:0;box-shadow:0 3px 8px rgba(0,0,0,.25)
   }
   .flyer-stat-content{text-align:left}
   .flyer-stat-num{
-    font-family:'Noto Serif TC',serif;font-size:36px;font-weight:900;
+    font-family:'Noto Serif TC',serif;font-size:28px;font-weight:900;
     color:#fff;line-height:1;margin:0
   }
-  .flyer-stat-num .small{font-size:18px;color:#F1CD57;margin-left:2px}
+  .flyer-stat-num .small{font-size:15px;color:#F1CD57;margin-left:2px}
   .flyer-stat-label{
-    font-size:13px;color:#a5b4d3;letter-spacing:.08em;
-    margin:4px 0 0;font-weight:500
+    font-size:11.5px;color:#a5b4d3;letter-spacing:.08em;
+    margin:3px 0 0;font-weight:500
   }
 
   /* === 4. 文案區（白底卡片＋引號） === */
   .flyer-message-wrap{padding:0 22px}
   .flyer-message{
-    background:#fff;padding:32px 50px 32px;border-radius:10px;
+    background:#fff;padding:20px 44px 18px;border-radius:10px;
     position:relative;text-align:center;
     box-shadow:0 4px 12px rgba(0,0,0,.08)
   }
   .flyer-message::before{
-    content:'\201C';position:absolute;left:20px;top:0;
-    font-family:'Noto Serif TC',serif;font-size:96px;font-weight:900;
+    content:'\201C';position:absolute;left:16px;top:-4px;
+    font-family:'Noto Serif TC',serif;font-size:72px;font-weight:900;
     color:#C82D26;line-height:1;opacity:.5
   }
   .flyer-message::after{
-    content:'\201D';position:absolute;right:24px;bottom:-30px;
-    font-family:'Noto Serif TC',serif;font-size:96px;font-weight:900;
+    content:'\201D';position:absolute;right:20px;bottom:-18px;
+    font-family:'Noto Serif TC',serif;font-size:72px;font-weight:900;
     color:#C82D26;line-height:1;opacity:.5
   }
   .flyer-message-text{
-    font-family:'Noto Serif TC',serif;font-size:16px;line-height:2;
+    font-family:'Noto Serif TC',serif;font-size:14px;line-height:1.85;
     color:#142544;margin:0;white-space:pre-line;
     letter-spacing:.04em;font-weight:500;
     position:relative;z-index:1
   }
   .flyer-message-text .em{color:#C82D26;font-weight:700}
   .flyer-message-sign{
-    font-family:'Noto Serif TC',serif;font-size:14px;color:#7A5C4A;
-    margin:14px 0 0;letter-spacing:.1em;font-weight:600;
+    font-family:'Noto Serif TC',serif;font-size:13px;color:#7A5C4A;
+    margin:8px 0 0;letter-spacing:.1em;font-weight:600;
     position:relative;z-index:1
   }
 
   /* === 5. CTA 紅色橫幅（金徽章 + 標題） === */
   .flyer-cta-banner{
     background:linear-gradient(135deg,#C82D26 0%,#8b1f1c 100%);
-    color:#fff;padding:18px 40px;margin:18px 0 0;
-    display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;
+    color:#fff;padding:12px 40px;margin:14px 0 0;
+    display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;
     position:relative;overflow:hidden
   }
   .flyer-cta-banner::before{
@@ -438,35 +438,35 @@
     pointer-events:none
   }
   .flyer-cta-badge{
-    width:64px;height:64px;border-radius:50%;
+    width:52px;height:52px;border-radius:50%;
     background:linear-gradient(135deg,#F8E197 0%,#D4A537 100%);
     display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;font-size:30px;color:#142544;
-    box-shadow:0 4px 12px rgba(0,0,0,.3),inset 0 -3px 6px rgba(140,90,20,.25);
+    flex-shrink:0;font-size:26px;color:#142544;
+    box-shadow:0 3px 10px rgba(0,0,0,.3),inset 0 -3px 6px rgba(140,90,20,.25);
     position:relative;z-index:1;
     border:3px solid rgba(255,255,255,.4)
   }
   .flyer-cta-text{text-align:center;position:relative;z-index:1}
   .flyer-cta-title{
-    font-family:'Noto Serif TC',serif;font-size:30px;font-weight:900;
+    font-family:'Noto Serif TC',serif;font-size:24px;font-weight:900;
     margin:0;letter-spacing:.12em;line-height:1.2
   }
   .flyer-cta-sub{
-    font-size:13px;color:#fde9e8;margin:3px 0 0;letter-spacing:.05em
+    font-size:11.5px;color:#fde9e8;margin:2px 0 0;letter-spacing:.05em
   }
 
   /* === 6. 業務員資訊（米黃底圓角卡片） === */
   .flyer-contact-card{
-    background:#fdf8ef;padding:22px 30px;
+    background:#fdf8ef;padding:14px 28px 16px;
     display:grid;grid-template-columns:auto 1fr auto;
-    gap:24px;align-items:center
+    gap:20px;align-items:center
   }
   .flyer-contact-photo{
-    width:115px;height:115px;border-radius:50%;
+    width:96px;height:96px;border-radius:50%;
     position:relative;flex-shrink:0
   }
   .flyer-contact-photo::before{
-    content:'';position:absolute;inset:-4px;border-radius:50%;
+    content:'';position:absolute;inset:-3px;border-radius:50%;
     background:linear-gradient(135deg,#F8E197,#D4A537);z-index:0
   }
   .flyer-contact-photo img{
@@ -478,45 +478,45 @@
     width:100%;height:100%;border-radius:50%;
     background:#142544;color:#F1CD57;
     display:flex;align-items:center;justify-content:center;
-    font-family:'Noto Serif TC',serif;font-size:42px;font-weight:900;
+    font-family:'Noto Serif TC',serif;font-size:36px;font-weight:900;
     position:relative;z-index:1;border:3px solid #fdf8ef
   }
   .flyer-contact-info{min-width:0}
   .flyer-contact-name{
-    font-family:'Noto Serif TC',serif;font-size:32px;font-weight:900;
-    color:#142544;margin:0 0 3px;letter-spacing:.04em
+    font-family:'Noto Serif TC',serif;font-size:26px;font-weight:900;
+    color:#142544;margin:0 0 2px;letter-spacing:.04em
   }
   .flyer-contact-role{
-    font-size:13.5px;color:#7A5C4A;margin:0 0 12px;
+    font-size:12px;color:#7A5C4A;margin:0 0 8px;
     letter-spacing:.06em;font-weight:500
   }
   .flyer-contact-info p{
-    margin:5px 0;font-size:16.5px;color:#142544;
-    display:flex;align-items:center;gap:10px;font-weight:500
+    margin:3px 0;font-size:14px;color:#142544;
+    display:flex;align-items:center;gap:8px;font-weight:500
   }
-  .flyer-contact-info p svg{width:18px;height:18px;color:#C82D26;flex-shrink:0;stroke-width:2.2}
+  .flyer-contact-info p svg{width:16px;height:16px;color:#C82D26;flex-shrink:0;stroke-width:2.2}
   .flyer-contact-license{
-    font-size:13px;color:#7A5C4A;letter-spacing:.04em;
-    margin:2px 0 8px;font-weight:600
+    font-size:11.5px;color:#7A5C4A;letter-spacing:.04em;
+    margin:2px 0 6px;font-weight:600
   }
   .flyer-contact-qr-block{text-align:center}
   .flyer-contact-qr-img{
-    width:130px;height:130px;padding:5px;
+    width:108px;height:108px;padding:4px;
     background:#fff;border-radius:8px;
     border:2px solid #142544;display:block
   }
   .flyer-contact-qr-cta{
-    background:#142544;color:#F1CD57;font-size:13.5px;font-weight:700;
-    padding:6px 18px;border-radius:6px;margin:8px 0 0;
+    background:#142544;color:#F1CD57;font-size:12px;font-weight:700;
+    padding:5px 14px;border-radius:6px;margin:6px 0 0;
     letter-spacing:.1em;display:inline-block;text-align:center
   }
 
   /* === 7. 底部 footer === */
   .flyer-footer-v2{
     background:#142544;color:#F1CD57;text-align:center;
-    padding:12px 40px;font-size:14px;letter-spacing:.35em;
+    padding:8px 40px;font-size:13px;letter-spacing:.3em;
     font-family:'Noto Serif TC',serif;font-weight:500;
-    display:flex;align-items:center;justify-content:center;gap:14px
+    display:flex;align-items:center;justify-content:center;gap:12px
   }
   .flyer-footer-v2 .home{
     width:18px;height:18px;color:#F1CD57
@@ -1460,7 +1460,7 @@ function buildFlyerHTML(){
     const el = document.getElementById(qrId);
     if(el && (a.phone || a.lineId)){
       el.innerHTML='';
-      try{ new QRCode(el,{text:qrPayload(),width:130,height:130,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+      try{ new QRCode(el,{text:qrPayload(),width:100,height:100,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
     }
   },0);
 
