@@ -226,278 +226,302 @@
   /* ============================================================ */
   /* === 成交快報（派報版）A4 直式 / 彩色 === */
   /* ============================================================ */
+  /* ★ 派報 v2 — 深藍金色奢華風 ★ */
   .flyer{
-    width:210mm;height:297mm;background:#fff;position:relative;overflow:hidden;
-    box-shadow:0 6px 28px rgba(0,0,0,.1);margin:0 auto 16px;
+    width:210mm;height:297mm;background:#142544;position:relative;overflow:hidden;
+    box-shadow:0 6px 28px rgba(0,0,0,.18);margin:0 auto 16px;
     font-family:'Noto Sans TC',sans-serif;color:#1a1a1a;box-sizing:border-box;
-    display:flex;flex-direction:column
+    display:block
   }
   .flyer:last-child{margin-bottom:0}
 
-  /* 抬頭 */
+  /* === 1. 抬頭區 === */
   .flyer-header{
-    background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);
-    color:#fff;padding:18px 32px 20px;position:relative;overflow:hidden
+    background:linear-gradient(180deg,#1a2547 0%,#142544 100%);
+    color:#fff;padding:28px 40px 26px;
+    position:relative;overflow:hidden;text-align:center
   }
-  .flyer-header::before{
-    content:'';position:absolute;inset:0;
-    background:radial-gradient(circle at 90% -20%,rgba(241,205,87,.25),transparent 55%);
-    pointer-events:none
+  .flyer-header::before,.flyer-header::after{
+    content:'';position:absolute;top:8px;width:160px;height:120px;
+    background:radial-gradient(ellipse at center,rgba(241,205,87,.22),transparent 65%);
+    pointer-events:none;z-index:0
   }
-  .flyer-brand{
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    color:rgba(255,255,255,.85);font-size:12.5px;letter-spacing:.05em;
-    margin-bottom:10px;font-weight:500
+  .flyer-header::before{left:-30px}
+  .flyer-header::after{right:-30px}
+  .flyer-brand-row{
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    color:#F1CD57;font-size:15px;font-weight:600;
+    letter-spacing:.15em;margin:0 0 12px;
+    position:relative;z-index:1
   }
-  .flyer-brand img{max-height:30px;max-width:140px;object-fit:contain}
+  .flyer-brand-row::before,.flyer-brand-row::after{
+    content:'◆';color:#F1CD57;font-size:10px;opacity:.8
+  }
+  .flyer-brand-row .line{
+    height:1px;width:60px;background:linear-gradient(90deg,transparent,rgba(241,205,87,.6),transparent)
+  }
   .flyer-title{
-    font-family:'Noto Serif TC',serif;font-size:46px;font-weight:900;
-    letter-spacing:.24em;line-height:1.1;color:#fff;margin:6px 0 0;
-    text-align:center;text-indent:.24em
+    font-family:'Noto Serif TC',serif;font-size:78px;font-weight:900;
+    letter-spacing:.18em;line-height:1.05;margin:6px 0 4px;
+    background:linear-gradient(180deg,#F8E197 0%,#D4A537 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:#F1CD57;
+    text-shadow:0 4px 24px rgba(241,205,87,.25);
+    position:relative;z-index:1;text-indent:.18em
   }
   .flyer-subtitle{
-    color:#F1CD57;font-size:13.5px;margin:10px 0 0;
-    letter-spacing:.12em;font-weight:500;text-align:center
-  }
-
-  /* === 單筆主秀（hero）章節標籤絕對定位於左側，內容於整版置中 === */
-  .deal-hero{
-    background:linear-gradient(135deg,#fef6e7 0%,#fff8d6 100%);
-    position:relative;overflow:hidden;min-height:280px
-  }
-  /* 左欄：成交資訊章節標籤（absolute 浮在左側，不影響右側內容置中） */
-  .deal-hero-label{
-    position:absolute;top:0;left:0;width:140px;height:100%;
-    background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);
-    color:#fff;display:flex;align-items:center;justify-content:center;
-    padding:32px 12px;overflow:hidden;z-index:2
-  }
-  .deal-hero-label::before{
-    content:'';position:absolute;top:0;left:0;width:100%;height:100%;
-    background:radial-gradient(circle at 50% 0%,rgba(241,205,87,.18),transparent 70%);
-    pointer-events:none
-  }
-  .deal-hero-label::after{
-    content:'';position:absolute;top:0;right:-1px;width:3px;height:100%;
-    background:linear-gradient(180deg,#F1CD57 0%,#C82D26 100%)
-  }
-  .deal-hero-label-text{
-    font-family:'Noto Serif TC',serif;font-size:30px;font-weight:900;
-    writing-mode:vertical-rl;text-orientation:upright;
-    letter-spacing:.4em;color:#fff;line-height:1.3;margin:0;
+    display:inline-flex;align-items:center;gap:14px;
+    color:#F1CD57;font-size:14.5px;font-weight:500;
+    letter-spacing:.18em;margin:8px 0 0;
     position:relative;z-index:1
   }
-  .deal-hero-label-watermark{
-    position:absolute;top:50%;left:50%;
-    transform:translate(-50%,-50%) rotate(0deg);
-    font-family:'Noto Serif TC',serif;font-size:120px;font-weight:900;
-    color:rgba(241,205,87,.06);letter-spacing:0;pointer-events:none;line-height:1
+  .flyer-subtitle::before,.flyer-subtitle::after{
+    content:'';display:inline-block;width:36px;height:1px;
+    background:#F1CD57;opacity:.6
   }
-  /* 右欄：成交內容（在 .flyer 全寬置中對齊上方「成 交 快 報」） */
-  .deal-hero-content{
-    padding:36px 36px;text-align:center;
-    position:relative;overflow:hidden;min-height:280px;
+
+  /* === 2. 主秀卡片 === */
+  .hero-card-wrap{padding:0 22px;margin:6px 0 0}
+  .hero-card{
+    background:#fdf8ef;border-radius:14px;
+    display:grid;grid-template-columns:38% 1fr;
+    overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18);
+    position:relative;min-height:320px
+  }
+  .hero-card-image{
+    position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#7c8aa8 0%,#3e4d6e 100%)
+  }
+  .hero-card-image img{
+    width:100%;height:100%;object-fit:cover;display:block
+  }
+  .hero-card-image-empty{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    height:100%;color:rgba(255,255,255,.6);font-size:13px;gap:8px;padding:16px;text-align:center
+  }
+  .hero-card-image-empty-icon{font-size:48px}
+  /* 紅色斜貼緞帶 */
+  .hero-card-ribbon{
+    position:absolute;top:24px;left:-32px;
+    background:linear-gradient(180deg,#C82D26 0%,#8b1f1c 100%);
+    color:#fff;font-family:'Noto Serif TC',serif;
+    font-size:16px;font-weight:900;line-height:1.3;
+    padding:8px 38px;
+    transform:rotate(-20deg);
+    box-shadow:0 4px 10px rgba(0,0,0,.3);
+    letter-spacing:.08em;text-align:center;z-index:2;white-space:nowrap
+  }
+  .hero-card-info{
+    padding:32px 24px 28px;text-align:center;
+    position:relative;overflow:hidden;
     display:flex;flex-direction:column;justify-content:center;align-items:center
   }
+  .hero-card-info::after{
+    content:'交易盛';position:absolute;right:8px;top:50%;
+    transform:translateY(-50%);
+    writing-mode:vertical-rl;text-orientation:upright;
+    font-family:'Noto Serif TC',serif;font-size:92px;
+    font-weight:900;color:rgba(212,165,55,.12);
+    letter-spacing:.05em;pointer-events:none;line-height:1
+  }
+  .hero-card-info > *{position:relative;z-index:1}
+  .hero-card-address{
+    font-family:'Noto Serif TC',serif;font-size:34px;font-weight:900;
+    color:#142544;margin:0 0 14px;letter-spacing:.04em;line-height:1.1;
+    display:inline-flex;align-items:center;gap:8px
+  }
+  .hero-card-address svg{width:28px;height:28px;color:#C82D26;flex-shrink:0}
+  .hero-card-meta{
+    display:flex;gap:8px;margin:0 0 22px;flex-wrap:wrap;justify-content:center
+  }
+  .hero-card-meta span{
+    display:inline-block;padding:5px 18px;
+    background:#e8dfd2;color:#3D2B1F;
+    border-radius:99px;font-size:15px;font-weight:600;letter-spacing:.04em
+  }
+  .hero-card-price-label{
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'Noto Serif TC',serif;font-size:15px;
+    color:#7A5C4A;letter-spacing:.2em;margin:0 0 6px;font-weight:600
+  }
+  .hero-card-price-label::before,.hero-card-price-label::after{
+    content:'';display:inline-block;width:24px;height:1px;background:#7A5C4A;opacity:.5
+  }
+  .hero-card-price{
+    font-family:'Noto Serif TC',serif;font-size:90px;font-weight:900;
+    color:#C82D26;line-height:1;letter-spacing:-.02em;
+    text-shadow:2px 4px 0 rgba(0,0,0,.05);margin:0
+  }
+  .hero-card-price-unit{font-size:38px;margin-left:8px;font-weight:700;vertical-align:bottom}
+  .hero-card-date{
+    margin:16px 0 0;font-size:15.5px;color:#142544;
+    font-weight:600;letter-spacing:.05em;
+    display:inline-flex;align-items:center;gap:6px
+  }
+  .hero-card-date svg{width:18px;height:18px;color:#142544}
   /* 空狀態 */
-  .deal-hero-content.is-empty{color:#94a3b8}
-  .deal-hero-content.is-empty .empty-icon{font-size:42px;margin-bottom:8px}
-  .deal-hero-content.is-empty .empty-text{
-    font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;
+  .hero-card-info.is-empty{color:#94a3b8}
+  .hero-card-info.is-empty .empty-icon{font-size:48px;margin-bottom:10px}
+  .hero-card-info.is-empty .empty-text{
+    font-family:'Noto Serif TC',serif;font-size:24px;font-weight:700;
     color:#7A6553;margin:0 0 6px;letter-spacing:.08em
   }
-  .deal-hero-content.is-empty .empty-hint{font-size:13px;color:#94a3b8;margin:0;letter-spacing:.04em}
-  .deal-hero-content::after{
-    content:'成交';position:absolute;right:-20px;bottom:-30px;
-    transform:rotate(-12deg);
-    font-family:'Noto Serif TC',serif;font-size:160px;font-weight:900;
-    color:rgba(200,45,38,.05);letter-spacing:.1em;pointer-events:none;line-height:1
+  .hero-card-info.is-empty .empty-hint{font-size:13px;color:#94a3b8;margin:0;letter-spacing:.04em}
+
+  /* === 3. 統計區 === */
+  .flyer-stats{
+    display:grid;grid-template-columns:1fr 1fr 1fr;
+    padding:28px 40px 26px;gap:16px;background:transparent
   }
-  .deal-hero-badge{
-    display:inline-block;background:#C82D26;color:#fff;font-size:13px;
-    font-weight:700;padding:4px 16px;border-radius:99px;
-    letter-spacing:.12em;box-shadow:0 3px 8px rgba(200,45,38,.3);
-    position:relative;z-index:1
+  .flyer-stat{
+    display:flex;align-items:center;gap:14px;justify-content:center
   }
-  .deal-hero-address{
-    font-family:'Noto Serif TC',serif;font-size:44px;font-weight:900;
-    color:#1e293b;margin:14px 0 6px;letter-spacing:.04em;line-height:1.1;
-    position:relative;z-index:1
+  .flyer-stat-icon{
+    width:60px;height:60px;border-radius:50%;
+    background:linear-gradient(135deg,#1e3a6f 0%,#142544 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:#F1CD57;font-size:26px;
+    border:2px solid rgba(241,205,87,.35);
+    flex-shrink:0;box-shadow:0 4px 10px rgba(0,0,0,.25)
   }
-  .deal-hero-meta{
-    font-size:17px;color:#475569;margin:0 0 16px;
-    display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;
-    position:relative;z-index:1
+  .flyer-stat-content{text-align:left}
+  .flyer-stat-num{
+    font-family:'Noto Serif TC',serif;font-size:36px;font-weight:900;
+    color:#fff;line-height:1;margin:0
   }
-  .deal-hero-meta span{
-    display:inline-block;padding:3px 12px;background:rgba(30,41,59,.08);
-    border-radius:4px;font-weight:600;color:#1e293b;font-size:15px
-  }
-  .deal-hero-price{
-    font-family:'Noto Serif TC',serif;font-size:68px;font-weight:900;
-    color:#C82D26;line-height:1;letter-spacing:-.02em;
-    text-shadow:2px 3px 0 rgba(0,0,0,.06);position:relative;z-index:1
-  }
-  .deal-hero-price-unit{font-size:36px;margin-left:6px;font-weight:700}
-  .deal-hero-date{
-    font-size:13px;color:#7A5C4A;margin:12px 0 0;
-    letter-spacing:.1em;font-weight:600;position:relative;z-index:1
+  .flyer-stat-num .small{font-size:18px;color:#F1CD57;margin-left:2px}
+  .flyer-stat-label{
+    font-size:13px;color:#a5b4d3;letter-spacing:.08em;
+    margin:4px 0 0;font-weight:500
   }
 
-  /* 次要成交（hero 模式下方）*/
-  .deal-sub-list{padding:16px 32px 12px;background:#fff}
-  .deal-sub-title{
-    font-size:12.5px;font-weight:700;color:#1e293b;
-    letter-spacing:.15em;margin:0 0 10px;display:flex;align-items:center;gap:8px
-  }
-  .deal-sub-title::before{content:'';width:22px;height:2px;background:#C82D26}
-  .deal-sub-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  .deal-sub-card{
-    background:#faf3e8;border-left:3px solid #F1CD57;
-    padding:9px 12px;border-radius:4px
-  }
-  .deal-sub-card-addr{font-size:12.5px;font-weight:700;color:#1e293b;margin:0 0 2px}
-  .deal-sub-card-meta{font-size:10.5px;color:#64748b;margin:0}
-  .deal-sub-card-price{
-    font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;
-    color:#C82D26;margin:4px 0 0;line-height:1
-  }
-
-  /* === 多筆網格（grid）=== */
-  .deal-grid{
-    display:grid;grid-template-columns:1fr 1fr;gap:10px;
-    padding:20px 32px;background:#faf6ee
-  }
-  .deal-grid-card{
-    background:linear-gradient(135deg,#fff 0%,#faf3e8 100%);
-    border:1px solid #e8d8c5;border-radius:8px;
-    padding:14px 16px;position:relative;overflow:hidden
-  }
-  .deal-grid-card::before{
-    content:'✓';position:absolute;top:8px;right:10px;
-    width:22px;height:22px;line-height:22px;text-align:center;
-    background:#C82D26;color:#fff;border-radius:50%;
-    font-size:13px;font-weight:700
-  }
-  .deal-grid-card-addr{
-    font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;
-    color:#1e293b;margin:0 0 4px;padding-right:28px
-  }
-  .deal-grid-card-meta{font-size:11.5px;color:#475569;margin:0 0 6px}
-  .deal-grid-card-meta span{
-    display:inline-block;padding:1px 8px;background:rgba(30,41,59,.06);
-    border-radius:3px;margin-right:4px
-  }
-  .deal-grid-card-price{
-    font-family:'Noto Serif TC',serif;font-size:22px;font-weight:900;
-    color:#C82D26;line-height:1
-  }
-  .deal-grid-card-date{font-size:10.5px;color:#94a3b8;margin:6px 0 0;letter-spacing:.05em}
-
-  /* 統計面板 */
-  .deal-stats{
-    display:flex;align-items:center;justify-content:space-around;
-    background:#1e293b;color:#fff;padding:14px 28px
-  }
-  .deal-stat{text-align:center}
-  .deal-stat-num{
-    font-family:'Noto Serif TC',serif;font-size:30px;font-weight:900;
-    color:#F1CD57;line-height:1;margin:0
-  }
-  .deal-stat-label{
-    font-size:10.5px;color:#cbd5e1;letter-spacing:.12em;margin:4px 0 0
-  }
-
-  /* 為什麼選我們（舊版保留以防 fallback） */
-  .flyer-why{
-    background:#fef6e7;padding:14px 32px;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:14px
-  }
-  .flyer-why-item{text-align:center}
-  .flyer-why-icon{
-    width:38px;height:38px;line-height:38px;text-align:center;
-    background:linear-gradient(135deg,#C82D26,#8b1f1c);color:#fff;
-    border-radius:50%;margin:0 auto 4px;font-size:18px;font-weight:700
-  }
-  .flyer-why-title{font-size:13px;font-weight:700;color:#1e293b;margin:2px 0 0}
-  .flyer-why-desc{font-size:10.5px;color:#64748b;margin:2px 0 0;line-height:1.4}
-
-  /* 派報文案（業務員手寫感謝信） */
+  /* === 4. 文案區（白底卡片＋引號） === */
+  .flyer-message-wrap{padding:0 22px}
   .flyer-message{
-    background:#fef9ec;padding:22px 40px 24px;
-    border-top:1px solid #f3e3b5;border-bottom:1px solid #f3e3b5;
-    position:relative;text-align:center
+    background:#fff;padding:32px 50px 32px;border-radius:10px;
+    position:relative;text-align:center;
+    box-shadow:0 4px 12px rgba(0,0,0,.08)
   }
-  .flyer-message-quote{
-    font-family:'Noto Serif TC',serif;font-size:15px;line-height:2;
-    color:#3D2B1F;margin:0;letter-spacing:.04em;font-weight:500;
-    white-space:pre-line;max-width:540px;margin-left:auto;margin-right:auto
+  .flyer-message::before{
+    content:'\201C';position:absolute;left:20px;top:0;
+    font-family:'Noto Serif TC',serif;font-size:96px;font-weight:900;
+    color:#C82D26;line-height:1;opacity:.5
   }
-  .flyer-message-quote .em{color:#C82D26;font-weight:700}
+  .flyer-message::after{
+    content:'\201D';position:absolute;right:24px;bottom:-30px;
+    font-family:'Noto Serif TC',serif;font-size:96px;font-weight:900;
+    color:#C82D26;line-height:1;opacity:.5
+  }
+  .flyer-message-text{
+    font-family:'Noto Serif TC',serif;font-size:16px;line-height:2;
+    color:#142544;margin:0;white-space:pre-line;
+    letter-spacing:.04em;font-weight:500;
+    position:relative;z-index:1
+  }
+  .flyer-message-text .em{color:#C82D26;font-weight:700}
   .flyer-message-sign{
-    margin-top:10px;font-family:'Noto Serif TC',serif;
-    font-size:13px;color:#7A5C4A;letter-spacing:.1em;font-weight:600
+    font-family:'Noto Serif TC',serif;font-size:14px;color:#7A5C4A;
+    margin:14px 0 0;letter-spacing:.1em;font-weight:600;
+    position:relative;z-index:1
   }
 
-  /* 業務員聯絡區（含 CTA 紅色橫幅） */
-  .flyer-contact{
-    background:#fff;border-top:2px solid #F1CD57;
-    overflow:hidden
-  }
-  /* CTA 橫幅貼在 contact 上方 */
-  .flyer-contact-cta{
+  /* === 5. CTA 紅色橫幅（金徽章 + 標題） === */
+  .flyer-cta-banner{
     background:linear-gradient(135deg,#C82D26 0%,#8b1f1c 100%);
-    color:#fff;padding:18px 32px;position:relative;overflow:hidden;
-    display:flex;align-items:center;justify-content:center;gap:14px;text-align:center
+    color:#fff;padding:18px 40px;margin:18px 0 0;
+    display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;
+    position:relative;overflow:hidden
   }
-  .flyer-contact-cta::before{
+  .flyer-cta-banner::before{
     content:'';position:absolute;inset:0;
-    background:radial-gradient(circle at 80% 50%,rgba(241,205,87,.2),transparent 60%);
+    background:radial-gradient(circle at 30% 0%,rgba(241,205,87,.25),transparent 50%);
     pointer-events:none
   }
-  .flyer-contact-cta-icon{font-size:30px;position:relative;z-index:1}
-  .flyer-contact-cta-text{position:relative;z-index:1;text-align:center}
-  .flyer-contact-cta-arrow{
-    font-family:'Noto Serif TC',serif;font-size:40px;font-weight:900;
-    color:#F1CD57;line-height:1;position:relative;z-index:1;
-    text-shadow:0 2px 4px rgba(0,0,0,.18)
+  .flyer-cta-badge{
+    width:64px;height:64px;border-radius:50%;
+    background:linear-gradient(135deg,#F8E197 0%,#D4A537 100%);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;font-size:30px;color:#142544;
+    box-shadow:0 4px 12px rgba(0,0,0,.3),inset 0 -3px 6px rgba(140,90,20,.25);
+    position:relative;z-index:1;
+    border:3px solid rgba(255,255,255,.4)
   }
-  .flyer-contact-cta-title{
-    font-family:'Noto Serif TC',serif;font-size:24px;font-weight:900;
-    margin:0;letter-spacing:.06em;line-height:1.2
+  .flyer-cta-text{text-align:center;position:relative;z-index:1}
+  .flyer-cta-title{
+    font-family:'Noto Serif TC',serif;font-size:30px;font-weight:900;
+    margin:0;letter-spacing:.12em;line-height:1.2
   }
-  .flyer-contact-cta-sub{
-    font-size:12.5px;color:#fde9e8;margin:3px 0 0;letter-spacing:.04em
+  .flyer-cta-sub{
+    font-size:13px;color:#fde9e8;margin:3px 0 0;letter-spacing:.05em
   }
-  /* 業務員資訊主體 — 加大版 */
-  .flyer-contact-body{
-    display:grid;grid-template-columns:auto 1fr auto;gap:26px;
-    align-items:center;padding:26px 36px 28px
+
+  /* === 6. 業務員資訊（米黃底圓角卡片） === */
+  .flyer-contact-card{
+    background:#fdf8ef;padding:22px 30px;
+    display:grid;grid-template-columns:auto 1fr auto;
+    gap:24px;align-items:center
+  }
+  .flyer-contact-photo{
+    width:115px;height:115px;border-radius:50%;
+    position:relative;flex-shrink:0
+  }
+  .flyer-contact-photo::before{
+    content:'';position:absolute;inset:-4px;border-radius:50%;
+    background:linear-gradient(135deg,#F8E197,#D4A537);z-index:0
   }
   .flyer-contact-photo img{
-    width:110px;height:110px;border-radius:50%;object-fit:cover;
-    border:4px solid #F1CD57;box-shadow:0 4px 10px rgba(0,0,0,.18);display:block
+    width:100%;height:100%;border-radius:50%;
+    object-fit:cover;position:relative;z-index:1;
+    display:block;border:3px solid #fdf8ef
+  }
+  .flyer-contact-photo-placeholder{
+    width:100%;height:100%;border-radius:50%;
+    background:#142544;color:#F1CD57;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif TC',serif;font-size:42px;font-weight:900;
+    position:relative;z-index:1;border:3px solid #fdf8ef
   }
   .flyer-contact-info{min-width:0}
+  .flyer-contact-name{
+    font-family:'Noto Serif TC',serif;font-size:32px;font-weight:900;
+    color:#142544;margin:0 0 3px;letter-spacing:.04em
+  }
+  .flyer-contact-role{
+    font-size:13.5px;color:#7A5C4A;margin:0 0 12px;
+    letter-spacing:.06em;font-weight:500
+  }
   .flyer-contact-info p{
-    margin:7px 0;font-size:20px;color:#1e293b;
-    display:flex;align-items:center;gap:10px;font-weight:600
+    margin:5px 0;font-size:16.5px;color:#142544;
+    display:flex;align-items:center;gap:10px;font-weight:500
   }
-  .flyer-contact-info p svg{width:22px;height:22px;stroke:#1e293b;flex-shrink:0;stroke-width:2.2}
-  .flyer-contact-info .name{
-    font-family:'Noto Serif TC',serif;font-size:30px;font-weight:900;
-    color:#1e293b;margin:0 0 8px;letter-spacing:.02em
+  .flyer-contact-info p svg{width:18px;height:18px;color:#C82D26;flex-shrink:0;stroke-width:2.2}
+  .flyer-contact-license{
+    font-size:13px;color:#7A5C4A;letter-spacing:.04em;
+    margin:2px 0 8px;font-weight:600
   }
-  .flyer-contact-info .name svg{width:26px;height:26px;stroke:#1e293b}
-  .flyer-contact-info .license{
-    font-size:14.5px;color:#7A5C4A;letter-spacing:.04em;margin:4px 0 10px;font-weight:600
+  .flyer-contact-qr-block{text-align:center}
+  .flyer-contact-qr-img{
+    width:130px;height:130px;padding:5px;
+    background:#fff;border-radius:8px;
+    border:2px solid #142544;display:block
   }
-  .flyer-contact-qr{text-align:center}
-  .flyer-contact-qr .qr{
-    width:148px;height:148px;padding:4px;border:1px solid #e5e5e5;
-    border-radius:8px;background:#fff
+  .flyer-contact-qr-cta{
+    background:#142544;color:#F1CD57;font-size:13.5px;font-weight:700;
+    padding:6px 18px;border-radius:6px;margin:8px 0 0;
+    letter-spacing:.1em;display:inline-block;text-align:center
   }
-  .flyer-contact-qr .qr-label{font-size:14px;color:#1e293b;margin:6px 0 0;font-weight:700;letter-spacing:.04em}
+
+  /* === 7. 底部 footer === */
+  .flyer-footer-v2{
+    background:#142544;color:#F1CD57;text-align:center;
+    padding:12px 40px;font-size:14px;letter-spacing:.35em;
+    font-family:'Noto Serif TC',serif;font-weight:500;
+    display:flex;align-items:center;justify-content:center;gap:14px
+  }
+  .flyer-footer-v2 .home{
+    width:18px;height:18px;color:#F1CD57
+  }
+  .flyer-footer-v2 .sep{color:rgba(241,205,87,.5);margin:0 4px}
 
   /* mode tabs */
   .mode-tabs{display:flex;gap:4px;margin-bottom:10px}
@@ -717,21 +741,19 @@
     <div data-mode-flyer>
       <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
         <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">1</span>
-        派報版面
+        派報設定
       </h2>
-      <div class="grid grid-cols-1 gap-1.5">
-        <button class="flyer-layout-btn month-btn text-left px-3 py-2 text-xs border border-stone-200 rounded-md bg-white hover:border-slate-800 active" data-layout="hero">
-          <div class="font-bold text-sm">🏆 單筆放大主秀</div>
-          <div class="text-[11px] text-slate-500 mt-0.5">第 1 筆超大轟炸 + 下方 3 筆小卡</div>
-        </button>
-        <button class="flyer-layout-btn month-btn text-left px-3 py-2 text-xs border border-stone-200 rounded-md bg-white hover:border-slate-800" data-layout="grid">
-          <div class="font-bold text-sm">📋 多筆整齊列表</div>
-          <div class="text-[11px] text-slate-500 mt-0.5">2×N 網格陳列季度戰績</div>
-        </button>
+      <div class="mb-3 px-3 py-2.5 rounded-md text-xs text-slate-600" style="background:#fef9ec;border:1px solid #f3e3b5">
+        <div class="font-bold text-[#7A5C4A] mb-1">📢 成 交 快 報（A4 直式）</div>
+        <div class="text-[11px] text-slate-500">深藍底＋金色標題＋街景照＋紅色緞帶設計</div>
       </div>
-      <div class="mt-3 pt-3 border-t border-stone-200">
+      <!-- 隱藏 layout 切換，新設計固定單筆主秀 -->
+      <div class="hidden">
+        <button class="flyer-layout-btn active" data-layout="hero"></button>
+      </div>
+      <div>
         <label class="block text-xs text-slate-600 mb-1">派報副標</label>
-        <input id="flyerSubtitle" type="text" placeholder="2026 年 4 月戰績" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        <input id="flyerSubtitle" type="text" placeholder="台北文山區 真實數據" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
       </div>
       <div class="mt-3">
         <div class="flex items-center justify-between mb-1">
@@ -793,6 +815,14 @@
           <div id="qrPreview" class="mt-1 hidden"><img class="w-12 h-12 object-contain border border-stone-200 rounded bg-white p-1"></div>
         </label>
       </div>
+      <label class="block">
+        <span class="text-xs text-slate-600 flex items-center justify-between">
+          <span>📢 派報主照（街景／物件外觀，僅用於成交快報）</span>
+          <button type="button" id="clearHeroPhoto" class="text-[11px] text-rose-600 hover:underline">清除</button>
+        </span>
+        <input id="heroPhotoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+        <div id="heroPhotoPreview" class="mt-1 hidden"><img class="h-16 max-w-[200px] object-cover border border-stone-200 rounded"></div>
+      </label>
       <label class="block">
         <span class="text-xs text-slate-600">服務區域</span>
         <input id="serviceRegion" type="text" placeholder="台北市大安區" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
@@ -1112,7 +1142,7 @@ const state = {
     serviceYears:'', awardYear:'', awards:'', phone:'',
     lineId:'', propertyType:'', storeAddress:'', licenseNo:'',
     introText: DEFAULT_INTRO, caseText: DEFAULT_CASE,
-    logoDataUrl:'', photoDataUrl:'', customQrDataUrl:''
+    logoDataUrl:'', photoDataUrl:'', customQrDataUrl:'', heroPhotoDataUrl:''
   },
   recipients: [],
   deals: []
@@ -1149,6 +1179,7 @@ function showLogoPreview(){
   showImagePreview('logoPreview','logoDataUrl');
   showImagePreview('photoPreview','photoDataUrl');
   showImagePreview('qrPreview','customQrDataUrl');
+  showImagePreview('heroPhotoPreview','heroPhotoDataUrl');
 }
 function bindImageUpload(fileId, clearId, previewId, stateKey){
   document.getElementById(fileId).addEventListener('change', e=>{
@@ -1401,7 +1432,6 @@ function splitPriceNumberUnit(price){
 
 function buildFlyerHTML(){
   const a = state.agent;
-  const layout = state.flyerLayout;
   const escHTML = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
   const safeDataUrl = s => {
     if(!s) return '';
@@ -1410,10 +1440,11 @@ function buildFlyerHTML(){
   };
 
   const hasDeals = state.deals.length > 0;
-  const deals = hasDeals ? state.deals : [{address:'', size:'', price:'', roomType:'', date:''}];
-  const subtitle = state.flyerSubtitle || `${a.serviceRegion||'本區'} 月度戰績`;
+  const main = hasDeals ? state.deals[0] : {address:'', size:'', price:'', roomType:'', date:''};
+  const mainPrice = splitPriceNumberUnit(main.price);
+  const subtitle = state.flyerSubtitle || `${a.serviceRegion||'本區'} 真實數據`;
 
-  // 派報文案變數展開 + **字** 紅色強調（空字串時也用 DEFAULT 不留白）
+  // 文案
   const dealCountText = state.deals.length || '多';
   const rawMessage = (state.flyerMessage && state.flyerMessage.trim()) ? state.flyerMessage : DEFAULT_FLYER_MESSAGE;
   const messageFilled = rawMessage
@@ -1423,148 +1454,142 @@ function buildFlyerHTML(){
     .replaceAll('{{region}}', a.serviceRegion || '本區');
   const messageHTML = escHTML(messageFilled).replace(/\*\*(.+?)\*\*/g, '<span class="em">$1</span>');
 
+  // QR
   const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
   setTimeout(()=>{
     const el = document.getElementById(qrId);
     if(el && (a.phone || a.lineId)){
       el.innerHTML='';
-      try{ new QRCode(el,{text:qrPayload(),width:140,height:140,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+      try{ new QRCode(el,{text:qrPayload(),width:130,height:130,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
     }
   },0);
 
-  const safeLogo = safeDataUrl(a.logoDataUrl);
-  const brandBlock = safeLogo
-    ? `<div class="flyer-brand"><img src="${safeLogo}" alt="logo">${a.storeName?` ${escHTML(a.storeName)}`:''}</div>`
-    : (a.storeName ? `<div class="flyer-brand">▎${escHTML(a.storeName)}</div>` : '');
+  const heroPhoto = safeDataUrl(a.heroPhotoDataUrl);
+  const photoData = safeDataUrl(a.photoDataUrl);
+  const customQr = safeDataUrl(a.customQrDataUrl);
 
-  // 主秀區
-  let dealBlock;
-  if(layout === 'hero'){
-    const main = deals[0];
-    const subs = deals.slice(1, 4);
-    const mainPrice = splitPriceNumberUnit(main.price);
-    const heroHTML = hasDeals ? `
-      <div class="deal-hero">
-        <div class="deal-hero-label">
-          <span class="deal-hero-label-watermark">№1</span>
-          <p class="deal-hero-label-text">成交資訊</p>
-        </div>
-        <div class="deal-hero-content">
-          <span class="deal-hero-badge">🏆 重 磅 成 交</span>
-          <h2 class="deal-hero-address">${escHTML(main.address||'—')}</h2>
-          <div class="deal-hero-meta">
-            ${main.size?`<span>${escHTML(main.size)}</span>`:''}
-            ${main.roomType?`<span>${escHTML(main.roomType)}</span>`:''}
-          </div>
-          <div class="deal-hero-price">${escHTML(mainPrice.num||'—')}<span class="deal-hero-price-unit">${escHTML(mainPrice.unit||'')}</span></div>
-          ${main.date?`<p class="deal-hero-date">📅 ${escHTML(main.date)} 強勢成交</p>`:''}
-        </div>
-      </div>` : `
-      <div class="deal-hero">
-        <div class="deal-hero-label">
-          <span class="deal-hero-label-watermark">№1</span>
-          <p class="deal-hero-label-text">成交資訊</p>
-        </div>
-        <div class="deal-hero-content is-empty">
-          <div class="empty-icon">📝</div>
-          <p class="empty-text">請輸入成交資料</p>
-          <p class="empty-hint">在左側「成交資料」區填入第一筆，這裡會放大顯示</p>
-        </div>
-      </div>`;
-    const subHTML = subs.length ? `
-      <div class="deal-sub-list">
-        <div class="deal-sub-title">本月其他成交</div>
-        <div class="deal-sub-grid">
-          ${subs.map(d=>{
-            const p = splitPriceNumberUnit(d.price);
-            return `<div class="deal-sub-card">
-              <p class="deal-sub-card-addr">${escHTML(d.address||'')}</p>
-              <p class="deal-sub-card-meta">${escHTML([d.size,d.roomType].filter(Boolean).join(' · '))}</p>
-              <p class="deal-sub-card-price">${escHTML(p.num)}<span style="font-size:12px;margin-left:3px">${escHTML(p.unit)}</span></p>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>` : '';
-    dealBlock = heroHTML + subHTML;
-  } else {
-    // grid 模式
-    const list = deals.slice(0, 8);
-    dealBlock = `
-      <div class="deal-grid">
-        ${list.map(d=>{
-          const p = splitPriceNumberUnit(d.price);
-          return `<div class="deal-grid-card">
-            <h3 class="deal-grid-card-addr">${escHTML(d.address||'—')}</h3>
-            <p class="deal-grid-card-meta">
-              ${d.size?`<span>${escHTML(d.size)}</span>`:''}
-              ${d.roomType?`<span>${escHTML(d.roomType)}</span>`:''}
-            </p>
-            <div class="deal-grid-card-price">${escHTML(p.num||'—')}<span style="font-size:14px;margin-left:3px">${escHTML(p.unit)}</span></div>
-            ${d.date?`<p class="deal-grid-card-date">📅 ${escHTML(d.date)}</p>`:''}
-          </div>`;
-        }).join('')}
-      </div>`;
-  }
+  // 主秀卡片左半（街景照片 + 紅色緞帶）
+  const heroImageInner = heroPhoto
+    ? `<img src="${heroPhoto}" alt="property">`
+    : `<div class="hero-card-image-empty">
+        <div class="hero-card-image-empty-icon">🏘️</div>
+        <div>請上傳<br>「派報主照」<br>（街景／物件外觀）</div>
+       </div>`;
+  const ribbon = hasDeals
+    ? `<span class="hero-card-ribbon">賀！<br>成功成交</span>`
+    : '';
 
-  // 統計區
-  const statsHTML = `
-    <div class="deal-stats">
-      <div class="deal-stat">
-        <p class="deal-stat-num">${deals.length}</p>
-        <p class="deal-stat-label">本期成交</p>
+  // 主秀卡片右半（成交資訊 or 空狀態）
+  const heroInfoBlock = hasDeals ? `
+    <div class="hero-card-info">
+      <h2 class="hero-card-address">${ICONS.pin} ${escHTML(main.address||'—')}</h2>
+      <div class="hero-card-meta">
+        ${main.size?`<span>${escHTML(main.size)}</span>`:''}
+        ${main.roomType?`<span>${escHTML(main.roomType)}</span>`:''}
       </div>
-      <div class="deal-stat">
-        <p class="deal-stat-num">${escHTML(a.serviceYears||'5')}<span style="font-size:14px">+</span></p>
-        <p class="deal-stat-label">服務年資</p>
-      </div>
-      <div class="deal-stat">
-        <p class="deal-stat-num">100<span style="font-size:14px">%</span></p>
-        <p class="deal-stat-label">透明回報</p>
-      </div>
+      <p class="hero-card-price-label">成 交 總 價</p>
+      <p class="hero-card-price">${escHTML(mainPrice.num||'—')}<span class="hero-card-price-unit">${escHTML(mainPrice.unit||'萬')}</span></p>
+      ${main.date?`<p class="hero-card-date">📅 ${escHTML(main.date)} 成交完成</p>`:''}
+    </div>` : `
+    <div class="hero-card-info is-empty">
+      <div class="empty-icon">📝</div>
+      <p class="empty-text">請輸入成交資料</p>
+      <p class="empty-hint">在左側「成交資料」區填入第一筆</p>
     </div>`;
+
+  // 業務員大頭照
+  const contactPhotoInner = photoData
+    ? `<img src="${photoData}" alt="agent">`
+    : `<div class="flyer-contact-photo-placeholder">${escHTML((a.agentName||'?').charAt(0))}</div>`;
 
   return `
   <article class="flyer">
+    <!-- 1. 抬頭區 -->
     <div class="flyer-header">
-      ${brandBlock}
+      <div class="flyer-brand-row">
+        <span class="line"></span>
+        ${escHTML(a.storeName || '請填店名')}
+        <span class="line"></span>
+      </div>
       <h1 class="flyer-title">成 交 快 報</h1>
-      <p class="flyer-subtitle">— ${escHTML(subtitle)} —</p>
+      <p class="flyer-subtitle">${escHTML(subtitle)}</p>
     </div>
 
-    ${dealBlock}
-
-    ${statsHTML}
-
-    <div class="flyer-message">
-      <p class="flyer-message-quote">${messageHTML}</p>
-      ${a.agentName?`<p class="flyer-message-sign">— ${escHTML(a.agentName)} 敬上 —</p>`:''}
+    <!-- 2. 主秀卡片 -->
+    <div class="hero-card-wrap">
+      <div class="hero-card">
+        <div class="hero-card-image">
+          ${heroImageInner}
+          ${ribbon}
+        </div>
+        ${heroInfoBlock}
+      </div>
     </div>
 
-    <div class="flyer-contact">
-      <div class="flyer-contact-cta">
-        <span class="flyer-contact-cta-arrow">↓</span>
-        <div class="flyer-contact-cta-text">
-          <p class="flyer-contact-cta-title">免費估價試算</p>
-          <p class="flyer-contact-cta-sub">掃下方 QR 加 ${escHTML(a.agentName||'業務員')} 的 LINE，30 秒回覆你家市值區間</p>
-        </div>
-        <span class="flyer-contact-cta-arrow">↓</span>
-      </div>
-      <div class="flyer-contact-body">
-        ${safeDataUrl(a.photoDataUrl)?`<div class="flyer-contact-photo"><img src="${safeDataUrl(a.photoDataUrl)}" alt="agent"></div>`:'<div></div>'}
-        <div class="flyer-contact-info">
-          <p class="name">${ICONS.user} ${escHTML(a.agentName||'○○○')}</p>
-          ${a.licenseNo?`<p class="license">經紀證號：${escHTML(a.licenseNo)}</p>`:''}
-          <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
-          <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
-          ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
-        </div>
-        <div class="flyer-contact-qr">
-          ${safeDataUrl(a.customQrDataUrl)
-            ? `<img src="${safeDataUrl(a.customQrDataUrl)}" class="qr" style="object-fit:contain" alt="qr">`
-            : `<div id="${qrId}" class="qr"></div>`}
-          <div class="qr-label">${safeDataUrl(a.customQrDataUrl)?'掃碼加好友':(a.lineId?'掃碼加 LINE':'掃碼存名片')}</div>
+    <!-- 3. 統計區 -->
+    <div class="flyer-stats">
+      <div class="flyer-stat">
+        <div class="flyer-stat-icon">🏆</div>
+        <div class="flyer-stat-content">
+          <p class="flyer-stat-num">${state.deals.length||0}</p>
+          <p class="flyer-stat-label">本月成交</p>
         </div>
       </div>
+      <div class="flyer-stat">
+        <div class="flyer-stat-icon">🤝</div>
+        <div class="flyer-stat-content">
+          <p class="flyer-stat-num">3<span class="small">+</span></p>
+          <p class="flyer-stat-label">組帶看客戶</p>
+        </div>
+      </div>
+      <div class="flyer-stat">
+        <div class="flyer-stat-icon">📈</div>
+        <div class="flyer-stat-content">
+          <p class="flyer-stat-num">100<span class="small">%</span></p>
+          <p class="flyer-stat-label">成交率達成</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 文案 -->
+    <div class="flyer-message-wrap">
+      <div class="flyer-message">
+        <p class="flyer-message-text">${messageHTML}</p>
+        ${a.agentName?`<p class="flyer-message-sign">— ${escHTML(a.agentName)} 敬上 —</p>`:''}
+      </div>
+    </div>
+
+    <!-- 5. CTA -->
+    <div class="flyer-cta-banner">
+      <div class="flyer-cta-badge">👍</div>
+      <div class="flyer-cta-text">
+        <p class="flyer-cta-title">免費估價試算</p>
+        <p class="flyer-cta-sub">讓專業為您把關房價｜立即聯絡，專人提供最適合的建議與服務！</p>
+      </div>
+    </div>
+
+    <!-- 6. 業務員 -->
+    <div class="flyer-contact-card">
+      <div class="flyer-contact-photo">${contactPhotoInner}</div>
+      <div class="flyer-contact-info">
+        <h3 class="flyer-contact-name">${escHTML(a.agentName||'○○○')}</h3>
+        <p class="flyer-contact-role">房地產顧問｜${escHTML(a.storeName||'')}</p>
+        ${a.licenseNo?`<p class="flyer-contact-license">經紀證號：${escHTML(a.licenseNo)}</p>`:''}
+        <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
+        <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
+        ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
+      </div>
+      <div class="flyer-contact-qr-block">
+        ${customQr
+          ? `<img src="${customQr}" class="flyer-contact-qr-img" alt="qr">`
+          : `<div id="${qrId}" class="flyer-contact-qr-img"></div>`}
+        <div class="flyer-contact-qr-cta">掃 碼 加 LINE</div>
+      </div>
+    </div>
+
+    <!-- 7. footer -->
+    <div class="flyer-footer-v2">
+      🏠 誠 信 <span class="sep">｜</span> 專 業 <span class="sep">｜</span> 用 心 <span class="sep">｜</span> 值 得 託 付
     </div>
   </article>`;
 }
@@ -1827,6 +1852,7 @@ function bindActions(){
   bindImageUpload('logoFile','clearLogo','logoPreview','logoDataUrl');
   bindImageUpload('photoFile','clearPhoto','photoPreview','photoDataUrl');
   bindImageUpload('qrFile','clearQr','qrPreview','customQrDataUrl');
+  bindImageUpload('heroPhotoFile','clearHeroPhoto','heroPhotoPreview','heroPhotoDataUrl');
 
   document.getElementById('resetIntro').addEventListener('click', ()=>{
     state.agent.introText = DEFAULT_INTRO;
