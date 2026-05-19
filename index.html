@@ -294,10 +294,11 @@
     font-family:'Noto Serif TC',serif;font-size:120px;font-weight:900;
     color:rgba(241,205,87,.06);letter-spacing:0;pointer-events:none;line-height:1
   }
-  /* 右欄：成交內容 */
+  /* 右欄：成交內容（水平＋垂直置中） */
   .deal-hero-content{
-    padding:32px 36px 28px 24px;text-align:right;
-    position:relative;overflow:hidden
+    padding:32px 36px 28px 24px;text-align:center;
+    position:relative;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:center;align-items:center
   }
   /* 空狀態：整塊置中 */
   .deal-hero-content.is-empty{
@@ -330,7 +331,7 @@
   }
   .deal-hero-meta{
     font-size:17px;color:#475569;margin:0 0 16px;
-    display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;
+    display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;
     position:relative;z-index:1
   }
   .deal-hero-meta span{
