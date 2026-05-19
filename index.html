@@ -373,7 +373,7 @@
     font-size:10.5px;color:#cbd5e1;letter-spacing:.12em;margin:4px 0 0
   }
 
-  /* 為什麼選我們 */
+  /* 為什麼選我們（舊版保留以防 fallback） */
   .flyer-why{
     background:#fef6e7;padding:14px 32px;
     display:grid;grid-template-columns:repeat(3,1fr);gap:14px
@@ -386,6 +386,27 @@
   }
   .flyer-why-title{font-size:13px;font-weight:700;color:#1e293b;margin:2px 0 0}
   .flyer-why-desc{font-size:10.5px;color:#64748b;margin:2px 0 0;line-height:1.4}
+
+  /* 派報文案（業務員手寫感謝信） */
+  .flyer-message{
+    background:#fef9ec;padding:22px 40px 24px;
+    border-top:1px solid #f3e3b5;border-bottom:1px solid #f3e3b5;
+    position:relative;text-align:center
+  }
+  .flyer-message::before{
+    content:'';position:absolute;left:50%;top:-1px;transform:translateX(-50%);
+    width:60px;height:3px;background:#C82D26;border-radius:0 0 4px 4px
+  }
+  .flyer-message-quote{
+    font-family:'Noto Serif TC',serif;font-size:15px;line-height:2;
+    color:#3D2B1F;margin:0;letter-spacing:.04em;font-weight:500;
+    white-space:pre-line;max-width:540px;margin-left:auto;margin-right:auto
+  }
+  .flyer-message-quote .em{color:#C82D26;font-weight:700}
+  .flyer-message-sign{
+    margin-top:10px;font-family:'Noto Serif TC',serif;
+    font-size:13px;color:#7A5C4A;letter-spacing:.1em;font-weight:600
+  }
 
   /* CTA 區 */
   .flyer-cta{
@@ -672,6 +693,14 @@
       <div class="mt-3 pt-3 border-t border-stone-200">
         <label class="block text-xs text-slate-600 mb-1">派報副標</label>
         <input id="flyerSubtitle" type="text" placeholder="2026 年 4 月戰績" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+      </div>
+      <div class="mt-3">
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-xs text-slate-600">派報文案（<code class="bg-stone-100 px-1 rounded">**字**</code>=紅色重點）</label>
+          <button type="button" id="resetFlyerMessage" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+        </div>
+        <textarea id="flyerMessage" rows="6" class="scroll-thin w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
+        <p class="text-[10.5px] text-slate-400 mt-1">支援變數：<code>{{agentName}}</code> <code>{{storeName}}</code> <code>{{dealCount}}</code> <code>{{region}}</code></p>
       </div>
     </div>
   </section>
@@ -1024,10 +1053,18 @@ const DEFAULT_INTRO = '您好，我是 **{{agentName}}**，來自 **{{hometown}}
 
 const DEFAULT_CASE = '我們最近成功協助一位屋主，原本擔心市場觀望氣氛遲遲不敢出售，透過我們的精準曝光策略，在 **{{caseStudyDays}} 天**內成交，順利完成換屋計畫。';
 
+const DEFAULT_FLYER_MESSAGE = `我是 **{{storeName}}** 的 **{{agentName}}**，
+感謝您的信任，在這一個月成交了 **{{dealCount}}** 件，
+{{agentName}} 手邊還有多組買方急尋這附近的房子。
+若您的房子願意割愛，或得知親友、鄰居有意願出售，
+希望您能給 {{agentName}} 服務的機會，
+{{agentName}} 一定盡心盡力服務您！`;
+
 const state = {
   viewMode: 'letter',        // 'letter' | 'flyer'
   flyerLayout: 'hero',       // 'hero' | 'grid'
   flyerSubtitle: '',
+  flyerMessage: DEFAULT_FLYER_MESSAGE,
   currentTemplate: 'general',
   previewIndex: 0,
   theme: 'navy',
@@ -1321,6 +1358,15 @@ function buildFlyerHTML(){
   const deals = state.deals.length ? state.deals : [{address:'（請輸入成交資料）', size:'', price:'', roomType:'', date:''}];
   const subtitle = state.flyerSubtitle || `${a.serviceRegion||'本區'} 月度戰績`;
 
+  // 派報文案變數展開 + **字** 紅色強調
+  const dealCountText = state.deals.length || '多';
+  const messageRaw = (state.flyerMessage || DEFAULT_FLYER_MESSAGE)
+    .replaceAll('{{agentName}}', a.agentName || '○○○')
+    .replaceAll('{{storeName}}', a.storeName || '○○房屋')
+    .replaceAll('{{dealCount}}', dealCountText)
+    .replaceAll('{{region}}', a.serviceRegion || '本區');
+  const messageHTML = escHTML(messageRaw).replace(/\*\*(.+?)\*\*/g, '<span class="em">$1</span>');
+
   const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
   setTimeout(()=>{
     const el = document.getElementById(qrId);
@@ -1419,22 +1465,9 @@ function buildFlyerHTML(){
 
     ${statsHTML}
 
-    <div class="flyer-why">
-      <div class="flyer-why-item">
-        <div class="flyer-why-icon">📣</div>
-        <div class="flyer-why-title">多元曝光</div>
-        <div class="flyer-why-desc">短影音 + 網路精準行銷</div>
-      </div>
-      <div class="flyer-why-item">
-        <div class="flyer-why-icon">📊</div>
-        <div class="flyer-why-title">精準訂價</div>
-        <div class="flyer-why-desc">實價登錄 + 區域行情</div>
-      </div>
-      <div class="flyer-why-item">
-        <div class="flyer-why-icon">🤝</div>
-        <div class="flyer-why-title">透明回報</div>
-        <div class="flyer-why-desc">每週主動更新銷售進度</div>
-      </div>
+    <div class="flyer-message">
+      <p class="flyer-message-quote">${messageHTML}</p>
+      ${a.agentName?`<p class="flyer-message-sign">— ${escHTML(a.agentName)} 敬上 —</p>`:''}
     </div>
 
     <div class="flyer-cta">
@@ -1589,6 +1622,16 @@ function bindAgentInputs(){
   document.getElementById('flyerSubtitle').addEventListener('input', e=>{
     state.flyerSubtitle = e.target.value;
     renderPreview();
+  });
+  document.getElementById('flyerMessage').addEventListener('input', e=>{
+    state.flyerMessage = e.target.value;
+    renderPreview();
+  });
+  document.getElementById('resetFlyerMessage').addEventListener('click', ()=>{
+    state.flyerMessage = DEFAULT_FLYER_MESSAGE;
+    document.getElementById('flyerMessage').value = DEFAULT_FLYER_MESSAGE;
+    renderPreview();
+    flash('已還原為公版派報文案');
   });
 }
 
@@ -1908,6 +1951,7 @@ bindEmailGate();
 document.body.setAttribute('data-mode', state.viewMode);
 loadAgent();
 renderTemplateList();
+document.getElementById('flyerMessage').value = state.flyerMessage;
 bindAgentInputs();
 bindNavigation();
 bindTheme();
