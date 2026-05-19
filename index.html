@@ -504,6 +504,10 @@
         <input id="storeAddress" type="text" placeholder="台北市大安區○○路 123 號" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
       </label>
       <label class="block">
+        <span class="text-xs text-slate-600">經紀證號（不動產經紀人／營業員）</span>
+        <input id="licenseNo" type="text" placeholder="北市經(99)字第 12345 號" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+      </label>
+      <label class="block">
         <div class="flex items-center justify-between">
           <span class="text-xs text-slate-600">自我介紹（公版可自行修改，<code class="bg-stone-100 px-1 rounded">**字**</code>=黃色重點）</span>
           <button type="button" id="resetIntro" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
@@ -752,7 +756,7 @@ const state = {
   agent: {
     agentName:'', hometown:'', storeName:'', serviceRegion:'',
     serviceYears:'', awardYear:'', awards:'', phone:'',
-    lineId:'', propertyType:'', storeAddress:'',
+    lineId:'', propertyType:'', storeAddress:'', licenseNo:'',
     introText: DEFAULT_INTRO, caseText: DEFAULT_CASE,
     logoDataUrl:'', photoDataUrl:'', customQrDataUrl:''
   },
@@ -830,6 +834,7 @@ function fillVars(text, recipient){
     .replaceAll('{{phone}}', state.agent.phone || '請聯繫店內')
     .replaceAll('{{lineId}}', state.agent.lineId || '請來電索取')
     .replaceAll('{{propertyType}}', state.agent.propertyType || '2-4 房')
+    .replaceAll('{{licenseNo}}', state.agent.licenseNo || '')
     .replaceAll('{{title}}', recipient?.title || '您好')
     .replaceAll('{{region}}', recipient?.region || state.agent.serviceRegion || '本區');
 }
@@ -848,6 +853,7 @@ function vCard(){
     `TEL;TYPE=CELL:${a.phone||''}`,
     a.lineId?`X-LINE:${a.lineId}`:'',
     `ADR:;;${a.storeAddress||''};;;;`,
+    a.licenseNo?`NOTE:經紀證號 ${a.licenseNo}`:'',
     'END:VCARD'
   ].filter(Boolean).join('\n');
 }
@@ -985,6 +991,7 @@ function buildLetterHTML(template, recipient){
         ${safeDataUrl(a.photoDataUrl)?`<div class="photo-cell"><img src="${safeDataUrl(a.photoDataUrl)}" alt="agent"></div>`:''}
         <div class="contact-info">
           <p class="name">${ICONS.user} ${escHTML(a.agentName||'○○○')}</p>
+          ${a.licenseNo?`<p style="font-size:11px;opacity:0.85;margin-top:-2px;letter-spacing:0.02em">經紀證號：${escHTML(a.licenseNo)}</p>`:''}
           <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
           <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
           ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
@@ -1041,6 +1048,7 @@ function buildLetterPlainText(template, recipient){
     '──────── 聯絡方式 ────────',
     '',
     `👤 ${a.agentName||''}`,
+    a.licenseNo?`🪪 經紀證號：${a.licenseNo}`:'',
     `📞 ${a.phone||''}`,
     `💬 LINE：${a.lineId||''}`,
     a.storeAddress?`📍 ${a.storeAddress}`:'',
@@ -1176,7 +1184,8 @@ function bindActions(){
       storeName:'東森房屋 大安店', serviceRegion:'台北市大安區',
       serviceYears:'5', awardYear:'2025', awards:'年度業績冠軍',
       phone:'0912-345-678', lineId:'@xiaoming',
-      propertyType:'2-4 房', storeAddress:'台北市大安區忠孝東路四段 100 號'
+      propertyType:'2-4 房', storeAddress:'台北市大安區忠孝東路四段 100 號',
+      licenseNo:'北市經(99)字第 12345 號'
     };
     let filled = 0;
     Object.keys(SAMPLE_AGENT).forEach(k=>{
