@@ -330,7 +330,7 @@
     color:#142544;margin:0 0 10px;letter-spacing:.04em;line-height:1.1;
     display:inline-flex;align-items:center;gap:8px
   }
-  .hero-card-address svg{width:24px;height:24px;color:#C82D26;flex-shrink:0}
+  .hero-card-address svg{width:24px;height:24px;stroke:#C82D26;color:#C82D26;flex-shrink:0;stroke-width:2.2}
   .hero-card-meta{
     display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap;justify-content:center
   }
@@ -494,11 +494,15 @@
     margin:3px 0;font-size:14px;color:#142544;
     display:flex;align-items:center;gap:8px;font-weight:500
   }
-  .flyer-contact-info p svg{width:16px;height:16px;color:#C82D26;flex-shrink:0;stroke-width:2.2}
-  .flyer-contact-license{
-    font-size:11.5px;color:#7A5C4A;letter-spacing:.04em;
-    margin:2px 0 6px;font-weight:600
+  .flyer-contact-info p svg{
+    width:16px;height:16px;stroke:#C82D26;flex-shrink:0;stroke-width:2.2;
+    color:#C82D26
   }
+  .flyer-contact-info p.flyer-contact-license{
+    font-size:13px;color:#7A5C4A;letter-spacing:.04em;
+    margin:3px 0;font-weight:500
+  }
+  .flyer-contact-info p.flyer-contact-license svg{stroke:#7A5C4A;color:#7A5C4A}
   .flyer-contact-qr-block{text-align:center}
   .flyer-contact-qr-img{
     width:108px;height:108px;padding:4px;
@@ -1581,7 +1585,7 @@ function buildFlyerHTML(){
       <div class="flyer-contact-info">
         <h3 class="flyer-contact-name">${escHTML(a.agentName||'○○○')}</h3>
         <p class="flyer-contact-role">房地產顧問｜${escHTML(a.storeName||'')}</p>
-        ${a.licenseNo?`<p class="flyer-contact-license">經紀證號：${escHTML(a.licenseNo)}</p>`:''}
+        ${a.licenseNo?`<p class="flyer-contact-license">${ICONS.clipboard} 經紀證號：${escHTML(a.licenseNo)}</p>`:''}
         <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
         <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
         ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
