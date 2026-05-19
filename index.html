@@ -260,17 +260,17 @@
     letter-spacing:.12em;font-weight:500;text-align:center
   }
 
-  /* === 單筆主秀（hero）雙欄結構 === */
+  /* === 單筆主秀（hero）章節標籤絕對定位於左側，內容於整版置中 === */
   .deal-hero{
     background:linear-gradient(135deg,#fef6e7 0%,#fff8d6 100%);
-    display:grid;grid-template-columns:140px 1fr;
-    align-items:stretch;position:relative;overflow:hidden;min-height:280px
+    position:relative;overflow:hidden;min-height:280px
   }
-  /* 左欄：成交資訊章節標籤（直書） */
+  /* 左欄：成交資訊章節標籤（absolute 浮在左側，不影響右側內容置中） */
   .deal-hero-label{
+    position:absolute;top:0;left:0;width:140px;height:100%;
     background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);
     color:#fff;display:flex;align-items:center;justify-content:center;
-    padding:32px 12px;position:relative;overflow:hidden
+    padding:32px 12px;overflow:hidden;z-index:2
   }
   .deal-hero-label::before{
     content:'';position:absolute;top:0;left:0;width:100%;height:100%;
@@ -293,18 +293,14 @@
     font-family:'Noto Serif TC',serif;font-size:120px;font-weight:900;
     color:rgba(241,205,87,.06);letter-spacing:0;pointer-events:none;line-height:1
   }
-  /* 右欄：成交內容（水平＋垂直置中） */
+  /* 右欄：成交內容（在 .flyer 全寬置中對齊上方「成 交 快 報」） */
   .deal-hero-content{
-    padding:32px 36px 28px 24px;text-align:center;
-    position:relative;overflow:hidden;
+    padding:36px 36px;text-align:center;
+    position:relative;overflow:hidden;min-height:280px;
     display:flex;flex-direction:column;justify-content:center;align-items:center
   }
-  /* 空狀態：整塊置中 */
-  .deal-hero-content.is-empty{
-    text-align:center;
-    display:flex;flex-direction:column;justify-content:center;align-items:center;
-    padding:32px 24px;color:#94a3b8
-  }
+  /* 空狀態 */
+  .deal-hero-content.is-empty{color:#94a3b8}
   .deal-hero-content.is-empty .empty-icon{font-size:42px;margin-bottom:8px}
   .deal-hero-content.is-empty .empty-text{
     font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;
