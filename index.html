@@ -216,26 +216,250 @@
   .scroll-thin::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
 
   /* 強制列印與 PDF 顯示底色，所有主要彩色元素都加上 */
-  .letter,.banner,.urgent-panel,.feature-grid,.contact-grid,.ribbon,.feature-icon,.intro-text .emph,.case-study .emph{
+  .letter,.banner,.urgent-panel,.feature-grid,.contact-grid,.ribbon,.feature-icon,.intro-text .emph,.case-study .emph,
+  .flyer,.flyer-header,.deal-hero,.deal-stats,.flyer-cta,.flyer-why,.flyer-contact,.deal-grid-card,.deal-sub-card{
     -webkit-print-color-adjust:exact!important;
     print-color-adjust:exact!important;
     color-adjust:exact!important
   }
 
+  /* ============================================================ */
+  /* === 成交快報（派報版）A4 直式 / 彩色 === */
+  /* ============================================================ */
+  .flyer{
+    width:210mm;height:297mm;background:#fff;position:relative;overflow:hidden;
+    box-shadow:0 6px 28px rgba(0,0,0,.1);margin:0 auto 16px;
+    font-family:'Noto Sans TC',sans-serif;color:#1a1a1a;box-sizing:border-box;
+    display:flex;flex-direction:column
+  }
+  .flyer:last-child{margin-bottom:0}
+
+  /* 抬頭 */
+  .flyer-header{
+    background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);
+    color:#fff;padding:18px 32px 20px;position:relative;overflow:hidden
+  }
+  .flyer-header::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 90% -20%,rgba(241,205,87,.25),transparent 55%);
+    pointer-events:none
+  }
+  .flyer-brand{
+    display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.85);
+    font-size:12.5px;letter-spacing:.05em;margin-bottom:8px;font-weight:500
+  }
+  .flyer-brand img{max-height:30px;max-width:140px;object-fit:contain}
+  .flyer-title-row{display:flex;align-items:center;gap:14px;margin-top:6px}
+  .flyer-tag{
+    background:#C82D26;color:#fff;font-size:13px;font-weight:700;
+    padding:4px 14px;border-radius:3px;letter-spacing:.18em;
+    box-shadow:0 3px 8px rgba(200,45,38,.35);flex-shrink:0
+  }
+  .flyer-title{
+    font-family:'Noto Serif TC',serif;font-size:36px;font-weight:900;
+    letter-spacing:.06em;line-height:1.1;color:#fff;margin:0
+  }
+  .flyer-subtitle{
+    color:#F1CD57;font-size:13.5px;margin:8px 0 0;
+    letter-spacing:.12em;font-weight:500
+  }
+
+  /* === 單筆主秀（hero）=== */
+  .deal-hero{
+    background:linear-gradient(135deg,#fef6e7 0%,#fff8d6 100%);
+    padding:32px 36px 28px;position:relative;overflow:hidden;
+    border-bottom:3px solid #C82D26
+  }
+  .deal-hero::after{
+    content:'成交';position:absolute;right:-30px;top:50%;
+    transform:translateY(-50%) rotate(-15deg);
+    font-family:'Noto Serif TC',serif;font-size:200px;font-weight:900;
+    color:rgba(200,45,38,.06);letter-spacing:.2em;pointer-events:none
+  }
+  .deal-hero-badge{
+    display:inline-block;background:#C82D26;color:#fff;font-size:13px;
+    font-weight:700;padding:4px 16px;border-radius:99px;
+    letter-spacing:.12em;box-shadow:0 3px 8px rgba(200,45,38,.3)
+  }
+  .deal-hero-address{
+    font-family:'Noto Serif TC',serif;font-size:44px;font-weight:900;
+    color:#1e293b;margin:14px 0 6px;letter-spacing:.04em;line-height:1.1
+  }
+  .deal-hero-meta{font-size:17px;color:#475569;margin:0 0 16px}
+  .deal-hero-meta span{
+    display:inline-block;padding:3px 12px;background:rgba(30,41,59,.08);
+    border-radius:4px;margin-right:6px;font-weight:600;color:#1e293b;font-size:15px
+  }
+  .deal-hero-price{
+    font-family:'Noto Serif TC',serif;font-size:68px;font-weight:900;
+    color:#C82D26;line-height:1;letter-spacing:-.02em;
+    text-shadow:2px 3px 0 rgba(0,0,0,.06);position:relative;z-index:1
+  }
+  .deal-hero-price-unit{font-size:36px;margin-left:6px;font-weight:700}
+  .deal-hero-date{
+    font-size:13px;color:#7A5C4A;margin:12px 0 0;
+    letter-spacing:.1em;font-weight:600
+  }
+
+  /* 次要成交（hero 模式下方）*/
+  .deal-sub-list{padding:16px 32px 12px;background:#fff}
+  .deal-sub-title{
+    font-size:12.5px;font-weight:700;color:#1e293b;
+    letter-spacing:.15em;margin:0 0 10px;display:flex;align-items:center;gap:8px
+  }
+  .deal-sub-title::before{content:'';width:22px;height:2px;background:#C82D26}
+  .deal-sub-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .deal-sub-card{
+    background:#faf3e8;border-left:3px solid #F1CD57;
+    padding:9px 12px;border-radius:4px
+  }
+  .deal-sub-card-addr{font-size:12.5px;font-weight:700;color:#1e293b;margin:0 0 2px}
+  .deal-sub-card-meta{font-size:10.5px;color:#64748b;margin:0}
+  .deal-sub-card-price{
+    font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;
+    color:#C82D26;margin:4px 0 0;line-height:1
+  }
+
+  /* === 多筆網格（grid）=== */
+  .deal-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    padding:20px 32px;background:#faf6ee
+  }
+  .deal-grid-card{
+    background:linear-gradient(135deg,#fff 0%,#faf3e8 100%);
+    border:1px solid #e8d8c5;border-radius:8px;
+    padding:14px 16px;position:relative;overflow:hidden
+  }
+  .deal-grid-card::before{
+    content:'✓';position:absolute;top:8px;right:10px;
+    width:22px;height:22px;line-height:22px;text-align:center;
+    background:#C82D26;color:#fff;border-radius:50%;
+    font-size:13px;font-weight:700
+  }
+  .deal-grid-card-addr{
+    font-family:'Noto Serif TC',serif;font-size:18px;font-weight:900;
+    color:#1e293b;margin:0 0 4px;padding-right:28px
+  }
+  .deal-grid-card-meta{font-size:11.5px;color:#475569;margin:0 0 6px}
+  .deal-grid-card-meta span{
+    display:inline-block;padding:1px 8px;background:rgba(30,41,59,.06);
+    border-radius:3px;margin-right:4px
+  }
+  .deal-grid-card-price{
+    font-family:'Noto Serif TC',serif;font-size:22px;font-weight:900;
+    color:#C82D26;line-height:1
+  }
+  .deal-grid-card-date{font-size:10.5px;color:#94a3b8;margin:6px 0 0;letter-spacing:.05em}
+
+  /* 統計面板 */
+  .deal-stats{
+    display:flex;align-items:center;justify-content:space-around;
+    background:#1e293b;color:#fff;padding:14px 28px
+  }
+  .deal-stat{text-align:center}
+  .deal-stat-num{
+    font-family:'Noto Serif TC',serif;font-size:30px;font-weight:900;
+    color:#F1CD57;line-height:1;margin:0
+  }
+  .deal-stat-label{
+    font-size:10.5px;color:#cbd5e1;letter-spacing:.12em;margin:4px 0 0
+  }
+
+  /* 為什麼選我們 */
+  .flyer-why{
+    background:#fef6e7;padding:14px 32px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px
+  }
+  .flyer-why-item{text-align:center}
+  .flyer-why-icon{
+    width:38px;height:38px;line-height:38px;text-align:center;
+    background:linear-gradient(135deg,#C82D26,#8b1f1c);color:#fff;
+    border-radius:50%;margin:0 auto 4px;font-size:18px;font-weight:700
+  }
+  .flyer-why-title{font-size:13px;font-weight:700;color:#1e293b;margin:2px 0 0}
+  .flyer-why-desc{font-size:10.5px;color:#64748b;margin:2px 0 0;line-height:1.4}
+
+  /* CTA 區 */
+  .flyer-cta{
+    background:linear-gradient(135deg,#C82D26 0%,#8b1f1c 100%);
+    color:#fff;padding:18px 32px;position:relative;overflow:hidden
+  }
+  .flyer-cta::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(circle at 80% 50%,rgba(241,205,87,.18),transparent 60%);
+    pointer-events:none
+  }
+  .flyer-cta-title{
+    font-family:'Noto Serif TC',serif;font-size:26px;font-weight:900;
+    margin:0 0 4px;position:relative;z-index:1;letter-spacing:.04em
+  }
+  .flyer-cta-sub{
+    font-size:13px;color:#fde9e8;margin:0;position:relative;z-index:1;letter-spacing:.05em
+  }
+
+  /* 業務員聯絡資訊 */
+  .flyer-contact{
+    display:grid;grid-template-columns:auto 1fr auto;gap:18px;
+    align-items:center;padding:16px 32px;background:#fff;
+    border-top:2px solid #F1CD57;margin-top:auto
+  }
+  .flyer-contact-photo img{
+    width:68px;height:68px;border-radius:50%;object-fit:cover;
+    border:3px solid #F1CD57;box-shadow:0 2px 6px rgba(0,0,0,.12);display:block
+  }
+  .flyer-contact-info{min-width:0}
+  .flyer-contact-info p{
+    margin:2px 0;font-size:12.5px;color:#1e293b;
+    display:flex;align-items:center;gap:6px
+  }
+  .flyer-contact-info p svg{width:13px;height:13px;stroke:#475569;flex-shrink:0}
+  .flyer-contact-info .name{
+    font-family:'Noto Serif TC',serif;font-size:17px;font-weight:900;
+    color:#1e293b;margin:0 0 2px
+  }
+  .flyer-contact-info .name svg{width:15px;height:15px;stroke:#1e293b}
+  .flyer-contact-info .license{font-size:10.5px;color:#7A5C4A;letter-spacing:.04em;margin:1px 0 4px}
+  .flyer-contact-qr{text-align:center}
+  .flyer-contact-qr .qr{
+    width:80px;height:80px;padding:3px;border:1px solid #e5e5e5;
+    border-radius:6px;background:#fff
+  }
+  .flyer-contact-qr .qr-label{font-size:9.5px;color:#64748b;margin:3px 0 0}
+
+  .flyer-footer{
+    text-align:center;font-size:10px;color:#94a3b8;
+    padding:6px 32px 10px;letter-spacing:.04em;background:#fff
+  }
+
+  /* mode tabs */
+  .mode-tabs{display:flex;gap:4px;margin-bottom:10px}
+  .mode-tab{
+    flex:1;padding:8px 12px;font-size:13px;font-weight:600;
+    border:1px solid #d6d3d1;border-radius:8px;background:#fff;
+    color:#475569;cursor:pointer;transition:all .15s
+  }
+  .mode-tab.active{
+    background:#1e293b;color:#fff;border-color:#1e293b;
+    box-shadow:0 3px 8px rgba(30,41,59,.2)
+  }
+  [data-mode-letter],[data-mode-flyer]{display:block}
+  body[data-mode="flyer"] [data-mode-letter]{display:none}
+  body[data-mode="letter"] [data-mode-flyer]{display:none}
+
   /* === 手機 / 平板 響應式預覽（不影響列印） === */
   @media (max-width: 1023px){
     #previewBox{padding:8px}
-    #previewBox .letter{
+    #previewBox .letter,#previewBox .flyer{
       zoom:.6;
       box-shadow:0 4px 14px rgba(0,0,0,.08)
     }
   }
   @media (max-width: 768px){
-    #previewBox .letter{zoom:.48}
+    #previewBox .letter,#previewBox .flyer{zoom:.48}
   }
   @media (max-width: 480px){
-    #previewBox .letter{zoom:.36}
-    .letter{margin-bottom:8px}
+    #previewBox .letter,#previewBox .flyer{zoom:.36}
+    .letter,.flyer{margin-bottom:8px}
   }
   /* 手機讓表單 input 字級加大、避免 iOS 自動放大 */
   @media (max-width: 640px){
@@ -246,12 +470,12 @@
   @media print{
     html,body{background:#fff;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
     .no-print{display:none!important}
-    .letter{
+    .letter,.flyer{
       box-shadow:none;margin:0;width:210mm;height:297mm;
       page-break-after:always;page-break-inside:avoid;overflow:hidden;
       border:none!important
     }
-    .letter:last-child{page-break-after:auto}
+    .letter:last-child,.flyer:last-child{page-break-after:auto}
     @page{size:A4;margin:0}
   }
 
@@ -411,11 +635,37 @@
 <main class="no-print max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 grid grid-cols-12 gap-3 sm:gap-5">
 
   <section class="col-span-12 lg:col-span-3 bg-white rounded-xl border border-stone-200 p-4">
-    <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
-      <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">1</span>
-      月份範本
-    </h2>
-    <div id="templateList" class="grid grid-cols-2 sm:grid-cols-2 gap-1.5"></div>
+    <div class="mode-tabs">
+      <button id="modeLetterBtn" class="mode-tab active" data-mode="letter">📮 開發信</button>
+      <button id="modeFlyerBtn" class="mode-tab" data-mode="flyer">📢 成交快報</button>
+    </div>
+    <div data-mode-letter>
+      <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">1</span>
+        月份範本
+      </h2>
+      <div id="templateList" class="grid grid-cols-2 sm:grid-cols-2 gap-1.5"></div>
+    </div>
+    <div data-mode-flyer>
+      <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">1</span>
+        派報版面
+      </h2>
+      <div class="grid grid-cols-1 gap-1.5">
+        <button class="flyer-layout-btn month-btn text-left px-3 py-2 text-xs border border-stone-200 rounded-md bg-white hover:border-slate-800 active" data-layout="hero">
+          <div class="font-bold text-sm">🏆 單筆放大主秀</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">第 1 筆超大轟炸 + 下方 3 筆小卡</div>
+        </button>
+        <button class="flyer-layout-btn month-btn text-left px-3 py-2 text-xs border border-stone-200 rounded-md bg-white hover:border-slate-800" data-layout="grid">
+          <div class="font-bold text-sm">📋 多筆整齊列表</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">2×N 網格陳列季度戰績</div>
+        </button>
+      </div>
+      <div class="mt-3 pt-3 border-t border-stone-200">
+        <label class="block text-xs text-slate-600 mb-1">派報副標</label>
+        <input id="flyerSubtitle" type="text" placeholder="2026 年 4 月戰績" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+      </div>
+    </div>
   </section>
 
   <section class="col-span-12 lg:col-span-4 bg-white rounded-xl border border-stone-200 p-4">
@@ -525,18 +775,35 @@
   </section>
 
   <section class="col-span-12 lg:col-span-5 bg-white rounded-xl border border-stone-200 p-4">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">3</span>
-        屋主名單（一行一筆）
-      </h2>
-      <button id="loadSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
+    <div data-mode-letter>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+          <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">3</span>
+          屋主名單（一行一筆）
+        </h2>
+        <button id="loadSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
+      </div>
+      <p class="text-[11px] text-slate-500 mb-1.5">每行 = 一個屋主稱謂，自動帶入大標「屋主XXX，⋯」</p>
+      <textarea id="recipientList" rows="9" placeholder="王先生&#10;陳太太&#10;李小姐" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
+      <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
+        <span>共 <b id="recipientCount" class="text-slate-800">0</b> 封</span>
+        <span>留空時大標顯示「屋主您好」</span>
+      </div>
     </div>
-    <p class="text-[11px] text-slate-500 mb-1.5">每行 = 一個屋主稱謂，自動帶入大標「屋主XXX，⋯」</p>
-    <textarea id="recipientList" rows="9" placeholder="王先生&#10;陳太太&#10;李小姐" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
-    <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
-      <span>共 <b id="recipientCount" class="text-slate-800">0</b> 封</span>
-      <span>留空時大標顯示「屋主您好」</span>
+    <div data-mode-flyer>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+          <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">3</span>
+          成交資料（一行一筆，逗號分隔）
+        </h2>
+        <button id="loadFlyerSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
+      </div>
+      <p class="text-[11px] text-slate-500 mb-1.5">格式：<code class="bg-stone-100 px-1 rounded">地址, 坪數, 總價, 房型, 月份</code>（單筆主秀：第 1 筆放大；多筆列表：建議 4-8 筆）</p>
+      <textarea id="dealList" rows="9" placeholder="仁愛路四段, 28坪, 1980萬, 3房2廳, 2026/04&#10;信義路五段, 35坪, 2680萬, 4房2廳, 2026/04&#10;忠孝東路, 22坪, 1560萬, 2房1廳, 2026/03" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
+      <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
+        <span>共 <b id="dealCount" class="text-slate-800">0</b> 筆成交</span>
+        <span>需有至少 1 筆</span>
+      </div>
     </div>
   </section>
 
@@ -750,6 +1017,9 @@ const DEFAULT_INTRO = '您好，我是 **{{agentName}}**，來自 **{{hometown}}
 const DEFAULT_CASE = '我們最近成功協助一位屋主，原本擔心市場觀望氣氛遲遲不敢出售，透過我們的精準曝光策略，在 **{{caseStudyDays}} 天**內成交，順利完成換屋計畫。';
 
 const state = {
+  viewMode: 'letter',        // 'letter' | 'flyer'
+  flyerLayout: 'hero',       // 'hero' | 'grid'
+  flyerSubtitle: '',
   currentTemplate: 'general',
   previewIndex: 0,
   theme: 'navy',
@@ -760,7 +1030,8 @@ const state = {
     introText: DEFAULT_INTRO, caseText: DEFAULT_CASE,
     logoDataUrl:'', photoDataUrl:'', customQrDataUrl:''
   },
-  recipients: []
+  recipients: [],
+  deals: []
 };
 
 function loadAgent(){
@@ -1009,6 +1280,181 @@ function buildLetterHTML(template, recipient){
   </article>`;
 }
 
+function parseDeals(raw){
+  return (raw||'').split('\n').map(l=>l.trim()).filter(Boolean).map(line=>{
+    const parts = line.split(/[,，、]\s*/).map(p=>p.trim());
+    return {
+      address: parts[0]||'',
+      size: parts[1]||'',
+      price: parts[2]||'',
+      roomType: parts[3]||'',
+      date: parts[4]||''
+    };
+  });
+}
+
+function splitPriceNumberUnit(price){
+  if(!price) return {num:'', unit:''};
+  const m = String(price).match(/^([\d,\.]+)\s*(.*)$/);
+  if(m) return {num:m[1], unit:m[2]||''};
+  return {num:price, unit:''};
+}
+
+function buildFlyerHTML(){
+  const a = state.agent;
+  const layout = state.flyerLayout;
+  const escHTML = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  const safeDataUrl = s => {
+    if(!s) return '';
+    s = String(s);
+    return /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/i.test(s) ? s : '';
+  };
+
+  const deals = state.deals.length ? state.deals : [{address:'（請輸入成交資料）', size:'', price:'', roomType:'', date:''}];
+  const subtitle = state.flyerSubtitle || `${a.serviceRegion||'本區'} 月度戰績`;
+
+  const qrId = 'qr_'+Math.random().toString(36).slice(2,10);
+  setTimeout(()=>{
+    const el = document.getElementById(qrId);
+    if(el && a.phone){
+      el.innerHTML='';
+      try{ new QRCode(el,{text:vCard(),width:90,height:90,correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+    }
+  },0);
+
+  const safeLogo = safeDataUrl(a.logoDataUrl);
+  const brandBlock = safeLogo
+    ? `<div class="flyer-brand"><img src="${safeLogo}" alt="logo">${a.storeName?` ${escHTML(a.storeName)}`:''}</div>`
+    : (a.storeName ? `<div class="flyer-brand">▎${escHTML(a.storeName)}</div>` : '');
+
+  // 主秀區
+  let dealBlock;
+  if(layout === 'hero'){
+    const main = deals[0];
+    const subs = deals.slice(1, 4);
+    const mainPrice = splitPriceNumberUnit(main.price);
+    const heroHTML = `
+      <div class="deal-hero">
+        <span class="deal-hero-badge">🏆 重 磅 成 交</span>
+        <h2 class="deal-hero-address">${escHTML(main.address||'—')}</h2>
+        <div class="deal-hero-meta">
+          ${main.size?`<span>${escHTML(main.size)}</span>`:''}
+          ${main.roomType?`<span>${escHTML(main.roomType)}</span>`:''}
+        </div>
+        <div class="deal-hero-price">${escHTML(mainPrice.num||'—')}<span class="deal-hero-price-unit">${escHTML(mainPrice.unit||'')}</span></div>
+        ${main.date?`<p class="deal-hero-date">📅 ${escHTML(main.date)} 強勢成交</p>`:''}
+      </div>`;
+    const subHTML = subs.length ? `
+      <div class="deal-sub-list">
+        <div class="deal-sub-title">本月其他成交</div>
+        <div class="deal-sub-grid">
+          ${subs.map(d=>{
+            const p = splitPriceNumberUnit(d.price);
+            return `<div class="deal-sub-card">
+              <p class="deal-sub-card-addr">${escHTML(d.address||'')}</p>
+              <p class="deal-sub-card-meta">${escHTML([d.size,d.roomType].filter(Boolean).join(' · '))}</p>
+              <p class="deal-sub-card-price">${escHTML(p.num)}<span style="font-size:12px;margin-left:3px">${escHTML(p.unit)}</span></p>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>` : '';
+    dealBlock = heroHTML + subHTML;
+  } else {
+    // grid 模式
+    const list = deals.slice(0, 8);
+    dealBlock = `
+      <div class="deal-grid">
+        ${list.map(d=>{
+          const p = splitPriceNumberUnit(d.price);
+          return `<div class="deal-grid-card">
+            <h3 class="deal-grid-card-addr">${escHTML(d.address||'—')}</h3>
+            <p class="deal-grid-card-meta">
+              ${d.size?`<span>${escHTML(d.size)}</span>`:''}
+              ${d.roomType?`<span>${escHTML(d.roomType)}</span>`:''}
+            </p>
+            <div class="deal-grid-card-price">${escHTML(p.num||'—')}<span style="font-size:14px;margin-left:3px">${escHTML(p.unit)}</span></div>
+            ${d.date?`<p class="deal-grid-card-date">📅 ${escHTML(d.date)}</p>`:''}
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // 統計區
+  const statsHTML = `
+    <div class="deal-stats">
+      <div class="deal-stat">
+        <p class="deal-stat-num">${deals.length}</p>
+        <p class="deal-stat-label">本期成交</p>
+      </div>
+      <div class="deal-stat">
+        <p class="deal-stat-num">${escHTML(a.serviceYears||'5')}<span style="font-size:14px">+</span></p>
+        <p class="deal-stat-label">服務年資</p>
+      </div>
+      <div class="deal-stat">
+        <p class="deal-stat-num">100<span style="font-size:14px">%</span></p>
+        <p class="deal-stat-label">透明回報</p>
+      </div>
+    </div>`;
+
+  return `
+  <article class="flyer">
+    <div class="flyer-header">
+      ${brandBlock}
+      <div class="flyer-title-row">
+        <span class="flyer-tag">成 交 快 報</span>
+        <h1 class="flyer-title">${escHTML(a.serviceRegion||'本區')}・實 績 公 告</h1>
+      </div>
+      <p class="flyer-subtitle">— ${escHTML(subtitle)} —</p>
+    </div>
+
+    ${dealBlock}
+
+    ${statsHTML}
+
+    <div class="flyer-why">
+      <div class="flyer-why-item">
+        <div class="flyer-why-icon">📣</div>
+        <div class="flyer-why-title">多元曝光</div>
+        <div class="flyer-why-desc">短影音 + 網路精準行銷</div>
+      </div>
+      <div class="flyer-why-item">
+        <div class="flyer-why-icon">📊</div>
+        <div class="flyer-why-title">精準訂價</div>
+        <div class="flyer-why-desc">實價登錄 + 區域行情</div>
+      </div>
+      <div class="flyer-why-item">
+        <div class="flyer-why-icon">🤝</div>
+        <div class="flyer-why-title">透明回報</div>
+        <div class="flyer-why-desc">每週主動更新銷售進度</div>
+      </div>
+    </div>
+
+    <div class="flyer-cta">
+      <h2 class="flyer-cta-title">📱 免費估價試算</h2>
+      <p class="flyer-cta-sub">掃 QR 加 LINE，30 秒回覆你家市值區間</p>
+    </div>
+
+    <div class="flyer-contact">
+      ${safeDataUrl(a.photoDataUrl)?`<div class="flyer-contact-photo"><img src="${safeDataUrl(a.photoDataUrl)}" alt="agent"></div>`:'<div></div>'}
+      <div class="flyer-contact-info">
+        <p class="name">${ICONS.user} ${escHTML(a.agentName||'○○○')}</p>
+        ${a.licenseNo?`<p class="license">經紀證號：${escHTML(a.licenseNo)}</p>`:''}
+        <p>${ICONS.phone} ${escHTML(a.phone||'請填入電話')}</p>
+        <p>${ICONS.message} LINE：${escHTML(a.lineId||'請來電索取')}</p>
+        ${a.storeAddress?`<p>${ICONS.pin} ${escHTML(a.storeAddress)}</p>`:''}
+      </div>
+      <div class="flyer-contact-qr">
+        ${safeDataUrl(a.customQrDataUrl)
+          ? `<img src="${safeDataUrl(a.customQrDataUrl)}" class="qr" style="object-fit:contain" alt="qr">`
+          : `<div id="${qrId}" class="qr"></div>`}
+        <div class="qr-label">${safeDataUrl(a.customQrDataUrl)?'掃碼加好友':'掃碼存名片'}</div>
+      </div>
+    </div>
+
+    <p class="flyer-footer">本派報為誠意派發 · 資料來源：實價登錄／公司成交紀錄 · 若已有合作仲介，敬請見諒</p>
+  </article>`;
+}
+
 function buildLetterPlainText(template, recipient){
   const t = template;
   const a = state.agent;
@@ -1065,6 +1511,14 @@ function getRecipientsForRender(){
 }
 
 function renderPreview(){
+  if(state.viewMode === 'flyer'){
+    document.getElementById('previewBox').innerHTML = buildFlyerHTML();
+    document.getElementById('previewIndex').textContent = 1;
+    document.getElementById('previewTotal').textContent = 1;
+    const layoutLabel = state.flyerLayout==='hero'?'🏆 單筆放大主秀':'📋 多筆整齊列表';
+    document.getElementById('previewMeta').textContent = `📢 成交快報　|　${layoutLabel}　|　${state.deals.length} 筆`;
+    return;
+  }
   const t = getTemplate(state.currentTemplate);
   const recips = getRecipientsForRender();
   if(state.previewIndex >= recips.length) state.previewIndex = 0;
@@ -1083,6 +1537,29 @@ function parseRecipients(){
   document.getElementById('recipientCount').textContent = state.recipients.length;
 }
 
+function parseDealsInput(){
+  const raw = document.getElementById('dealList').value;
+  state.deals = parseDeals(raw);
+  document.getElementById('dealCount').textContent = state.deals.length;
+}
+
+function setViewMode(mode){
+  state.viewMode = mode;
+  document.body.setAttribute('data-mode', mode);
+  document.querySelectorAll('.mode-tab').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+  renderPreview();
+}
+
+function setFlyerLayout(layout){
+  state.flyerLayout = layout;
+  document.querySelectorAll('.flyer-layout-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.layout === layout);
+  });
+  renderPreview();
+}
+
 function bindAgentInputs(){
   Object.keys(state.agent).forEach(k=>{
     const el = document.getElementById(k);
@@ -1096,6 +1573,39 @@ function bindAgentInputs(){
   document.getElementById('recipientList').addEventListener('input', ()=>{
     parseRecipients();
     renderPreview();
+  });
+  document.getElementById('dealList').addEventListener('input', ()=>{
+    parseDealsInput();
+    renderPreview();
+  });
+  document.getElementById('flyerSubtitle').addEventListener('input', e=>{
+    state.flyerSubtitle = e.target.value;
+    renderPreview();
+  });
+}
+
+function bindModeAndLayout(){
+  document.querySelectorAll('.mode-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>setViewMode(btn.dataset.mode));
+  });
+  document.querySelectorAll('.flyer-layout-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>setFlyerLayout(btn.dataset.layout));
+  });
+  document.getElementById('loadFlyerSample').addEventListener('click', ()=>{
+    const sample = [
+      '仁愛路四段, 28坪, 1980萬, 3房2廳, 2026/04',
+      '信義路五段, 35坪, 2680萬, 4房2廳, 2026/04',
+      '忠孝東路, 22坪, 1560萬, 2房1廳, 2026/03',
+      '復興南路, 18坪, 1280萬, 2房1廳, 2026/03',
+      '敦化南路, 42坪, 3380萬, 4房3廳, 2026/03',
+      '光復南路, 25坪, 1750萬, 3房1廳, 2026/02'
+    ].join('\n');
+    document.getElementById('dealList').value = sample;
+    document.getElementById('flyerSubtitle').value = '2026 年 Q2 戰績一覽';
+    state.flyerSubtitle = '2026 年 Q2 戰績一覽';
+    parseDealsInput();
+    renderPreview();
+    flash('已載入 6 筆成交範例');
   });
 }
 
@@ -1135,13 +1645,34 @@ function bindTheme(){
 
 function bindActions(){
   document.getElementById('copyBtn').addEventListener('click', async ()=>{
-    const t = getTemplate(state.currentTemplate);
-    const r = getRecipientsForRender()[state.previewIndex];
-    const text = buildLetterPlainText(t, r);
+    let text;
+    if(state.viewMode === 'flyer'){
+      const a = state.agent;
+      const lines = [
+        `📢 ${a.serviceRegion||'本區'} 成 交 快 報`,
+        `— ${state.flyerSubtitle||'月度戰績'} —`,
+        '',
+        '──────── 本期成交 ────────',
+        ''
+      ];
+      state.deals.forEach((d,i)=>{
+        lines.push(`${i+1}. ${d.address}　${d.size}　${d.roomType}　${d.price}　${d.date}`.replace(/\s+/g,' ').trim());
+      });
+      lines.push('', '📱 免費估價試算 → 掃 QR 加 LINE', '',
+        `👤 ${a.agentName||''}`,
+        a.licenseNo?`🪪 經紀證號：${a.licenseNo}`:'',
+        `📞 ${a.phone||''}`,
+        `💬 LINE：${a.lineId||''}`);
+      text = lines.filter(x=>x!==undefined).join('\n');
+    } else {
+      const t = getTemplate(state.currentTemplate);
+      const r = getRecipientsForRender()[state.previewIndex];
+      text = buildLetterPlainText(t, r);
+    }
     try{
       await navigator.clipboard.writeText(text);
-      flash('已複製此封內容到剪貼簿');
-      track('letter_copy', { template_key: t.key });
+      flash('已複製內容到剪貼簿');
+      track(state.viewMode==='flyer'?'flyer_copy':'letter_copy', { mode: state.viewMode });
     }catch(e){
       flash('複製失敗，請手動選取');
     }
@@ -1149,6 +1680,17 @@ function bindActions(){
 
   document.getElementById('printBtn').addEventListener('click', ()=>{
     if(!validateAgent()) return;
+    if(state.viewMode === 'flyer'){
+      if(state.deals.length === 0){
+        flash('請先輸入至少 1 筆成交資料');
+        return;
+      }
+      document.getElementById('printArea').innerHTML = buildFlyerHTML();
+      flash('列印對話框：目的地選「另存為 PDF」、邊界選「無」、勾選「背景圖形」');
+      track('flyer_print', { layout: state.flyerLayout, deal_count: state.deals.length });
+      setTimeout(()=>window.print(), 600);
+      return;
+    }
     const t = getTemplate(state.currentTemplate);
     const recips = getRecipientsForRender();
     const html = recips.map(r=>buildLetterHTML(t,r)).join('');
@@ -1355,6 +1897,7 @@ function bindEmailGate(){
 }
 
 bindEmailGate();
+document.body.setAttribute('data-mode', state.viewMode);
 loadAgent();
 renderTemplateList();
 bindAgentInputs();
@@ -1363,7 +1906,9 @@ bindTheme();
 bindActions();
 bindHelpModal();
 bindAnalytics();
+bindModeAndLayout();
 parseRecipients();
+parseDealsInput();
 renderPreview();
 </script>
 </body>
