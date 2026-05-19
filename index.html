@@ -395,25 +395,26 @@
     margin:3px 0 0;font-weight:500
   }
 
-  /* === 4. 文案區（白底卡片＋引號） === */
+  /* === 4. 文案區（白底卡片＋引號，自動撐高） === */
   .flyer-message-wrap{
-    padding:0 22px;flex:1 0 auto;
-    display:flex;flex-direction:column;justify-content:center
+    padding:8px 22px;flex:1 0 auto;
+    display:flex;align-items:stretch
   }
   .flyer-message{
-    background:#fff;padding:20px 44px 18px;border-radius:10px;
+    flex:1;background:#fff;padding:32px 64px;border-radius:10px;
     position:relative;text-align:center;
-    box-shadow:0 4px 12px rgba(0,0,0,.08)
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    display:flex;flex-direction:column;justify-content:center
   }
   .flyer-message::before{
-    content:'\201C';position:absolute;left:16px;top:-4px;
-    font-family:'Noto Serif TC',serif;font-size:72px;font-weight:900;
-    color:#C82D26;line-height:1;opacity:.5
+    content:'\201C';position:absolute;left:12px;top:-2px;
+    font-family:'Noto Serif TC',serif;font-size:60px;font-weight:900;
+    color:#C82D26;line-height:1;opacity:.45;pointer-events:none
   }
   .flyer-message::after{
-    content:'\201D';position:absolute;right:20px;bottom:-18px;
-    font-family:'Noto Serif TC',serif;font-size:72px;font-weight:900;
-    color:#C82D26;line-height:1;opacity:.5
+    content:'\201D';position:absolute;right:16px;bottom:-22px;
+    font-family:'Noto Serif TC',serif;font-size:60px;font-weight:900;
+    color:#C82D26;line-height:1;opacity:.45;pointer-events:none
   }
   .flyer-message-text{
     font-family:'Noto Serif TC',serif;font-size:16px;line-height:1.9;
