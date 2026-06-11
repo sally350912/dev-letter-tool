@@ -14,6 +14,7 @@
 // ===== 設定區（部署前請改） =====
 const SHEET_ID    = '1ZFZwDOj-qZD7LYl4bDzFiiR9bfbP9cVktwfX8wZI63g';
 const SHEET_NAME  = '名單';                          // 工作表分頁名
+const VISITS_SHEET_NAME = '訪問紀錄';                 // 訪問紀錄分頁名（不存在會自動建）
 const TOOL_URL    = 'https://dev-letter-tool.vercel.app/';
 const FROM_NAME   = '莎莉｜台東女子北漂中';
 const SUBJECT     = '你的試用資格已解鎖 🔓｜莎莉 Sally';
@@ -32,6 +33,11 @@ function doPost(e) {
   try {
     const body  = JSON.parse(e.postData.contents || '{}');
     const email = String(body.email || '').trim().toLowerCase();
+
+    // 訪問紀錄分支：已解鎖使用者開頁時 ping，只寫紀錄不寄信、不檢查重複、不吃 quota
+    if (body.action === 'visit') {
+      return logVisit(email, body);
+    }
 
     // Honeypot：bot 會填這個隱藏欄位，人類不會。佯裝成功不浪費資源。
     if (body.company && String(body.company).trim() !== '') {
@@ -110,6 +116,32 @@ function doGet() {
   return jsonOut({ status: 'ok', message: 'dev-letter-tool email gate alive' });
 }
 
+// 寫一筆訪問紀錄到「訪問紀錄」分頁（不存在會自動建）
+function logVisit(email, body) {
+  try {
+    if (!isValidEmail(email)) {
+      return jsonOut({ status: 'error', message: 'invalid email' });
+    }
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    let sheet = ss.getSheetByName(VISITS_SHEET_NAME);
+    if (!sheet) {
+      sheet = ss.insertSheet(VISITS_SHEET_NAME);
+      sheet.appendRow(['時間', 'Email', '來源', 'User-Agent']);
+    } else if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['時間', 'Email', '來源', 'User-Agent']);
+    }
+    sheet.appendRow([
+      new Date(),
+      safeForSheet(email),
+      safeForSheet(body.source || 'web'),
+      safeForSheet(body.ua || '')
+    ]);
+    return jsonOut({ status: 'visit_logged' });
+  } catch (err) {
+    return jsonOut({ status: 'error', message: String(err) });
+  }
+}
+
 function isValidEmail(s) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 }
@@ -180,8 +212,8 @@ function sendWelcomeMail(to) {
           <span style="color:#7A5C4A">用 AI 讓工作變簡單 ⚡</span>
         </p>
         <p style="margin:16px 0 0;font-size:13px;line-height:2;color:#7A5C4A">
-          📷 IG：<a href="https://www.instagram.com/sally.lifestyle.ttt" style="color:#C4783A;text-decoration:none;font-weight:600">@sally.lifestyle.ttt</a><br>
-          🧵 Threads：<a href="https://www.threads.com/@sally.lifestyle.ttt" style="color:#C4783A;text-decoration:none;font-weight:600">@sally.lifestyle.ttt</a>
+          📷 IG：<a href="https://www.instagram.com/sally.sales.ttt" style="color:#C4783A;text-decoration:none;font-weight:600">@sally.sales.ttt</a><br>
+          🧵 Threads：<a href="https://www.threads.com/@sally.sales.ttt" style="color:#C4783A;text-decoration:none;font-weight:600">@sally.sales.ttt</a>
         </p>
       </div>
     </div>
