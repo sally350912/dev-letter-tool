@@ -4,8 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>房仲開發信批次生產工具</title>
+<meta name="description" content="房仲開發信與成交快報批次生產工具，快速套用 13 種月份情境、個人品牌資料與屋主名單，完成可列印的專業素材。">
+<link rel="canonical" href="https://dev-letter-tool.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="房仲開發信批次生產工具｜Sally 房仲工具室">
+<meta property="og:description" content="填一次資料，快速產生全年開發信與成交快報。">
+<meta property="og:url" content="https://dev-letter-tool.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="property-sales.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YSC1Q52B7G"></script>
 <script>
@@ -82,6 +91,15 @@
   .divider::before,.divider::after{
     content:'';flex:1;height:1px;background:#cbd5e1
   }
+
+  /* 開場問候（多封輪替） */
+  .opener-line{
+    font-size:13.5px;color:#64748b;margin:10px 0 -18px;
+    letter-spacing:.02em;line-height:1.6
+  }
+  /* 急尋面板帶買方故事時改一排四欄，維持原高度不擠壓版面 */
+  .urgent-grid.has-buyer{grid-template-columns:repeat(4,1fr)}
+  .urgent-grid.has-buyer .urgent-value{font-size:15px}
 
   /* 自我介紹段 */
   .intro-text{
@@ -588,9 +606,13 @@
     background:#1e293b;color:#fff;border-color:#1e293b;
     box-shadow:0 3px 8px rgba(30,41,59,.2)
   }
-  [data-mode-letter],[data-mode-flyer]{display:block}
+  [data-mode-letter],[data-mode-flyer],[data-mode-property]{display:block}
   body[data-mode="flyer"] [data-mode-letter]{display:none}
   body[data-mode="letter"] [data-mode-flyer]{display:none}
+  body:not([data-mode="property"]) [data-mode-property]{display:none}
+  body[data-mode="property"] [data-mode-letter],body[data-mode="property"] [data-mode-flyer]{display:none}
+  body[data-property-output="dm"] .property-copy-only{display:none!important}
+  body:not([data-property-output="dm"]) .property-dm-only{display:none!important}
 
   /* === 手機 / 平板 響應式預覽（不影響列印） === */
   @media (max-width: 1023px){
@@ -599,12 +621,18 @@
       zoom:.6;
       box-shadow:0 4px 14px rgba(0,0,0,.08)
     }
+    #previewBox .property-a4{zoom:.62}
+    #previewBox .property-social{zoom:.46}
   }
   @media (max-width: 768px){
     #previewBox .letter,#previewBox .flyer{zoom:.48}
+    #previewBox .property-a4{zoom:.48}
+    #previewBox .property-social{zoom:.36}
   }
   @media (max-width: 480px){
     #previewBox .letter,#previewBox .flyer{zoom:.36}
+    #previewBox .property-a4{zoom:.32}
+    #previewBox .property-social{zoom:.23}
     .letter,.flyer{margin-bottom:8px}
   }
   /* 手機讓表單 input 字級加大、避免 iOS 自動放大 */
@@ -636,8 +664,8 @@
   @media print{ .email-gate{display:none!important} }
 
   .email-gate-card{
-    width:100%;max-width:460px;background:#fff;border:1px solid #C4783A;
-    border-radius:16px;overflow:hidden;box-shadow:0 18px 48px rgba(122,92,74,.18);
+    width:100%;max-width:540px;background:#fff;border:1px solid #C4783A;
+    border-radius:20px;overflow:hidden;box-shadow:0 24px 64px rgba(122,92,74,.22);
     animation:gateFadeIn .35s ease-out
   }
   @keyframes gateFadeIn{
@@ -655,15 +683,22 @@
     font-size:11px;letter-spacing:.22em;color:#E8C96A;font-weight:600
   }
   .email-gate-title{
-    font-family:'Noto Serif TC',serif;font-size:22px;font-weight:700;
+    font-family:'Noto Serif TC',serif;font-size:25px;font-weight:700;
     margin:6px 0 0;letter-spacing:.04em
   }
+  .email-gate-kicker{font-size:12px;color:#8b6b55;margin:0 0 5px;font-weight:700;letter-spacing:.08em}
   .email-gate-body{padding:24px 28px 26px}
   .email-gate-desc{
     font-size:14px;line-height:1.85;color:#5b4636;margin:0 0 18px
   }
   .email-gate-desc b{color:#C4783A;font-weight:700}
+  .email-gate-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 20px}
+  .email-gate-benefit{padding:12px 9px;border-radius:12px;background:#FAF5EE;border:1px solid #eadbc9;text-align:center}
+  .email-gate-benefit svg{width:21px;height:21px;margin:0 auto 7px;stroke:#C4783A;fill:none;stroke-width:1.8}
+  .email-gate-benefit strong{display:block;font-size:12px;color:#4a3527;line-height:1.4}
+  .email-gate-benefit span{display:block;font-size:10.5px;color:#8b7462;margin-top:3px;line-height:1.35}
   .email-gate-form{display:flex;flex-direction:column;gap:10px}
+  .email-gate-label{font-size:12px;font-weight:700;color:#5b4636}
   .email-gate-input{
     width:100%;padding:13px 16px;font-size:15px;border:1.5px solid #d8c5b1;
     border-radius:10px;background:#FAF5EE;color:#3a2a1f;
@@ -698,11 +733,65 @@
   }
   .email-gate-foot span{color:#C4783A;font-weight:600}
 
+  /* === 解鎖後三步驟動線（只影響工具 UI，不影響輸出樣板） === */
+  .workflow-shell{background:#fffaf4;border-bottom:1px solid #eadbc9}
+  .workflow-stepper{display:grid;grid-template-columns:repeat(4,1fr);max-width:840px;margin:0 auto;padding:10px 12px;gap:8px}
+  .workflow-step{min-height:44px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e6d7c6;border-radius:999px;background:#fff;color:#806955;font-size:13px;font-weight:700;transition:background .2s,border-color .2s,color .2s,box-shadow .2s}
+  .workflow-step-number{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#f1e7dc;color:#7A5C4A;font-size:12px}
+  .workflow-step[aria-current="step"]{background:#7A5C4A;border-color:#7A5C4A;color:#fff;box-shadow:0 5px 14px rgba(122,92,74,.2)}
+  .workflow-step[aria-current="step"] .workflow-step-number{background:#E8C96A;color:#4a3527}
+  .workflow-mobile-hint{display:none;text-align:center;color:#7A5C4A;font-size:11px;font-weight:700;padding:0 12px 8px}
+  .tool-panel{transition:border-color .2s,box-shadow .2s}
+  .tool-panel.is-current{border-color:#c9a98c;box-shadow:0 8px 22px rgba(122,92,74,.1)}
+  .preview-actions button{min-height:44px}
+
+  /* === 四階段精靈：一次只顯示一個步驟 === */
+  .step-panel{display:none}
+  .step-panel.is-active{display:block}
+
+  .step-nav-btn{
+    padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;
+    border:1px solid #d6d3d1;background:#fff;color:#475569;
+    transition:all .15s;cursor:pointer
+  }
+  .step-nav-btn:hover{border-color:#7A5C4A;color:#7A5C4A}
+  .step-nav-btn.step-nav-next{
+    background:#7A5C4A;border-color:#7A5C4A;color:#fff;
+    box-shadow:0 4px 12px rgba(122,92,74,.25)
+  }
+  .step-nav-btn.step-nav-next:hover{background:#644a3b;color:#fff}
+
+  .output-card{
+    display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
+    padding:14px 16px;border:1.5px solid #e7e5e4;border-radius:14px;background:#fff;
+    transition:all .15s;cursor:pointer
+  }
+  .output-card:hover{border-color:#c9a98c;box-shadow:0 4px 14px rgba(122,92,74,.12)}
+  .output-card.is-selected{
+    border-color:#7A5C4A;background:#FAF5EE;
+    box-shadow:0 4px 14px rgba(122,92,74,.15)
+  }
+  .output-card-emoji{font-size:26px;line-height:1;margin-top:2px}
+  .output-card-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .output-card-body strong{font-size:14.5px;color:#1e293b}
+  .output-card-body span{font-size:11.5px;color:#78716c;line-height:1.5}
+  .output-card.is-selected .output-card-body strong{color:#7A5C4A}
+
   @media (max-width:480px){
     .email-gate{padding:16px}
     .email-gate-head{padding:18px 22px 16px}
     .email-gate-title{font-size:19px}
     .email-gate-body{padding:20px 22px 22px}
+    .email-gate-benefits{grid-template-columns:1fr;gap:6px}
+    .email-gate-benefit{display:grid;grid-template-columns:28px 1fr;column-gap:8px;text-align:left;padding:9px 11px}
+    .email-gate-benefit svg{grid-row:1/3;margin:auto 0}
+    .workflow-stepper{padding:8px;gap:5px}
+    .workflow-step{min-height:42px;padding:0 6px;font-size:11px;gap:5px}
+    .workflow-step-number{width:21px;height:21px}
+    .workflow-step-label{display:none}
+    .workflow-mobile-hint{display:block}
+    .preview-actions{position:sticky;bottom:8px;z-index:20;width:100%;padding:8px;border-radius:12px;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(61,43,31,.18);backdrop-filter:blur(8px)}
+    .preview-actions .preview-divider{display:none}
   }
 </style>
 </head>
@@ -713,30 +802,38 @@
   <div class="email-gate-card">
     <div class="email-gate-head">
       <div class="email-gate-tag">SALLY · 房仲工具室</div>
-      <div id="emailGateTitle" class="email-gate-title">解鎖開發信工具 ✉️</div>
+      <div id="emailGateTitle" class="email-gate-title">把重複寫信，變成一次完成</div>
     </div>
     <div class="email-gate-body">
-      <p class="email-gate-desc">
-        當房仲的時候，我每天花大量時間<br>
-        重複寫一樣的開發信，只是換個名字換個地址。<br>
-        所以我做了這個工具。
-      </p>
-      <p class="email-gate-desc" style="margin-top:-4px">
-        現在開放<b>試用資格申請</b>，<br>
-        輸入 Email 即可解鎖，後續功能持續更新中。
-      </p>
+      <p class="email-gate-kicker">免費房仲效率工具</p>
+      <p class="email-gate-desc">輸入一次業務資料，就能套用全年開發信與成交快報。留下 Email，立即進入工具。</p>
+      <div class="email-gate-benefits" aria-label="工具功能">
+        <div class="email-gate-benefit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="m4 7 8 6 8-6"/></svg>
+          <strong>13 種月份情境</strong><span>全年開發信快速套用</span>
+        </div>
+        <div class="email-gate-benefit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9l8-5 8 5v10"/><path d="M9 19v-5h6v5"/></svg>
+          <strong>成交快報</strong><span>資料填完即時預覽</span>
+        </div>
+        <div class="email-gate-benefit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4V9h16v9h-2"/><path d="M6 14h12v7H6z"/></svg>
+          <strong>批次輸出</strong><span>列印或另存 PDF</span>
+        </div>
+      </div>
       <form id="emailGateForm" class="email-gate-form" novalidate>
+        <label class="email-gate-label" for="emailGateInput">你的 Email</label>
         <input id="emailGateInput" class="email-gate-input" type="email" required
-               placeholder="your@email.com" autocomplete="email" inputmode="email">
+               placeholder="name@example.com" autocomplete="email" inputmode="email" aria-describedby="emailGateMsg emailGatePrivacy">
         <!-- Honeypot：bot 會填，人類看不到也不會填 -->
         <input id="emailGateHoney" type="text" name="company" tabindex="-1" autocomplete="off"
                aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;opacity:0">
-        <button id="emailGateBtn" class="email-gate-btn" type="submit">解鎖試用資格 →</button>
+        <button id="emailGateBtn" class="email-gate-btn" type="submit">免費解鎖，開始製作</button>
       </form>
-      <div id="emailGateMsg" class="email-gate-msg"></div>
-      <div class="email-gate-foot">
-        所有資料只存在你瀏覽器，僅留 Email 給莎莉<br>
-        <span>不會分享給第三方，每個 Email 只會收到一次歡迎信</span>
+      <div id="emailGateMsg" class="email-gate-msg" role="status" aria-live="polite"></div>
+      <div id="emailGatePrivacy" class="email-gate-foot">
+        工具內資料只存在你的瀏覽器；Email 僅供寄送歡迎信與工具更新<br>
+        <span>不分享給第三方，也不會寄送大量推銷信</span>
       </div>
     </div>
   </div>
@@ -752,14 +849,14 @@
       </div>
     </div>
     <div class="flex items-center gap-1.5 sm:gap-2">
-      <button id="helpBtn" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-sm transition hover:scale-105" style="background:#7A5C4A">
+      <button id="helpBtn" aria-label="開啟使用說明" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-sm transition hover:scale-105" style="background:#7A5C4A">
         📖 <span class="hidden sm:inline">使用說明</span>
       </button>
       <span class="hidden sm:inline text-xs text-slate-500 mr-1 ml-1">主色：</span>
-      <button data-theme="navy" title="深藍" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ring-2 ring-offset-2 ring-slate-800" style="background:#1e293b"></button>
-      <button data-theme="emerald" title="新綠" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#589B4B"></button>
-      <button data-theme="wine" title="正紅" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#C82D26"></button>
-      <button data-theme="gold" title="金黃" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#F1CD57"></button>
+      <button data-theme="navy" title="深藍" aria-label="樣板主色：深藍" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 ring-2 ring-offset-2 ring-slate-800" style="background:#1e293b"></button>
+      <button data-theme="emerald" title="新綠" aria-label="樣板主色：新綠" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#589B4B"></button>
+      <button data-theme="wine" title="正紅" aria-label="樣板主色：正紅" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#C82D26"></button>
+      <button data-theme="gold" title="金黃" aria-label="樣板主色：金黃" class="color-swatch w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white ring-1 ring-stone-200" style="background:#F1CD57"></button>
       <div class="hidden sm:flex items-center gap-1.5 ml-1 sm:ml-2 pl-2 sm:pl-3 border-l border-stone-200">
         <span class="text-xs text-slate-500">by</span>
         <span class="text-xs font-bold text-slate-800">Sally</span>
@@ -767,6 +864,11 @@
            data-track-event="click_ig" data-track-source="header"
            class="inline-flex items-center justify-center w-7 h-7 rounded-full text-white bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 hover:scale-110 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+        </a>
+        <a href="https://lin.ee/vGHKzG1" target="_blank" rel="noopener" title="Sally LINE"
+           data-track-event="click_line" data-track-source="header"
+           class="inline-flex items-center justify-center w-7 h-7 rounded-full text-white bg-[#06C755] hover:scale-110 transition">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         </a>
         <a href="https://www.threads.com/@sally.sales.ttt" target="_blank" rel="noopener" title="Sally Threads"
            data-track-event="click_threads" data-track-source="header"
@@ -778,219 +880,372 @@
   </div>
 </header>
 
-<main class="no-print max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 grid grid-cols-12 gap-3 sm:gap-5">
+<nav class="no-print workflow-shell" aria-label="製作流程">
+  <div id="workflowStepper" class="workflow-stepper">
+    <button type="button" class="workflow-step" data-workflow-step="1" aria-current="step"><span class="workflow-step-number">1</span><span class="workflow-step-label">基本資料</span></button>
+    <button type="button" class="workflow-step" data-workflow-step="2"><span class="workflow-step-number">2</span><span class="workflow-step-label">選擇產出</span></button>
+    <button type="button" class="workflow-step" data-workflow-step="3"><span class="workflow-step-number">3</span><span class="workflow-step-label">內容設定</span></button>
+    <button type="button" class="workflow-step" data-workflow-step="4"><span class="workflow-step-number">4</span><span class="workflow-step-label">預覽輸出</span></button>
+  </div>
+  <p id="workflowMobileHint" class="workflow-mobile-hint" aria-live="polite">第 1 步：基本資料</p>
+</nav>
 
-  <section class="col-span-12 lg:col-span-3 bg-white rounded-xl border border-stone-200 p-4">
-    <div class="mode-tabs">
-      <button id="modeLetterBtn" class="mode-tab active" data-mode="letter">📮 開發信</button>
-      <button id="modeFlyerBtn" class="mode-tab" data-mode="flyer">📢 成交快報</button>
-    </div>
-    <div data-mode-letter>
-      <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
-        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">1</span>
-        月份範本
-      </h2>
-      <div id="templateList" class="grid grid-cols-2 sm:grid-cols-2 gap-1.5"></div>
-    </div>
-    <div data-mode-flyer>
-      <h2 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
-        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">1</span>
-        派報設定
-      </h2>
-      <div class="mb-3 px-3 py-2.5 rounded-md text-xs text-slate-600" style="background:#fef9ec;border:1px solid #f3e3b5">
-        <div class="font-bold text-[#7A5C4A] mb-1">📢 成 交 快 報（A4 直式）</div>
-        <div class="text-[11px] text-slate-500">深藍底＋金色標題＋街景照＋紅色緞帶設計</div>
-      </div>
-      <!-- 隱藏 layout 切換，新設計固定單筆主秀 -->
-      <div class="hidden">
-        <button class="flyer-layout-btn active" data-layout="hero"></button>
-      </div>
-      <div>
-        <label class="block text-xs text-slate-600 mb-1">派報副標</label>
-        <input id="flyerSubtitle" type="text" placeholder="台北文山區 真實數據" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-      </div>
-      <div class="mt-3">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-xs text-slate-600">底部金字 footer</label>
-          <button type="button" id="resetFlyerFooter" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
-        </div>
-        <input id="flyerFooter" type="text" placeholder="🏠 誠信 ｜ 專業 ｜ 用心 ｜ 值得託付" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-        <p class="text-[10.5px] text-slate-400 mt-1">不會自動換行，請控制長度</p>
-      </div>
-      <div class="mt-3">
-        <div class="flex items-center justify-between mb-1">
-          <label class="text-xs text-slate-600">派報文案（<code class="bg-stone-100 px-1 rounded">**字**</code>=紅色重點）</label>
-          <button type="button" id="resetFlyerMessage" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
-        </div>
-        <textarea id="flyerMessage" rows="6" class="scroll-thin w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
-        <p class="text-[10.5px] text-slate-400 mt-1">支援變數：<code>{{agentName}}</code> <code>{{storeName}}</code> <code>{{dealCount}}</code> <code>{{region}}</code></p>
-      </div>
-    </div>
-  </section>
+<main class="no-print max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
 
-  <section class="col-span-12 lg:col-span-4 bg-white rounded-xl border border-stone-200 p-4">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-        <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">2</span>
-        業務員資料
-      </h2>
-      <span class="text-[11px] text-slate-400">自動儲存</span>
+  <!-- ============ STEP 1 基本資料（填一次全共用） ============ -->
+  <section id="stepPanel1" class="step-panel is-active tool-panel is-current bg-white rounded-xl border border-stone-200 p-4 sm:p-6">
+    <div class="flex items-center justify-between mb-1 flex-wrap gap-2">
+      <h2 class="text-base font-bold text-slate-800">👤 基本資料</h2>
+      <div class="flex items-center gap-2">
+        <button type="button" id="exportSettings" title="下載設定檔，換電腦或手機不用重填" class="text-[11px] text-amber-700 hover:underline">匯出設定</button>
+        <button type="button" id="importSettings" class="text-[11px] text-amber-700 hover:underline">匯入</button>
+        <input id="importSettingsFile" type="file" accept="application/json,.json" class="hidden">
+        <span class="text-[11px] text-slate-400">自動儲存</span>
+      </div>
     </div>
-    <div class="space-y-2.5">
-      <div class="grid grid-cols-2 gap-2">
+    <p class="text-xs text-slate-500 mb-4">填一次就好——開發信、成交快報、房屋銷售的文案跟 DM 都會自動帶入這些資料。</p>
+    <div class="grid lg:grid-cols-2 gap-x-8 gap-y-3">
+      <div class="space-y-2.5">
+        <h3 class="text-sm font-bold pb-1 border-b border-stone-100" style="color:#7A5C4A">① 我是誰（<span class="text-rose-500">*</span> 必填）</h3>
         <label class="block">
           <span class="text-xs text-slate-600">姓名 <span class="text-rose-500">*</span></span>
           <input id="agentName" type="text" placeholder="王小明" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
         </label>
         <label class="block">
-          <span class="text-xs text-slate-600">家鄉</span>
-          <input id="hometown" type="text" placeholder="彰化" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          <span class="text-xs text-slate-600">店名 <span class="text-rose-500">*</span></span>
+          <input id="storeName" type="text" placeholder="XX房屋 台北旗艦店" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="block">
+            <span class="text-xs text-slate-600">電話 <span class="text-rose-500">*</span></span>
+            <input id="phone" type="text" placeholder="0912-345-678" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          </label>
+          <label class="block">
+            <span class="text-xs text-slate-600">LINE ID</span>
+            <input id="lineId" type="text" placeholder="@sally-realtor" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          </label>
+        </div>
+        <label class="block">
+          <span class="text-xs text-slate-600">經紀證號（不動產經紀人／營業員）</span>
+          <input id="licenseNo" type="text" placeholder="北市經(99)字第 12345 號" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
+        <label class="block">
+          <span class="text-xs text-slate-600">公司地址（可選）</span>
+          <input id="storeAddress" type="text" placeholder="台北市大安區○○路 123 號" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
         </label>
       </div>
-      <label class="block">
-        <span class="text-xs text-slate-600">店名 <span class="text-rose-500">*</span></span>
-        <input id="storeName" type="text" placeholder="XX房屋 台北旗艦店" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-      </label>
-      <label class="block">
-        <span class="text-xs text-slate-600 flex items-center justify-between">
-          <span>店頭 LOGO（可選，沒上傳則顯示店名）</span>
-          <button type="button" id="clearLogo" class="text-[11px] text-rose-600 hover:underline">清除</button>
-        </span>
-        <input id="logoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
-        <div id="logoPreview" class="mt-1 hidden"><img class="h-9 max-w-[180px] object-contain border border-stone-200 rounded bg-stone-50 p-1"></div>
-      </label>
-      <div class="grid grid-cols-2 gap-2">
+      <div class="space-y-2.5">
+        <h3 class="text-sm font-bold pb-1 border-b border-stone-100" style="color:#7A5C4A">② 我的特色與形象</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="block">
+            <span class="text-xs text-slate-600">家鄉</span>
+            <input id="hometown" type="text" placeholder="彰化" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          </label>
+          <label class="block">
+            <span class="text-xs text-slate-600">服務區域</span>
+            <input id="serviceRegion" type="text" placeholder="台北市大安區" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          </label>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="block">
+            <span class="text-xs text-slate-600">服務年資</span>
+            <input id="serviceYears" type="text" placeholder="5" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          </label>
+          <label class="block">
+            <span class="text-xs text-slate-600">獎項年份</span>
+            <input id="awardYear" type="text" placeholder="2025" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          </label>
+        </div>
+        <label class="block">
+          <span class="text-xs text-slate-600">獎項名稱</span>
+          <input id="awards" type="text" placeholder="年度業績冠軍" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+        </label>
         <label class="block">
           <span class="text-xs text-slate-600 flex items-center justify-between">
-            <span>大頭照（圓形）</span>
-            <button type="button" id="clearPhoto" class="text-[11px] text-rose-600 hover:underline">清除</button>
+            <span>店頭 LOGO（可選，沒上傳則顯示店名）</span>
+            <button type="button" id="clearLogo" class="text-[11px] text-rose-600 hover:underline">清除</button>
           </span>
-          <input id="photoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
-          <div id="photoPreview" class="mt-1 hidden"><img class="w-12 h-12 rounded-full object-cover border border-stone-200"></div>
+          <input id="logoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+          <div id="logoPreview" class="mt-1 hidden"><img class="h-9 max-w-[180px] object-contain border border-stone-200 rounded bg-stone-50 p-1"></div>
         </label>
-        <label class="block">
-          <span class="text-xs text-slate-600 flex items-center justify-between">
-            <span>自訂 QR（覆蓋預設）</span>
-            <button type="button" id="clearQr" class="text-[11px] text-rose-600 hover:underline">清除</button>
-          </span>
-          <input id="qrFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
-          <div id="qrPreview" class="mt-1 hidden"><img class="w-12 h-12 object-contain border border-stone-200 rounded bg-white p-1"></div>
-        </label>
-      </div>
-      <label class="block">
-        <span class="text-xs text-slate-600 flex items-center justify-between">
-          <span>📢 派報主照（街景／物件外觀，僅用於成交快報）</span>
-          <button type="button" id="clearHeroPhoto" class="text-[11px] text-rose-600 hover:underline">清除</button>
-        </span>
-        <input id="heroPhotoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
-        <div id="heroPhotoPreview" class="mt-1 hidden"><img class="h-16 max-w-[200px] object-cover border border-stone-200 rounded"></div>
-      </label>
-      <label class="block">
-        <span class="text-xs text-slate-600">服務區域</span>
-        <input id="serviceRegion" type="text" placeholder="台北市大安區" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-      </label>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        <label class="block">
-          <span class="text-xs text-slate-600">服務年資</span>
-          <input id="serviceYears" type="text" placeholder="5" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-        </label>
-        <label class="block">
-          <span class="text-xs text-slate-600">獎項年份</span>
-          <input id="awardYear" type="text" placeholder="2025" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-        </label>
-        <label class="block col-span-2 sm:col-span-1">
-          <span class="text-xs text-slate-600">電話 <span class="text-rose-500">*</span></span>
-          <input id="phone" type="text" placeholder="0912-345-678" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-        </label>
-      </div>
-      <label class="block">
-        <span class="text-xs text-slate-600">獎項名稱</span>
-        <input id="awards" type="text" placeholder="年度業績冠軍" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-      </label>
-      <div class="grid grid-cols-2 gap-2">
-        <label class="block">
-          <span class="text-xs text-slate-600">LINE ID</span>
-          <input id="lineId" type="text" placeholder="@sally-realtor" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-        </label>
-        <label class="block">
-          <span class="text-xs text-slate-600">急尋房型</span>
-          <input id="propertyType" type="text" placeholder="2-4 房" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-        </label>
-      </div>
-      <label class="block">
-        <span class="text-xs text-slate-600">公司地址（可選）</span>
-        <input id="storeAddress" type="text" placeholder="台北市大安區○○路 123 號" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-      </label>
-      <label class="block">
-        <span class="text-xs text-slate-600">經紀證號（不動產經紀人／營業員）</span>
-        <input id="licenseNo" type="text" placeholder="北市經(99)字第 12345 號" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
-      </label>
-      <label class="block">
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-slate-600">自我介紹（公版可自行修改，<code class="bg-stone-100 px-1 rounded">**字**</code>=黃色重點）</span>
-          <button type="button" id="resetIntro" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="block">
+            <span class="text-xs text-slate-600 flex items-center justify-between">
+              <span>大頭照（圓形）</span>
+              <button type="button" id="clearPhoto" class="text-[11px] text-rose-600 hover:underline">清除</button>
+            </span>
+            <input id="photoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+            <div id="photoPreview" class="mt-1 hidden"><img class="w-12 h-12 rounded-full object-cover border border-stone-200"></div>
+          </label>
+          <label class="block">
+            <span class="text-xs text-slate-600 flex items-center justify-between">
+              <span>自訂 QR（覆蓋預設）</span>
+              <button type="button" id="clearQr" class="text-[11px] text-rose-600 hover:underline">清除</button>
+            </span>
+            <input id="qrFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+            <div id="qrPreview" class="mt-1 hidden"><img class="w-12 h-12 object-contain border border-stone-200 rounded bg-white p-1"></div>
+          </label>
         </div>
-        <textarea id="introText" rows="4" class="scroll-thin mt-0.5 w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
-      </label>
-      <label class="block">
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-slate-600">成功案例（<code class="bg-stone-100 px-1 rounded">{{caseStudyDays}}</code>=月份天數，<code class="bg-stone-100 px-1 rounded">**字**</code>=紅色重點）</span>
-          <button type="button" id="resetCase" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
-        </div>
-        <textarea id="caseText" rows="3" class="scroll-thin mt-0.5 w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
-      </label>
+      </div>
+    </div>
+    <div class="mt-6 flex justify-end">
+      <button type="button" data-step-next="2" class="step-nav-btn step-nav-next">下一步：選擇產出 →</button>
     </div>
   </section>
 
-  <section class="col-span-12 lg:col-span-5 bg-white rounded-xl border border-stone-200 p-4">
+  <!-- ============ STEP 2 選擇產出 ============ -->
+  <section id="stepPanel2" class="step-panel tool-panel bg-white rounded-xl border border-stone-200 p-4 sm:p-6">
+    <h2 class="text-base font-bold text-slate-800 mb-1">🎯 這次要產出什麼？</h2>
+    <p class="text-xs text-slate-500 mb-4">選一種，下一步只會出現它需要的欄位。之後隨時可以回來換。</p>
+
+    <p class="text-xs font-bold mb-2" style="color:#7A5C4A">✍️ 文案產生（純文字，複製就能發）</p>
+    <div class="grid sm:grid-cols-1 gap-3 mb-5 max-w-2xl">
+      <button type="button" data-output-card="copy" class="output-card">
+        <span class="output-card-emoji">✍️</span>
+        <span class="output-card-body">
+          <strong>房屋銷售文案腳本</strong>
+          <span>填物件資料＋勾特色＋選口吻，一鍵產出 FB／IG／LINE 三平台完整貼文</span>
+        </span>
+      </button>
+    </div>
+
+    <p class="text-xs font-bold mb-2" style="color:#7A5C4A">🖨 DM 產生（可列印／存 PDF／下載圖片）</p>
+    <div class="grid sm:grid-cols-3 gap-3">
+      <button type="button" data-output-card="dm-letter" class="output-card">
+        <span class="output-card-emoji">📮</span>
+        <span class="output-card-body">
+          <strong>開發信</strong>
+          <span>A4 直式・13 種月份情境・屋主名單批次生成</span>
+        </span>
+      </button>
+      <button type="button" data-output-card="dm-flyer" class="output-card">
+        <span class="output-card-emoji">📢</span>
+        <span class="output-card-body">
+          <strong>成交快報</strong>
+          <span>A4 直式戰績快報・可下載 PNG 傳 LINE</span>
+        </span>
+      </button>
+      <button type="button" data-output-card="dm-property" class="output-card">
+        <span class="output-card-emoji">🏠</span>
+        <span class="output-card-body">
+          <strong>房屋銷售 DM</strong>
+          <span>A4 橫式＋1200×900 社群圖</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="mt-6 flex justify-between">
+      <button type="button" data-step-prev="1" class="step-nav-btn">← 上一步</button>
+      <button type="button" data-step-next="3" class="step-nav-btn step-nav-next">下一步：內容設定 →</button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3 內容設定（依產出型態顯示） ============ -->
+  <section id="stepPanel3" class="step-panel tool-panel bg-white rounded-xl border border-stone-200 p-4 sm:p-6">
+    <h2 class="text-base font-bold text-slate-800 mb-1">📝 內容設定 <span id="configTitle" class="text-sm font-normal text-slate-500"></span></h2>
+    <p class="text-xs text-slate-500 mb-4">只需要填這個型態會用到的內容，基本資料已經自動帶入。</p>
+
+    <!-- 開發信設定 -->
     <div data-mode-letter>
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-          <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">3</span>
-          屋主名單（一行一筆）
-        </h2>
-        <button id="loadSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
-      </div>
-      <p class="text-[11px] text-slate-500 mb-1.5">每行 = 一個屋主稱謂，自動帶入大標「屋主XXX，⋯」</p>
-      <textarea id="recipientList" rows="9" placeholder="王先生&#10;陳太太&#10;李小姐" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
-      <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
-        <span>共 <b id="recipientCount" class="text-slate-800">0</b> 封</span>
-        <span>留空時大標顯示「屋主您好」</span>
+      <div class="grid lg:grid-cols-2 gap-x-8 gap-y-4">
+        <div>
+          <h3 class="text-sm font-bold mb-2 pb-1 border-b border-stone-100" style="color:#7A5C4A">① 選月份範本</h3>
+          <div id="templateList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-1.5"></div>
+          <h3 class="text-sm font-bold mt-4 mb-2 pb-1 border-b border-stone-100" style="color:#7A5C4A">② 信件內容（公版可修改）</h3>
+          <label class="block">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-600">自我介紹（<code class="bg-stone-100 px-1 rounded">**字**</code>=黃色重點）</span>
+              <button type="button" id="resetIntro" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+            </div>
+            <textarea id="introText" rows="4" class="scroll-thin mt-0.5 w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
+          </label>
+          <label class="block mt-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-600">成功案例（<code class="bg-stone-100 px-1 rounded">{{caseStudyDays}}</code>=月份天數，<code class="bg-stone-100 px-1 rounded">**字**</code>=紅色重點）</span>
+              <button type="button" id="resetCase" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+            </div>
+            <textarea id="caseText" rows="3" class="scroll-thin mt-0.5 w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
+          </label>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold mb-2 pb-1 border-b border-stone-100" style="color:#7A5C4A">③ 急尋買方（越具體越打動屋主）</h3>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="block">
+              <span class="text-xs text-slate-600">急尋房型</span>
+              <input id="propertyType" type="text" placeholder="2-4 房" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+            </label>
+            <label class="block">
+              <span class="text-xs text-slate-600">買方預算（選填）</span>
+              <input id="buyerBudget" type="text" placeholder="2,000～2,500 萬" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+            </label>
+            <label class="block">
+              <span class="text-xs text-slate-600">看屋時間（選填）</span>
+              <input id="buyerTiming" type="text" placeholder="本週即可看屋" class="mt-0.5 w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+            </label>
+          </div>
+          <div class="flex items-center justify-between mt-4 mb-2 pb-1 border-b border-stone-100">
+            <h3 class="text-sm font-bold" style="color:#7A5C4A">④ 屋主名單（一行一筆，可加路段）</h3>
+            <button id="loadSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
+          </div>
+          <p class="text-[11px] text-slate-500 mb-1.5">格式：<code class="bg-stone-100 px-1 rounded">稱謂, 路段</code>（路段選填）。有填路段時，急尋面板的目標區域會鎖定該路段，回應率更好。</p>
+          <textarea id="recipientList" rows="9" placeholder="王先生, 仁愛路四段&#10;陳太太, 信義路五段&#10;李小姐" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
+          <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
+            <span>共 <b id="recipientCount" class="text-slate-800">0</b> 封<span id="recipientRoadInfo" class="text-amber-700"></span></span>
+            <span>留空時大標顯示「屋主您好」</span>
+          </div>
+          <label class="mt-2 flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+            <input id="rotateOpeners" type="checkbox" checked class="rounded border-stone-300">
+            <span>多封輪替開場句<span class="text-slate-400">（同一棟投遞時，鄰居的信不會一模一樣）</span></span>
+          </label>
+        </div>
       </div>
     </div>
+
+    <!-- 成交快報設定 -->
     <div data-mode-flyer>
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-          <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-xs flex items-center justify-center">3</span>
-          成交資料（一行一筆，逗號分隔）
-        </h2>
-        <button id="loadFlyerSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
+      <div class="grid lg:grid-cols-2 gap-x-8 gap-y-4">
+        <div>
+          <h3 class="text-sm font-bold mb-2 pb-1 border-b border-stone-100" style="color:#7A5C4A">① 快報版面文字</h3>
+          <div>
+            <label class="block text-xs text-slate-600 mb-1">派報副標</label>
+            <input id="flyerSubtitle" type="text" placeholder="台北文山區 真實數據" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+          </div>
+          <div class="mt-3">
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs text-slate-600">底部金字 footer</label>
+              <button type="button" id="resetFlyerFooter" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+            </div>
+            <input id="flyerFooter" type="text" placeholder="🏠 誠信 ｜ 專業 ｜ 用心 ｜ 值得託付" class="w-full px-3 py-1.5 text-sm border border-stone-300 rounded-md">
+            <p class="text-[10.5px] text-slate-400 mt-1">不會自動換行，請控制長度</p>
+          </div>
+          <div class="mt-3">
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs text-slate-600">派報文案（<code class="bg-stone-100 px-1 rounded">**字**</code>=紅色重點）</label>
+              <button type="button" id="resetFlyerMessage" class="text-[11px] text-amber-700 hover:underline">還原公版</button>
+            </div>
+            <textarea id="flyerMessage" rows="6" class="scroll-thin w-full px-3 py-2 text-xs border border-stone-300 rounded-md leading-relaxed"></textarea>
+            <p class="text-[10.5px] text-slate-400 mt-1">支援變數：<code>{{agentName}}</code> <code>{{storeName}}</code> <code>{{dealCount}}</code> <code>{{region}}</code></p>
+          </div>
+          <label class="block mt-3">
+            <span class="text-xs text-slate-600 flex items-center justify-between">
+              <span>📢 派報主照（街景／物件外觀）</span>
+              <button type="button" id="clearHeroPhoto" class="text-[11px] text-rose-600 hover:underline">清除</button>
+            </span>
+            <input id="heroPhotoFile" type="file" accept="image/*" class="mt-0.5 w-full text-xs file:mr-2 file:px-2 file:py-1 file:text-xs file:border-0 file:rounded file:bg-slate-100 file:text-slate-700 file:cursor-pointer">
+            <div id="heroPhotoPreview" class="mt-1 hidden"><img class="h-16 max-w-[200px] object-cover border border-stone-200 rounded"></div>
+          </label>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-2 pb-1 border-b border-stone-100">
+            <h3 class="text-sm font-bold" style="color:#7A5C4A">② 成交資料（一行一筆，逗號分隔）</h3>
+            <button id="loadFlyerSample" class="text-xs text-amber-700 hover:underline">載入範例</button>
+          </div>
+          <p class="text-[11px] text-slate-500 mb-1.5">格式：<code class="bg-stone-100 px-1 rounded">地址, 坪數, 總價, 房型, 月份</code>（第 1 筆會放大主秀）</p>
+          <textarea id="dealList" rows="9" placeholder="仁愛路四段, 28坪, 1980萬, 3房2廳, 2026/04&#10;信義路五段, 35坪, 2680萬, 4房2廳, 2026/04&#10;忠孝東路, 22坪, 1560萬, 2房1廳, 2026/03" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
+          <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
+            <span>共 <b id="dealCount" class="text-slate-800">0</b> 筆成交</span>
+            <span>需有至少 1 筆</span>
+          </div>
+        </div>
       </div>
-      <p class="text-[11px] text-slate-500 mb-1.5">格式：<code class="bg-stone-100 px-1 rounded">地址, 坪數, 總價, 房型, 月份</code>（單筆主秀：第 1 筆放大；多筆列表：建議 4-8 筆）</p>
-      <textarea id="dealList" rows="9" placeholder="仁愛路四段, 28坪, 1980萬, 3房2廳, 2026/04&#10;信義路五段, 35坪, 2680萬, 4房2廳, 2026/04&#10;忠孝東路, 22坪, 1560萬, 2房1廳, 2026/03" class="scroll-thin w-full px-3 py-2 text-sm border border-stone-300 rounded-md font-mono"></textarea>
-      <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
-        <span>共 <b id="dealCount" class="text-slate-800">0</b> 筆成交</span>
-        <span>需有至少 1 筆</span>
+    </div>
+
+    <!-- 房屋銷售設定（文案腳本與 DM 共用物件資料） -->
+    <div data-mode-property>
+      <div class="grid lg:grid-cols-2 gap-x-8 gap-y-4">
+        <div class="space-y-3">
+          <h3 class="text-sm font-bold pb-1 border-b border-stone-100" style="color:#7A5C4A">① 物件資料（<span class="text-rose-500">*</span> 為必填）</h3>
+          <div class="grid sm:grid-cols-2 gap-2.5">
+            <label class="block sm:col-span-2"><span class="text-xs text-slate-600">物件標題 *</span><input id="propertyTitle" type="text" placeholder="大安森林公園三房" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block sm:col-span-2"><span class="text-xs text-slate-600">地址或生活圈 *</span><input id="propertyArea" type="text" placeholder="大安森林公園生活圈" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">總價 *</span><input id="propertyPrice" type="text" placeholder="3,680 萬" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">坪數 *</span><input id="propertySize" type="text" placeholder="36 坪" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">房型 *</span><input id="propertyRooms" type="text" placeholder="3 房 2 廳" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">樓層</span><input id="propertyFloor" type="text" placeholder="8 樓／共 12 樓" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">屋齡</span><input id="propertyAge" type="text" placeholder="12 年" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">車位</span><input id="propertyParking" type="text" placeholder="坡道平面" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">管理費</span><input id="propertyFee" type="text" placeholder="3,200 元／月" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="block"><span class="text-xs text-slate-600">物件編號</span><input id="propertyListingId" type="text" placeholder="A1234" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+            <label class="property-dm-only block sm:col-span-2"><span class="text-xs text-slate-600">物件主照片 *（DM 版面用）</span><input id="propertyPhotoFile" type="file" accept="image/*" class="mt-1 w-full text-xs file:mr-2 file:px-3 file:py-2 file:border-0 file:rounded-md file:bg-stone-100 file:text-slate-700"><span id="propertyPhotoStatus" class="block mt-1 text-[11px] text-slate-400">建議使用橫式照片</span></label>
+            <label class="block sm:col-span-2"><span class="text-xs text-slate-600">其他補充</span><textarea id="propertyNotes" rows="2" placeholder="例如：預約制、屋主惜售、可談交屋期" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></textarea></label>
+          </div>
+        </div>
+
+        <div class="property-copy-only space-y-4">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2 pb-1 border-b border-stone-100"><h3 class="text-sm font-bold" style="color:#7A5C4A">② 物件特色</h3><span class="text-[11px] text-slate-400">建議選 3～6 個</span></div>
+            <div id="propertyFeatureGroups" class="space-y-3"></div>
+            <label class="block mt-3"><span class="text-xs text-slate-600">自訂特色</span><input id="propertyCustomFeature" type="text" placeholder="例如：邊間戶、可養寵物" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold mb-2 pb-1 border-b border-stone-100" style="color:#7A5C4A">③ 你的個人特質口吻</h3>
+            <div class="grid sm:grid-cols-2 gap-2">
+              <button type="button" data-property-tone="friendly" class="property-tone-btn text-left p-3 rounded-lg border" style="border-color:#7A5C4A;background:#FAF5EE"><strong class="block text-sm text-slate-800">親切陪伴型</strong><span class="text-[11px] text-slate-500">溫暖、生活化</span></button>
+              <button type="button" data-property-tone="professional" class="property-tone-btn text-left p-3 rounded-lg border border-stone-300"><strong class="block text-sm text-slate-800">專業顧問型</strong><span class="text-[11px] text-slate-500">條件清楚、資訊完整</span></button>
+              <button type="button" data-property-tone="playful" class="property-tone-btn text-left p-3 rounded-lg border border-stone-300"><strong class="block text-sm text-slate-800">活潑有趣型</strong><span class="text-[11px] text-slate-500">輕快、有記憶點</span></button>
+              <button type="button" data-property-tone="direct" class="property-tone-btn text-left p-3 rounded-lg border border-stone-300"><strong class="block text-sm text-slate-800">俐落成交型</strong><span class="text-[11px] text-slate-500">重點先講、直接行動</span></button>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold mb-2 pb-1 border-b border-stone-100" style="color:#7A5C4A">④ 產生文案</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" id="generatePropertyCopy" class="px-3 py-2.5 rounded-lg text-xs font-bold text-white" style="background:#C4783A">產生文案</button>
+              <button type="button" id="regeneratePropertyCopy" class="px-3 py-2.5 rounded-lg text-xs font-bold border border-stone-300 text-slate-700">換一版</button>
+            </div>
+            <p id="propertyGenerateHint" class="mt-2 text-[11px] text-slate-500">先完成物件資料並選 3～6 個特色，產生後會直接跳到預覽，給你 FB／IG／LINE 三平台腳本。</p>
+          </div>
+        </div>
+
+        <div class="property-dm-only space-y-3">
+          <h3 class="text-sm font-bold pb-1 border-b border-stone-100" style="color:#7A5C4A">② DM 版面設定</h3>
+          <label class="block max-w-md"><span class="text-xs text-slate-600">DM 小標</span><input id="propertyDmEyebrow" maxlength="18" type="text" value="本月精選物件" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></label>
+          <p class="text-[11px] text-slate-500">選擇成品尺寸</p>
+          <div class="grid grid-cols-2 gap-2 max-w-md">
+            <button type="button" data-property-size="a4" class="property-size-btn px-3 py-2.5 rounded-lg border text-xs font-bold" style="border-color:#7A5C4A;background:#7A5C4A;color:#fff">A4 橫式</button>
+            <button type="button" data-property-size="social" class="property-size-btn px-3 py-2.5 rounded-lg border border-stone-300 text-xs font-bold text-slate-700 bg-white">1200×900 社群版</button>
+          </div>
+        </div>
       </div>
+
+      <div class="property-copy-only mt-5 pt-5 border-t border-stone-200">
+        <div class="flex items-center justify-between gap-2 mb-3"><h3 class="text-sm font-bold text-slate-700">可編輯文案（產生後可微調，三平台腳本即時跟著變）</h3><span class="text-[11px] text-slate-400">你修改後，重新生成前會先確認</span></div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <label class="block"><span class="text-xs text-slate-600">主標題</span><textarea id="propertyCopyHeadline" rows="2" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></textarea></label>
+          <label class="block"><span class="text-xs text-slate-600">開場</span><textarea id="propertyCopyOpening" rows="2" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></textarea></label>
+          <label class="block"><span class="text-xs text-slate-600">物件賣點</span><textarea id="propertyCopySellingPoints" rows="3" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></textarea></label>
+          <label class="block"><span class="text-xs text-slate-600">行動邀請</span><textarea id="propertyCopyCta" rows="3" class="mt-1 w-full px-3 py-2 text-sm border border-stone-300 rounded-md"></textarea></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex justify-between">
+      <button type="button" data-step-prev="2" class="step-nav-btn">← 上一步</button>
+      <button type="button" data-step-next="4" class="step-nav-btn step-nav-next">下一步：預覽輸出 →</button>
     </div>
   </section>
 
-  <section class="col-span-12 bg-white rounded-xl border border-stone-200 p-4">
+  <!-- ============ STEP 4 預覽輸出 ============ -->
+  <section id="workflowPreview" class="step-panel tool-panel bg-white rounded-xl border border-stone-200 p-4">
     <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
       <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
         📄 預覽
         <span id="previewMeta" class="text-xs font-normal text-slate-500"></span>
       </h2>
-      <div class="flex items-center gap-2 flex-wrap">
-        <button id="prevPreview" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">←</button>
+      <div class="preview-actions flex items-center gap-2 flex-wrap">
+        <button id="prevPreview" aria-label="預覽上一封" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">←</button>
         <span class="text-sm text-slate-600"><b id="previewIndex">1</b> / <span id="previewTotal">1</span></span>
-        <button id="nextPreview" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">→</button>
-        <div class="w-px h-6 bg-stone-300 mx-1"></div>
+        <button id="nextPreview" aria-label="預覽下一封" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">→</button>
+        <div class="preview-divider w-px h-6 bg-stone-300 mx-1"></div>
         <button id="copyBtn" class="px-3 py-1.5 text-sm bg-stone-100 hover:bg-stone-200 rounded-md">📋 複製此封</button>
+        <button id="downloadPropertyImage" data-mode-property class="px-3 py-1.5 text-sm text-white rounded-md" style="background:#C4783A">下載 16:9 PNG</button>
+        <button id="downloadFlyerImage" data-mode-flyer class="px-3 py-1.5 text-sm text-white rounded-md" style="background:#C4783A">下載快報 PNG（LINE 可傳）</button>
         <button id="printBtn" class="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-900 rounded-md">🖨️ 列印 / 存成 PDF</button>
       </div>
     </div>
     <div id="previewBox" class="bg-stone-100 rounded-lg p-4 overflow-auto scroll-thin" style="max-height:80vh"></div>
+    <div class="mt-4 flex justify-start">
+      <button type="button" data-step-prev="3" class="step-nav-btn">← 回內容設定</button>
+    </div>
   </section>
 </main>
 
@@ -1002,11 +1257,11 @@
     <!-- Header bar -->
     <div class="px-6 py-4 flex items-center justify-between rounded-t-2xl sticky top-0" style="background:linear-gradient(135deg,#7A5C4A 0%,#C4783A 100%)">
       <h2 class="text-lg font-bold flex items-center gap-2" style="color:#F5EDD6;font-family:'Noto Serif TC',serif">📖 使用說明</h2>
-      <button id="helpClose" class="text-2xl leading-none hover:opacity-70 w-8 h-8 flex items-center justify-center rounded-full" style="color:#F5EDD6;background:rgba(245,237,214,.15)">×</button>
+      <button id="helpClose" aria-label="關閉使用說明" class="text-2xl leading-none hover:opacity-70 w-8 h-8 flex items-center justify-center rounded-full" style="color:#F5EDD6;background:rgba(245,237,214,.15)">×</button>
     </div>
     <div class="px-6 py-5 space-y-5" style="color:#3D2B1F">
       <p class="text-sm leading-relaxed" style="color:#7A6553">
-        30 秒上手 ✦ 5 分鐘批次生成全年 13 種開發信
+        四步驟一條路走完 ✦ 基本資料填一次，三種產出全共用
       </p>
 
       <!-- 4 STEPS -->
@@ -1014,29 +1269,29 @@
         <div class="flex gap-3">
           <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">1</div>
           <div>
-            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">填寫業務員資料</h3>
-            <p class="text-sm leading-relaxed" style="color:#7A6553">姓名、店名、電話為必填，其他選填。資料自動存於你的瀏覽器，下次開啟自動帶入。</p>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">基本資料</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">姓名、店名、電話必填，加上經紀證號、照片、LOGO 等個人特色。填一次就好，開發信、成交快報、房屋銷售全部自動帶入，資料存在你的瀏覽器。</p>
           </div>
         </div>
         <div class="flex gap-3">
           <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">2</div>
           <div>
-            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">選擇月份範本</h3>
-            <p class="text-sm leading-relaxed" style="color:#7A6553">13 套情境（一般 + 1-12 月），每月有專屬節慶大標、副標、成功案例天數。</p>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">選擇產出</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">✍️ 文案腳本（FB／IG／LINE 三平台貼文）或 🖨 DM 三型態：📮 開發信、📢 成交快報、🏠 房屋銷售 DM。</p>
           </div>
         </div>
         <div class="flex gap-3">
           <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">3</div>
           <div>
-            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">貼上屋主名單</h3>
-            <p class="text-sm leading-relaxed" style="color:#7A6553">一行一筆（如：王先生），自動帶入「屋主王先生」抬頭。沒填則顯示「屋主您好」。</p>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">內容設定</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">只出現你選的型態需要的欄位——開發信填月份範本＋屋主名單（格式「王先生, 仁愛路四段」，路段選填）；成交快報填成交資料；房屋銷售填物件資料。</p>
           </div>
         </div>
         <div class="flex gap-3">
           <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0" style="background:#C4783A;color:#F5EDD6">4</div>
           <div>
-            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">列印 / 存 PDF</h3>
-            <p class="text-sm leading-relaxed" style="color:#7A6553">點 🖨️ → 列印對話框「目的地」選「另存為 PDF」、邊界選「無」、勾選「背景圖形」。</p>
+            <h3 class="font-bold mb-0.5" style="color:#7A5C4A;font-family:'Noto Serif TC',serif">預覽輸出</h3>
+            <p class="text-sm leading-relaxed" style="color:#7A6553">列印時「目的地」選「另存為 PDF」、邊界選「無」、勾選「背景圖形」。文案腳本直接按各平台的「複製」；快報可下載 PNG 傳 LINE。</p>
           </div>
         </div>
       </div>
@@ -1050,6 +1305,10 @@
           <li>• 4 色主題切換（深藍 / 新綠 / 正紅 / 金黃）</li>
           <li>• 上傳店頭 LOGO、大頭照、自訂 QR Code</li>
           <li>• 自動生成 vCard QR（屋主一掃存名片）</li>
+          <li>• 買方預算＋看屋時間 → 急尋面板變「真實買方故事」</li>
+          <li>• 多封輪替開場句，同棟投遞不撞版</li>
+          <li>• 成交快報可下載 PNG，直接傳 LINE / 發限動</li>
+          <li>• 「匯出設定」帶著走，換電腦不用重填</li>
         </ul>
       </div>
 
@@ -1080,6 +1339,12 @@
             <svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.781 3.631 2.695 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.74-1.757-.504-.586-1.283-.883-2.317-.89h-.029c-.831 0-1.959.227-2.679 1.301L7.7 6.34c.969-1.443 2.541-2.235 4.428-2.235h.044c3.157.02 5.036 1.953 5.222 5.325.108.046.214.094.318.143 1.469.692 2.544 1.74 3.11 3.029.79 1.799.863 4.733-1.527 7.071-1.825 1.788-4.045 2.598-7.108 2.62Zm1.286-11.31c-.236.001-.475.007-.717.02-1.815.103-2.948.946-2.866 2.146.084 1.235 1.46 1.81 2.84 1.732 1.292-.072 2.969-.61 3.279-3.937a10.916 10.916 0 0 0-2.535-.32Z"/></svg>
             Threads
           </a>
+          <a href="https://lin.ee/vGHKzG1" target="_blank" rel="noopener"
+             data-track-event="click_line" data-track-source="modal"
+             class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-[#06C755] hover:bg-[#05a648] transition">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            LINE
+          </a>
         </div>
       </div>
     </div>
@@ -1104,85 +1369,101 @@
         <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.781 3.631 2.695 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.74-1.757-.504-.586-1.283-.883-2.317-.89h-.029c-.831 0-1.959.227-2.679 1.301L7.7 6.34c.969-1.443 2.541-2.235 4.428-2.235h.044c3.157.02 5.036 1.953 5.222 5.325.108.046.214.094.318.143 1.469.692 2.544 1.74 3.11 3.029.79 1.799.863 4.733-1.527 7.071-1.825 1.788-4.045 2.598-7.108 2.62Zm1.286-11.31c-.236.001-.475.007-.717.02-1.815.103-2.948.946-2.866 2.146.084 1.235 1.46 1.81 2.84 1.732 1.292-.072 2.969-.61 3.279-3.937a10.916 10.916 0 0 0-2.535-.32Z"/></svg>
         Threads
       </a>
+      <a href="https://lin.ee/vGHKzG1" target="_blank" rel="noopener"
+         data-track-event="click_line" data-track-source="footer"
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white bg-[#06C755] hover:bg-[#05a648] hover:scale-105 transition shadow-sm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        LINE
+      </a>
     </div>
     <p class="text-[11px] text-slate-400">© 2026 房仲開發信工具・資料僅儲存於您的瀏覽器，不會上傳任何伺服器</p>
   </div>
 </footer>
 
+<script src="property-sales.js"></script>
 <script>
 const TEMPLATES = [
   { key:'general', label:'一般開發', emoji:'📮', ribbon:'Limited',
     title:'屋主{{title}}，有買方正在等您的房子',
-    subtitle:'來自 {{storeName}} 的一封誠摯邀請',
+    subtitle:'來自 {{storeName}} 的一封誠懇來信',
     caseStudyDays:'21'
   },
   { key:'jan', label:'1月 新春成家', emoji:'🧧', ribbon:'新春',
-    title:'屋主{{title}}，新的一年給家一個新起點',
-    subtitle:'來自 {{storeName}} 的新春誠摯邀請',
+    title:'屋主{{title}}，新的一年，給家一個新起點',
+    subtitle:'{{storeName}} 給您拜個早年',
     caseStudyDays:'18'
   },
   { key:'feb', label:'2月 開工大吉', emoji:'🎊', ribbon:'開工',
-    title:'屋主{{title}}，把握開工後的首波看屋熱潮',
-    subtitle:'來自 {{storeName}} 的年後誠摯邀請',
+    title:'屋主{{title}}，年後買方回籠，看屋的人變多了',
+    subtitle:'來自 {{storeName}} 的開工問候',
     caseStudyDays:'18'
   },
   { key:'mar', label:'3月 春季換屋', emoji:'🌸', ribbon:'春季',
-    title:'屋主{{title}}，春暖花開正是換屋好時機',
-    subtitle:'來自 {{storeName}} 的春季誠摯邀請',
+    title:'屋主{{title}}，春天是一年看屋最熱的季節',
+    subtitle:'來自 {{storeName}} 的春季來信',
     caseStudyDays:'21'
   },
   { key:'apr', label:'4月 節稅規劃', emoji:'📊', ribbon:'節稅',
-    title:'屋主{{title}}，房地產稅務與資產配置規劃',
-    subtitle:'來自 {{storeName}} 的稅務季誠摯邀請',
+    title:'屋主{{title}}，報稅季前，先幫房子算一筆帳',
+    subtitle:'來自 {{storeName}} 的稅務季提醒',
     caseStudyDays:'25'
   },
   { key:'may', label:'5月 溫馨五月', emoji:'🌷', ribbon:'溫馨',
-    title:'屋主{{title}}，為家人尋找更大的幸福空間',
-    subtitle:'來自 {{storeName}} 的溫馨五月誠摯邀請',
+    title:'屋主{{title}}，為家人換一個更寬敞的空間',
+    subtitle:'來自 {{storeName}} 的五月問候',
     caseStudyDays:'14'
   },
   { key:'jun', label:'6月 年中衝刺', emoji:'🚀', ribbon:'衝刺',
-    title:'屋主{{title}}，掌握上半年最後的成交契機',
-    subtitle:'來自 {{storeName}} 的年中誠摯邀請',
+    title:'屋主{{title}}，上半年的買方，還在等一間對的房子',
+    subtitle:'來自 {{storeName}} 的年中來信',
     caseStudyDays:'17'
   },
   { key:'jul', label:'7月 暑期看屋', emoji:'☀️', ribbon:'暑期',
-    title:'屋主{{title}}，趁連假為您的房子找新主人',
-    subtitle:'來自 {{storeName}} 的暑期誠摯邀請',
+    title:'屋主{{title}}，暑假看屋潮，幫您的房子找新主人',
+    subtitle:'來自 {{storeName}} 的暑期來信',
     caseStudyDays:'14'
   },
   { key:'aug', label:'8月 策略佈局', emoji:'♟️', ribbon:'佈局',
-    title:'屋主{{title}}，淡季中脫穎而出的銷售策略',
-    subtitle:'來自 {{storeName}} 的策略佈局邀請',
+    title:'屋主{{title}}，淡季賣屋，更需要對的策略',
+    subtitle:'來自 {{storeName}} 的誠懇建議',
     caseStudyDays:'30'
   },
   { key:'sep', label:'9月 中秋團圓', emoji:'🌕', ribbon:'中秋',
-    title:'屋主{{title}}，人圓月圓也是成家圓夢好時節',
-    subtitle:'來自 {{storeName}} 的中秋誠摯邀請',
+    title:'屋主{{title}}，月圓人團圓，也是成家好時節',
+    subtitle:'來自 {{storeName}} 的中秋問候',
     caseStudyDays:'21'
   },
   { key:'oct', label:'10月 國慶成家', emoji:'🎆', ribbon:'國慶',
-    title:'屋主{{title}}，光輝十月為您的愛屋找到伯樂',
-    subtitle:'來自 {{storeName}} 的十月誠摯邀請',
+    title:'屋主{{title}}，第四季買氣啟動，別錯過這一波',
+    subtitle:'來自 {{storeName}} 的十月來信',
     caseStudyDays:'17'
   },
   { key:'nov', label:'11月 精準媒合', emoji:'🎯', ribbon:'精準',
     title:'屋主{{title}}，目前有客戶指名要找您的房型',
-    subtitle:'來自 {{storeName}} 的精準媒合邀請',
+    subtitle:'來自 {{storeName}} 的媒合通知',
     caseStudyDays:'10'
   },
-  { key:'dec', label:'12月 歲末完美收官', emoji:'🎄', ribbon:'歲末',
-    title:'屋主{{title}}，在今年完成最重要的資產大事',
-    subtitle:'來自 {{storeName}} 的歲末誠摯邀請',
+  { key:'dec', label:'12月 歲末圓滿', emoji:'🎄', ribbon:'歲末',
+    title:'屋主{{title}}，趕在年底前，完成今年最重要的資產大事',
+    subtitle:'來自 {{storeName}} 的歲末問候',
     caseStudyDays:'21'
   }
 ];
 
 const STORAGE_KEY = 'devLetterTool.agent.v4';
 
-const DEFAULT_INTRO = '您好，我是 **{{agentName}}**，來自 **{{hometown}}**，現服務於 **{{storeName}}**。專營 **{{serviceRegion}}** 房地產，累積 **{{serviceYears}} 年**實戰經驗，曾榮獲 **{{awardYear}}年{{awards}}**。';
+// 同棟投遞防撞：多封信輪替不同開場問候，避免鄰居收到一模一樣的信
+const LETTER_OPENERS = [
+  '冒昧寄這封信給您，先說聲不好意思，耽誤您一點時間。',
+  '這封信不長，只想讓您知道最近這一帶的一個消息。',
+  '您好，打擾了。最近常在這附近服務，有件事想讓您知道。',
+  '信箱裡多半是帳單和廣告，希望這封信對您有不一樣的價值。',
+  '我常在這一帶帶看，有個消息想讓您第一時間知道。'
+];
 
-const DEFAULT_CASE = '我們最近成功協助一位屋主，原本擔心市場觀望氣氛遲遲不敢出售，透過我們的精準曝光策略，在 **{{caseStudyDays}} 天**內成交，順利完成換屋計畫。';
+const DEFAULT_INTRO ='您好，我是 **{{agentName}}**，來自 **{{hometown}}**，現服務於 **{{storeName}}**。專營 **{{serviceRegion}}** 房地產，累積 **{{serviceYears}} 年**實戰經驗，曾榮獲 **{{awardYear}}年{{awards}}**。';
+
+const DEFAULT_CASE = '最近有位屋主，原本擔心市場在觀望、遲遲不敢出售，後來我們調整了曝光方式，**{{caseStudyDays}} 天**就順利成交，換屋計畫一點都沒被耽誤。';
 
 const DEFAULT_FLYER_MESSAGE = `我是 **{{storeName}}** 的 **{{agentName}}**，
 感謝您的信任，在這一個月成交了 **{{dealCount}}** 件，
@@ -1194,7 +1475,7 @@ const DEFAULT_FLYER_MESSAGE = `我是 **{{storeName}}** 的 **{{agentName}}**，
 const DEFAULT_FLYER_FOOTER = '🏠 誠信 ｜ 專業 ｜ 用心 ｜ 值得託付';
 
 const state = {
-  viewMode: 'letter',        // 'letter' | 'flyer'
+  viewMode: 'letter',        // 'letter' | 'flyer' | 'property'
   flyerLayout: 'hero',       // 'hero' | 'grid'
   flyerSubtitle: '',
   flyerMessage: DEFAULT_FLYER_MESSAGE,
@@ -1202,16 +1483,20 @@ const state = {
   currentTemplate: 'general',
   previewIndex: 0,
   theme: 'navy',
+  rotateOpeners: true,
   agent: {
     agentName:'', hometown:'', storeName:'', serviceRegion:'',
     serviceYears:'', awardYear:'', awards:'', phone:'',
     lineId:'', propertyType:'', storeAddress:'', licenseNo:'',
+    buyerBudget:'', buyerTiming:'',
     introText: DEFAULT_INTRO, caseText: DEFAULT_CASE,
     logoDataUrl:'', photoDataUrl:'', customQrDataUrl:'', heroPhotoDataUrl:''
   },
   recipients: [],
   deals: []
 };
+
+let propertyState = PropertySales.createDefaultState();
 
 function loadAgent(){
   try{
@@ -1273,6 +1558,195 @@ function saveAgent(){
   try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.agent)); }catch(e){}
 }
 
+const propertyFieldMap = {
+  propertyTitle:'title', propertyArea:'area', propertyPrice:'price', propertySize:'size',
+  propertyRooms:'rooms', propertyFloor:'floor', propertyAge:'age', propertyParking:'parking',
+  propertyFee:'fee', propertyListingId:'listingId', propertyNotes:'notes'
+};
+
+const propertyCopyMap = {
+  propertyCopyHeadline:'headline', propertyCopyOpening:'opening',
+  propertyCopySellingPoints:'sellingPoints', propertyCopyCta:'cta'
+};
+
+function savePropertyState(){
+  try{ localStorage.setItem(PropertySales.STORAGE_KEY, PropertySales.serializeState(propertyState)); }catch(e){}
+}
+
+function renderPropertyFeatureGroups(){
+  const wrap = document.getElementById('propertyFeatureGroups');
+  wrap.innerHTML = Object.entries(PropertySales.FEATURE_GROUPS).map(([key,group])=>`
+    <fieldset>
+      <legend class="text-[11px] font-bold mb-1" style="color:#7A5C4A">${PropertySales.escapeHTML(group.label)}</legend>
+      <div class="flex flex-wrap gap-1.5">
+        ${group.items.map(item=>`
+          <label class="cursor-pointer">
+            <input type="checkbox" class="sr-only property-feature-input" data-property-feature="${PropertySales.escapeHTML(item)}" ${propertyState.selectedFeatures.includes(item)?'checked':''}>
+            <span class="property-feature-chip inline-flex min-h-9 items-center px-3 py-1.5 rounded-full border border-stone-300 bg-white text-xs text-slate-600">${PropertySales.escapeHTML(item)}</span>
+          </label>`).join('')}
+      </div>
+    </fieldset>`).join('');
+  wrap.querySelectorAll('.property-feature-input').forEach(input=>{
+    input.addEventListener('change', ()=>{
+      propertyState.selectedFeatures = [...wrap.querySelectorAll('.property-feature-input:checked')].map(el=>el.dataset.propertyFeature);
+      updatePropertyControls();
+      savePropertyState();
+    });
+  });
+}
+
+function updatePropertyControls(){
+  document.body.setAttribute('data-property-output',propertyState.outputType);
+  document.querySelectorAll('.property-feature-input').forEach(input=>{
+    const chip = input.nextElementSibling;
+    const active = propertyState.selectedFeatures.includes(input.dataset.propertyFeature);
+    input.checked = active;
+    chip.style.background = active ? '#7A5C4A' : '#fff';
+    chip.style.borderColor = active ? '#7A5C4A' : '#d6d3d1';
+    chip.style.color = active ? '#fff' : '#475569';
+  });
+  document.querySelectorAll('[data-property-tone]').forEach(btn=>{
+    const active = btn.dataset.propertyTone === propertyState.tone;
+    btn.style.background = active ? '#FAF5EE' : '#fff';
+    btn.style.borderColor = active ? '#7A5C4A' : '#d6d3d1';
+  });
+  document.querySelectorAll('[data-property-size]').forEach(btn=>{
+    const active = btn.dataset.propertySize === propertyState.outputSize;
+    btn.style.background = active ? '#7A5C4A' : '#fff';
+    btn.style.borderColor = active ? '#7A5C4A' : '#d6d3d1';
+    btn.style.color = active ? '#fff' : '#334155';
+  });
+  document.querySelectorAll('.property-output-btn').forEach(btn=>{
+    const active=btn.dataset.propertyOutput===propertyState.outputType;
+    btn.style.background=active?'#7A5C4A':'#fff'; btn.style.color=active?'#fff':'#334155'; btn.style.borderColor=active?'#7A5C4A':'#d6d3d1';
+  });
+}
+
+function fillPropertyForm(){
+  Object.entries(propertyFieldMap).forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.value=propertyState.property[key]||''; });
+  document.getElementById('propertyCustomFeature').value = propertyState.customFeature || '';
+  document.getElementById('propertyDmEyebrow').value=propertyState.dmEyebrow||'本月精選物件';
+  Object.entries(propertyCopyMap).forEach(([id,key])=>{ document.getElementById(id).value=propertyState.generatedCopy[key]||''; });
+  const status = document.getElementById('propertyPhotoStatus');
+  status.textContent = propertyState.property.photoDataUrl ? '照片已載入，可隨時更換' : '建議使用橫式照片';
+  updatePropertyControls();
+}
+
+function loadPropertyState(){
+  try{
+    const raw = localStorage.getItem(PropertySales.STORAGE_KEY);
+    if(raw) propertyState = PropertySales.normalizeState(JSON.parse(raw));
+  }catch(e){ propertyState = PropertySales.createDefaultState(); }
+  renderPropertyFeatureGroups();
+  fillPropertyForm();
+}
+
+function generatePropertyCopy(nextVariant){
+  if(propertyState.copyEdited && Object.values(propertyState.generatedCopy).some(Boolean)){
+    if(!confirm('重新產生會覆蓋你修改過的文案，要繼續嗎？')) return;
+  }
+  const validation = PropertySales.validateProperty(propertyState.property, { requirePhoto:false });
+  if(!validation.valid){
+    const labels = {title:'物件標題',area:'地址或生活圈',price:'總價',size:'坪數',rooms:'房型',photoDataUrl:'主照片'};
+    flash(`請先補齊：${validation.missing.map(key=>labels[key]).join('、')}`);
+    return;
+  }
+  if(propertyState.selectedFeatures.length < 3 && !propertyState.customFeature){
+    flash('請先選至少 3 個物件特色');
+    return;
+  }
+  if(nextVariant) propertyState.variant += 1;
+  propertyState.generatedCopy = PropertySales.generateCopy({
+    property:propertyState.property, selectedFeatures:propertyState.selectedFeatures,
+    customFeature:propertyState.customFeature, tone:propertyState.tone,
+    variant:propertyState.variant, agent:state.agent
+  });
+  propertyState.copyEdited = false;
+  fillPropertyForm();
+  savePropertyState();
+  setWorkflowStep(4);
+  renderPreview();
+  window.scrollTo({ top:0, behavior:'smooth' });
+  flash(nextVariant ? '已換一版句型' : '文案已產生，回上一步可微調四段文案');
+}
+
+function compressPropertyImage(file,maxDimension=2000){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error('read_failed'));
+    reader.onload=()=>{
+      const image=new Image();
+      image.onerror=()=>reject(new Error('decode_failed'));
+      image.onload=()=>{
+        const size=PropertySales.getScaledDimensions(image.naturalWidth,image.naturalHeight,maxDimension);
+        const canvas=document.createElement('canvas');
+        canvas.width=size.width; canvas.height=size.height;
+        const context=canvas.getContext('2d',{alpha:false});
+        context.fillStyle='#fff'; context.fillRect(0,0,size.width,size.height);
+        context.drawImage(image,0,0,size.width,size.height);
+        let quality=.84;
+        let dataUrl=canvas.toDataURL('image/jpeg',quality);
+        while(dataUrl.length>1800000 && quality>.56){
+          quality-=.07;
+          dataUrl=canvas.toDataURL('image/jpeg',quality);
+        }
+        resolve({dataUrl,width:size.width,height:size.height,bytes:Math.round(dataUrl.length*.75)});
+      };
+      image.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function bindPropertySales(){
+  loadPropertyState();
+  Object.entries(propertyFieldMap).forEach(([id,key])=>{
+    document.getElementById(id).addEventListener('input', e=>{
+      propertyState.property[key] = e.target.value;
+      savePropertyState(); renderPreview();
+    });
+  });
+  document.getElementById('propertyCustomFeature').addEventListener('input', e=>{
+    propertyState.customFeature=e.target.value; savePropertyState();
+  });
+  Object.entries(propertyCopyMap).forEach(([id,key])=>{
+    document.getElementById(id).addEventListener('input', e=>{
+      propertyState.generatedCopy[key]=e.target.value; propertyState.copyEdited=true;
+      savePropertyState(); renderPreview();
+    });
+  });
+  document.querySelectorAll('[data-property-tone]').forEach(btn=>btn.addEventListener('click', ()=>{
+    propertyState.tone=btn.dataset.propertyTone; updatePropertyControls(); savePropertyState();
+  }));
+  document.querySelectorAll('[data-property-size]').forEach(btn=>btn.addEventListener('click', ()=>{
+    propertyState.outputSize=btn.dataset.propertySize; updatePropertyControls(); savePropertyState(); renderPreview();
+  }));
+  document.querySelectorAll('.property-output-btn').forEach(btn=>btn.addEventListener('click', ()=>{
+    propertyState.outputType=btn.dataset.propertyOutput; updatePropertyControls(); savePropertyState(); renderPreview();
+  }));
+  document.getElementById('propertyDmEyebrow').addEventListener('input',e=>{propertyState.dmEyebrow=e.target.value.slice(0,18);savePropertyState();renderPreview();});
+  document.getElementById('generatePropertyCopy').addEventListener('click', ()=>generatePropertyCopy(false));
+  document.getElementById('regeneratePropertyCopy').addEventListener('click', ()=>generatePropertyCopy(true));
+  document.getElementById('propertyPhotoFile').addEventListener('change', async e=>{
+    const file=e.target.files[0]; if(!file) return;
+    if(file.size>15*1024*1024){ flash('照片超過 15MB，請改用較小的檔案'); e.target.value=''; return; }
+    const status=document.getElementById('propertyPhotoStatus');
+    status.textContent='照片處理中，請稍候...';
+    e.target.disabled=true;
+    try{
+      const result=await compressPropertyImage(file);
+      propertyState.property.photoDataUrl=result.dataUrl;
+      savePropertyState(); fillPropertyForm(); renderPreview();
+      status.textContent=`已自動縮圖為 ${result.width} × ${result.height}（約 ${Math.max(1,Math.round(result.bytes/1024))}KB）`;
+      flash('物件照片已自動壓縮並載入');
+    }catch(error){
+      status.textContent='照片無法讀取，請改用 JPG、PNG 或 WebP';
+      flash('照片處理失敗，請換一張再試');
+      e.target.value='';
+    }finally{ e.target.disabled=false; }
+  });
+}
+
 function fillVars(text, recipient){
   return text
     .replaceAll('{{agentName}}', state.agent.agentName || '○○○')
@@ -1287,12 +1761,13 @@ function fillVars(text, recipient){
     .replaceAll('{{propertyType}}', state.agent.propertyType || '2-4 房')
     .replaceAll('{{licenseNo}}', state.agent.licenseNo || '')
     .replaceAll('{{title}}', recipient?.title || '您好')
+    .replaceAll('{{road}}', recipient?.road || state.agent.serviceRegion || '本區')
     .replaceAll('{{region}}', recipient?.region || state.agent.serviceRegion || '本區');
 }
 
 function recipientLine(r){
   const title = r.title ? r.title : '您好';
-  return `屋主 ${title}`;
+  return r.road ? `屋主 ${title}（${r.road}）` : `屋主 ${title}`;
 }
 
 function vCard(){
@@ -1358,9 +1833,10 @@ const ICONS = {
   camera:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>'
 };
 
-function buildLetterHTML(template, recipient){
+function buildLetterHTML(template, recipient, letterIndex){
   const t = template;
   const a = state.agent;
+  const idx = Number.isInteger(letterIndex) ? letterIndex : 0;
   const escHTML = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
   // data: URL 白名單檢查（只允許 data:image/...）
   const safeDataUrl = s => {
@@ -1404,6 +1880,7 @@ function buildLetterHTML(template, recipient){
     </div>
 
     <div class="body-wrap">
+      ${state.rotateOpeners ? `<p class="opener-line">${escHTML(LETTER_OPENERS[idx % LETTER_OPENERS.length])}</p>` : ''}
       <div class="divider">自 我 介 紹</div>
       <p class="intro-text">${introParts}</p>
 
@@ -1439,15 +1916,23 @@ function buildLetterHTML(template, recipient){
 
       <div class="urgent-panel">
         <div class="urgent-title">${ICONS.pin} 目前客戶急需物件</div>
-        <div class="urgent-grid">
+        <div class="urgent-grid${(a.buyerBudget||a.buyerTiming)?' has-buyer':''}">
           <div>
             <div class="urgent-label">目標區域</div>
-            <div class="urgent-value">${region} 周邊</div>
+            <div class="urgent-value">${escHTML(recipient?.road || '') || region} 周邊</div>
           </div>
           <div>
             <div class="urgent-label">需求型態</div>
             <div class="urgent-value">${escHTML(a.propertyType||'2-4 房')} 房屋</div>
           </div>
+          ${a.buyerBudget?`<div>
+            <div class="urgent-label">買方預算</div>
+            <div class="urgent-value">${escHTML(a.buyerBudget)}</div>
+          </div>`:''}
+          ${a.buyerTiming?`<div>
+            <div class="urgent-label">看屋時間</div>
+            <div class="urgent-value">${escHTML(a.buyerTiming)}</div>
+          </div>`:''}
         </div>
         <p class="urgent-cta">若您有出售意願，或得知親友、鄰居有相關需求，懇請給我一次服務的機會。</p>
       </div>
@@ -1688,8 +2173,10 @@ function buildLetterPlainText(template, recipient){
     '──────── 急尋物件 ────────',
     '',
     '📍 目前客戶急需：',
-    `   目標區域：${region} 周邊`,
+    `   目標區域：${recipient?.road || region} 周邊`,
     `   需求型態：${a.propertyType||'2-4 房'} 房屋`,
+    a.buyerBudget?`   買方預算：${a.buyerBudget}`:undefined,
+    a.buyerTiming?`   看屋時間：${a.buyerTiming}`:undefined,
     '',
     '若您有出售意願，或得知親友、鄰居有需求，懇請給我一次服務的機會。',
     '',
@@ -1709,10 +2196,48 @@ function getTemplate(key){ return TEMPLATES.find(t=>t.key===key) || TEMPLATES[0]
 
 function getRecipientsForRender(){
   if(state.recipients.length>0) return state.recipients;
-  return [{ region: state.agent.serviceRegion || '本區', title:'' }];
+  return [{ region: state.agent.serviceRegion || '本區', title:'', road:'' }];
+}
+
+const SCRIPT_PLATFORMS = [
+  { key:'fb',   label:'📘 FB／社團完整版', hint:'長文貼文、社團 PO 文直接用' },
+  { key:'ig',   label:'📸 IG 貼文版（含 hashtag）', hint:'搭配物件照發 IG' },
+  { key:'line', label:'💬 LINE 群發精簡版', hint:'傳客戶、發 LINE 社群' }
+];
+
+function buildScriptPanelsHTML(){
+  const scripts = PropertySales.buildScripts({ ...propertyState, agent: state.agent });
+  return `<div class="max-w-3xl mx-auto space-y-4">
+    ${SCRIPT_PLATFORMS.map(pf=>{
+      const text = scripts[pf.key] || '';
+      return `<div class="bg-white rounded-xl border border-stone-200 overflow-hidden">
+        <div class="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-stone-100" style="background:#FAF5EE">
+          <div class="min-w-0">
+            <span class="text-sm font-bold text-slate-800">${pf.label}</span>
+            <span class="hidden sm:inline text-[11px] text-slate-400 ml-2">${pf.hint}・${text.length} 字</span>
+          </div>
+          <button type="button" data-copy-script="${pf.key}" data-copy-label="${pf.label}" class="shrink-0 px-3 py-1.5 text-xs font-bold text-white rounded-md hover:opacity-90" style="background:#C4783A">📋 複製</button>
+        </div>
+        <pre class="px-4 py-3 text-[13px] leading-relaxed text-slate-700 whitespace-pre-wrap break-words" style="font-family:'Noto Sans TC',sans-serif;margin:0">${PropertySales.escapeHTML(text)}</pre>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
 
 function renderPreview(){
+  if(state.viewMode === 'property'){
+    const copy = propertyState.generatedCopy;
+    const hasCopy = Object.values(copy).some(Boolean);
+    document.getElementById('previewBox').innerHTML = propertyState.outputType==='copy'
+      ? (hasCopy ? buildScriptPanelsHTML() : `<div class="text-center py-16 text-slate-500">先填物件資料、勾特色，再按「產生文案」，這裡會直接給你 FB／IG／LINE 三個平台的完整腳本</div>`)
+      : (propertyState.outputSize==='social'
+        ? PropertySales.buildSocialHTML({ ...propertyState,agent:state.agent,theme:state.theme })
+        : PropertySales.buildA4HTML({ ...propertyState, agent:state.agent, theme:state.theme }));
+    document.getElementById('previewIndex').textContent=1;
+    document.getElementById('previewTotal').textContent=1;
+    document.getElementById('previewMeta').textContent=`🏠 ${propertyState.outputType==='copy'?'文案腳本（FB／IG／LINE）':propertyState.outputSize==='a4'?'A4 精簡 DM':'1200×900 社群 DM'}`;
+    return;
+  }
   if(state.viewMode === 'flyer'){
     document.getElementById('previewBox').innerHTML = buildFlyerHTML();
     document.getElementById('previewIndex').textContent = 1;
@@ -1725,7 +2250,13 @@ function renderPreview(){
   const recips = getRecipientsForRender();
   if(state.previewIndex >= recips.length) state.previewIndex = 0;
   const r = recips[state.previewIndex];
-  document.getElementById('previewBox').innerHTML = buildLetterHTML(t, r);
+  const emptyHint = (!state.agent.agentName && !state.agent.phone)
+    ? `<div class="mb-3 px-4 py-3 rounded-xl text-sm flex items-center justify-between gap-3 flex-wrap" style="background:#FDF3E3;border:1px solid #E8C96A;color:#7A5C4A">
+         <span>還沒填基本資料——先看一眼完整成品長怎樣？</span>
+         <button type="button" onclick="document.getElementById('loadSample').click()" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white shrink-0" style="background:#C4783A">一鍵載入範例</button>
+       </div>`
+    : '';
+  document.getElementById('previewBox').innerHTML = emptyHint + buildLetterHTML(t, r, state.previewIndex);
   document.getElementById('previewIndex').textContent = state.previewIndex+1;
   document.getElementById('previewTotal').textContent = recips.length;
   document.getElementById('previewMeta').textContent = `${t.emoji} ${t.label}　|　${recips.length} 封`;
@@ -1733,10 +2264,16 @@ function renderPreview(){
 
 function parseRecipients(){
   const raw = document.getElementById('recipientList').value;
-  state.recipients = raw.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>({
-    title: line, region:''
-  }));
+  state.recipients = raw.split('\n').map(line=>line.trim()).filter(Boolean).map(line=>{
+    const parts = line.split(/[,，、]\s*/).map(p=>p.trim());
+    return { title: parts[0]||'', road: parts[1]||'', region:'' };
+  });
   document.getElementById('recipientCount').textContent = state.recipients.length;
+  const roadCount = state.recipients.filter(r=>r.road).length;
+  const info = document.getElementById('recipientRoadInfo');
+  if(info) info.textContent = state.recipients.length
+    ? `・已辨識 ${state.recipients.length} 筆${roadCount?`，${roadCount} 筆含路段（急尋面板會鎖定路段）`:'，都沒填路段'}`
+    : '';
 }
 
 function parseDealsInput(){
@@ -1745,12 +2282,103 @@ function parseDealsInput(){
   document.getElementById('dealCount').textContent = state.deals.length;
 }
 
+let workflowStep = 1;
+const workflowLabels = {
+  1:'第 1 步：基本資料',
+  2:'第 2 步：選擇產出',
+  3:'第 3 步：內容設定',
+  4:'第 4 步：預覽輸出'
+};
+const stepPanelIds = { 1:'stepPanel1', 2:'stepPanel2', 3:'stepPanel3', 4:'workflowPreview' };
+
+function setWorkflowStep(step){
+  workflowStep = Math.max(1, Math.min(4, Number(step) || 1));
+  document.querySelectorAll('[data-workflow-step]').forEach(btn=>{
+    const active = Number(btn.dataset.workflowStep) === workflowStep;
+    if(active) btn.setAttribute('aria-current','step');
+    else btn.removeAttribute('aria-current');
+  });
+  Object.entries(stepPanelIds).forEach(([step,id])=>{
+    const panel = document.getElementById(id);
+    if(!panel) return;
+    const active = Number(step) === workflowStep;
+    panel.classList.toggle('is-active', active);
+    panel.classList.toggle('is-current', active);
+  });
+  const hint = document.getElementById('workflowMobileHint');
+  if(hint) hint.textContent = workflowLabels[workflowStep];
+  // step 4 預覽時放寬版心，A4 預覽更有空間
+  const main = document.querySelector('main');
+  if(main){
+    main.classList.toggle('max-w-7xl', workflowStep === 4);
+    main.classList.toggle('max-w-5xl', workflowStep !== 4);
+  }
+}
+
+function bindWorkflow(){
+  document.querySelectorAll('[data-workflow-step]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      setWorkflowStep(Number(btn.dataset.workflowStep));
+      window.scrollTo({ top:0, behavior:'smooth' });
+    });
+  });
+  document.querySelectorAll('[data-step-next],[data-step-prev]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      setWorkflowStep(Number(btn.dataset.stepNext || btn.dataset.stepPrev));
+      window.scrollTo({ top:0, behavior:'smooth' });
+    });
+  });
+  // 開發輔助：?step=N 直接跳到指定階段（不影響一般使用）
+  const devStep = new URLSearchParams(location.search).get('step');
+  setWorkflowStep(devStep ? Number(devStep) : 1);
+}
+
+// === 產出型態：step 2 的四張卡 ===
+// copy = 房屋銷售文案腳本；dm-letter / dm-flyer / dm-property = 三種 DM
+const OUTPUT_MAP = {
+  'copy':        { mode:'property', propertyOutput:'copy', label:'✍️ 房屋銷售文案腳本' },
+  'dm-letter':   { mode:'letter',   propertyOutput:null,   label:'📮 開發信' },
+  'dm-flyer':    { mode:'flyer',    propertyOutput:null,   label:'📢 成交快報' },
+  'dm-property': { mode:'property', propertyOutput:'dm',   label:'🏠 房屋銷售 DM' }
+};
+
+function currentOutputKey(){
+  if(state.viewMode === 'letter') return 'dm-letter';
+  if(state.viewMode === 'flyer') return 'dm-flyer';
+  return propertyState.outputType === 'dm' ? 'dm-property' : 'copy';
+}
+
+function setOutput(key, options){
+  const conf = OUTPUT_MAP[key] || OUTPUT_MAP['dm-letter'];
+  state.viewMode = conf.mode;
+  document.body.setAttribute('data-mode', conf.mode);
+  if(conf.propertyOutput){
+    propertyState.outputType = conf.propertyOutput;
+    savePropertyState();
+  }
+  document.body.setAttribute('data-property-output', propertyState.outputType);
+  document.querySelectorAll('[data-output-card]').forEach(card=>{
+    card.classList.toggle('is-selected', card.dataset.outputCard === key);
+  });
+  const title = document.getElementById('configTitle');
+  if(title) title.textContent = `— ${conf.label}`;
+  renderPreview();
+  if(options && options.navigate){
+    setWorkflowStep(3);
+    window.scrollTo({ top:0, behavior:'smooth' });
+    track('output_select', { output: key });
+  }
+}
+
+function bindOutputCards(){
+  document.querySelectorAll('[data-output-card]').forEach(card=>{
+    card.addEventListener('click', ()=>setOutput(card.dataset.outputCard, { navigate:true }));
+  });
+}
+
 function setViewMode(mode){
   state.viewMode = mode;
   document.body.setAttribute('data-mode', mode);
-  document.querySelectorAll('.mode-tab').forEach(btn=>{
-    btn.classList.toggle('active', btn.dataset.mode === mode);
-  });
   renderPreview();
 }
 
@@ -1827,6 +2455,8 @@ function bindModeAndLayout(){
     state.flyerSubtitle = '2026 年 Q2 戰績一覽';
     parseDealsInput();
     renderPreview();
+    setWorkflowStep(4);
+    window.scrollTo({ top:0, behavior:'smooth' });
     flash('已載入 6 筆成交範例');
   });
 }
@@ -1866,9 +2496,24 @@ function bindTheme(){
 }
 
 function bindActions(){
+  // 三平台腳本卡的複製按鈕（事件委派，previewBox 每次重繪不用重綁）
+  document.getElementById('previewBox').addEventListener('click', async e=>{
+    const btn = e.target.closest('[data-copy-script]');
+    if(!btn) return;
+    const scripts = PropertySales.buildScripts({ ...propertyState, agent: state.agent });
+    const text = scripts[btn.dataset.copyScript] || '';
+    try{
+      await navigator.clipboard.writeText(text);
+      flash(`已複製${btn.dataset.copyLabel||'腳本'}，貼上就能發`);
+      track('property_script_copy', { platform: btn.dataset.copyScript });
+    }catch(err){ flash('複製失敗，請手動選取'); }
+  });
+
   document.getElementById('copyBtn').addEventListener('click', async ()=>{
     let text;
-    if(state.viewMode === 'flyer'){
+    if(state.viewMode === 'property'){
+      text = PropertySales.buildScripts({ ...propertyState, agent: state.agent }).fb;
+    } else if(state.viewMode === 'flyer'){
       const a = state.agent;
       const lines = [
         `📢 ${a.serviceRegion||'本區'} 成 交 快 報`,
@@ -1894,13 +2539,23 @@ function bindActions(){
     try{
       await navigator.clipboard.writeText(text);
       flash('已複製內容到剪貼簿');
-      track(state.viewMode==='flyer'?'flyer_copy':'letter_copy', { mode: state.viewMode });
+      const copyEvent=state.viewMode==='flyer'?'flyer_copy':state.viewMode==='property'?'property_copy':'letter_copy';
+      track(copyEvent, { mode: state.viewMode });
     }catch(e){
       flash('複製失敗，請手動選取');
     }
   });
 
   document.getElementById('printBtn').addEventListener('click', ()=>{
+    if(state.viewMode === 'property'){
+      if(propertyState.outputType==='copy'){ flash('文案腳本請用各平台的「複製」按鈕；切到精簡 DM 才能列印'); return; }
+      const validation=PropertySales.validateProperty(propertyState.property);
+      if(!validation.valid){ flash('請先補齊物件必要資料'); return; }
+      document.getElementById('printArea').innerHTML=PropertySales.buildA4HTML({ ...propertyState,agent:state.agent,theme:state.theme });
+      track('property_print',{ size:propertyState.outputSize,tone:propertyState.tone });
+      setTimeout(()=>window.print(),600);
+      return;
+    }
     if(!validateAgent()) return;
     if(state.viewMode === 'flyer'){
       if(state.deals.length === 0){
@@ -1915,11 +2570,113 @@ function bindActions(){
     }
     const t = getTemplate(state.currentTemplate);
     const recips = getRecipientsForRender();
-    const html = recips.map(r=>buildLetterHTML(t,r)).join('');
+    const html = recips.map((r,i)=>buildLetterHTML(t,r,i)).join('');
     document.getElementById('printArea').innerHTML = html;
     flash('列印對話框：目的地選「另存為 PDF」、邊界選「無」、勾選「背景圖形」');
     track('letter_print', { template_key: t.key, recipient_count: recips.length });
     setTimeout(()=>window.print(), 600);
+  });
+
+  document.getElementById('downloadPropertyImage').addEventListener('click', async ()=>{
+    if(state.viewMode!=='property') return;
+    if(propertyState.outputType!=='dm'){ flash('請先切換到「精簡 DM」'); return; }
+    if(propertyState.outputSize!=='social'){
+      propertyState.outputSize='social'; updatePropertyControls(); savePropertyState(); renderPreview();
+      flash('已切換成 16:9 社群版，請再按一次下載');
+      return;
+    }
+    const target=document.querySelector('#previewBox .property-social');
+    if(!target){ flash('請先產生房屋銷售文案'); return; }
+    if(typeof html2canvas!=='function'){ flash('圖片工具載入失敗，請重新整理後再試'); return; }
+    const btn=document.getElementById('downloadPropertyImage');
+    btn.disabled=true; btn.textContent='圖片製作中...';
+    const previousZoom=target.style.zoom;
+    target.style.zoom='1';
+    try{
+      const canvas=await html2canvas(target,{scale:1,useCORS:true,backgroundColor:null,logging:false});
+      const link=document.createElement('a');
+      link.download=`${propertyState.property.title||'房屋銷售'}-16x9.png`;
+      link.href=canvas.toDataURL('image/png'); link.click();
+      track('property_image_download',{tone:propertyState.tone,theme:state.theme});
+      flash('16:9 圖片已下載');
+    }catch(e){ flash('圖片輸出失敗，請換一張較小的照片再試'); }
+    finally{ target.style.zoom=previousZoom; btn.disabled=false; btn.textContent='下載 16:9 PNG'; }
+  });
+
+  document.getElementById('downloadFlyerImage').addEventListener('click', async ()=>{
+    if(state.viewMode!=='flyer') return;
+    if(!validateAgent()) return;
+    if(state.deals.length === 0){ flash('請先輸入至少 1 筆成交資料'); return; }
+    const target=document.querySelector('#previewBox .flyer');
+    if(!target){ flash('預覽尚未產生，請稍候再試'); return; }
+    if(typeof html2canvas!=='function'){ flash('圖片工具載入失敗，請重新整理後再試'); return; }
+    const btn=document.getElementById('downloadFlyerImage');
+    btn.disabled=true; btn.textContent='圖片製作中...';
+    const previousZoom=target.style.zoom;
+    target.style.zoom='1';
+    try{
+      const canvas=await html2canvas(target,{scale:2,useCORS:true,backgroundColor:null,logging:false});
+      const link=document.createElement('a');
+      link.download=`成交快報-${state.agent.serviceRegion||'本區'}.png`;
+      link.href=canvas.toDataURL('image/png'); link.click();
+      track('flyer_image_download',{ deal_count: state.deals.length, theme: state.theme });
+      flash('快報圖片已下載，可直接傳 LINE 或發限動');
+    }catch(e){ flash('圖片輸出失敗，請換一張較小的照片再試'); }
+    finally{ target.style.zoom=previousZoom; btn.disabled=false; btn.textContent='下載快報 PNG（LINE 可傳）'; }
+  });
+
+  document.getElementById('rotateOpeners').addEventListener('change', e=>{
+    state.rotateOpeners = e.target.checked;
+    renderPreview();
+  });
+
+  document.getElementById('exportSettings').addEventListener('click', ()=>{
+    const payload = {
+      app: 'dev-letter-tool', version: 1, exportedAt: new Date().toISOString(),
+      agent: state.agent,
+      flyerSubtitle: state.flyerSubtitle,
+      flyerMessage: state.flyerMessage,
+      flyerFooter: state.flyerFooter
+    };
+    const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
+    const link = document.createElement('a');
+    link.download = `開發信設定-${state.agent.agentName||'未命名'}.json`;
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+    track('settings_export');
+    flash('設定檔已下載，換電腦時用「匯入」還原');
+  });
+
+  document.getElementById('importSettings').addEventListener('click', ()=>{
+    document.getElementById('importSettingsFile').click();
+  });
+  document.getElementById('importSettingsFile').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const data = JSON.parse(reader.result);
+        if(data.app !== 'dev-letter-tool' || !data.agent){ flash('這不是本工具的設定檔'); return; }
+        Object.keys(state.agent).forEach(k=>{
+          if(typeof data.agent[k] === 'string') state.agent[k] = data.agent[k];
+        });
+        if(typeof data.flyerSubtitle === 'string') state.flyerSubtitle = data.flyerSubtitle;
+        if(typeof data.flyerMessage === 'string' && data.flyerMessage.trim()) state.flyerMessage = data.flyerMessage;
+        if(typeof data.flyerFooter === 'string' && data.flyerFooter.trim()) state.flyerFooter = data.flyerFooter;
+        saveAgent();
+        loadAgent();
+        document.getElementById('flyerSubtitle').value = state.flyerSubtitle;
+        document.getElementById('flyerMessage').value = state.flyerMessage;
+        document.getElementById('flyerFooter').value = state.flyerFooter;
+        renderPreview();
+        track('settings_import');
+        flash('設定已匯入，包含照片與 LOGO');
+      }catch(err){ flash('設定檔讀取失敗，請確認檔案沒有被改過'); }
+      finally{ e.target.value=''; }
+    };
+    reader.readAsText(file);
   });
 
   bindImageUpload('logoFile','clearLogo','logoPreview','logoDataUrl');
@@ -1950,7 +2707,8 @@ function bindActions(){
       serviceYears:'5', awardYear:'2025', awards:'年度業績冠軍',
       phone:'0912-345-678', lineId:'@xiaoming',
       propertyType:'2-4 房', storeAddress:'台北市大安區忠孝東路四段 100 號',
-      licenseNo:'北市經(99)字第 12345 號'
+      licenseNo:'北市經(99)字第 12345 號',
+      buyerBudget:'2,000～2,500 萬', buyerTiming:'本週即可看屋'
     };
     let filled = 0;
     Object.keys(SAMPLE_AGENT).forEach(k=>{
@@ -1962,11 +2720,11 @@ function bindActions(){
       }
     });
     document.getElementById('recipientList').value = [
-      '王先生',
-      '陳太太',
-      '李小姐',
-      '張先生',
-      '林太太',
+      '王先生, 仁愛路四段',
+      '陳太太, 信義路五段',
+      '李小姐, 忠孝東路四段',
+      '張先生, 復興南路一段',
+      '林太太, 敦化南路二段',
       '黃先生',
       '吳太太',
       '蔡小姐'
@@ -1974,6 +2732,8 @@ function bindActions(){
     saveAgent();
     parseRecipients();
     renderPreview();
+    setWorkflowStep(4);
+    window.scrollTo({ top:0, behavior:'smooth' });
     flash(filled>0 ? `已載入範例（含 ${filled} 個業務員欄位）` : '已載入屋主名單範例');
   });
 }
@@ -2047,6 +2807,7 @@ function unlockTool(email){
   document.documentElement.classList.add('is-unlocked');
   try{ gtag('event', 'email_unlock', { email_domain: (email||'').split('@')[1] || '' }); }catch(e){}
   pingVisit(email);
+  setTimeout(()=>document.getElementById('agentName')?.focus(), 80);
 }
 
 // 訪問紀錄 ping：同 session 只送一次，避免 reload 灌爆 Sheet
@@ -2088,6 +2849,8 @@ function bindEmailGate(){
     return;
   }
 
+  try{ gtag('event', 'email_gate_view'); }catch(e){}
+
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const email = (input.value||'').trim().toLowerCase();
@@ -2103,7 +2866,7 @@ function bindEmailGate(){
     }
 
     btn.disabled = true;
-    btn.textContent = '送出中...';
+    btn.textContent = '正在解鎖...';
     showGateMsg('正在驗證 Email，請稍候...', 'info');
 
     try{
@@ -2132,12 +2895,12 @@ function bindEmailGate(){
       } else {
         showGateMsg(data.message || '送出失敗，請稍後再試', 'error');
         btn.disabled = false;
-        btn.textContent = '解鎖工具 →';
+        btn.textContent = '免費解鎖，開始製作';
       }
     }catch(err){
       showGateMsg('連線失敗，請檢查網路後再試一次', 'error');
       btn.disabled = false;
-      btn.textContent = '解鎖工具 →';
+      btn.textContent = '免費解鎖，開始製作';
     }
   });
 }
@@ -2145,6 +2908,8 @@ function bindEmailGate(){
 bindEmailGate();
 document.body.setAttribute('data-mode', state.viewMode);
 loadAgent();
+bindPropertySales();
+bindWorkflow();
 renderTemplateList();
 document.getElementById('flyerMessage').value = state.flyerMessage;
 document.getElementById('flyerFooter').value = state.flyerFooter;
@@ -2155,8 +2920,10 @@ bindActions();
 bindHelpModal();
 bindAnalytics();
 bindModeAndLayout();
+bindOutputCards();
 parseRecipients();
 parseDealsInput();
+setOutput(currentOutputKey());
 renderPreview();
 </script>
 </body>

@@ -1,0 +1,8 @@
+{
+  "name": "dev-letter-tool",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test tests/ui-flow.test.mjs tests/property-sales.test.mjs"
+  }
+}
