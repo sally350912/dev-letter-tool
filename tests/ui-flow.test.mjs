@@ -66,6 +66,18 @@ test('offers flyer PNG download and settings export/import', () => {
   assert.match(html, /id="importSettingsFile"[^>]+type="file"/);
 });
 
+test('phone output: fit-width preview, share image, recipient picker', () => {
+  assert.match(html, /function fitPreview\(\)/);
+  assert.match(html, /id="shareImageBtn"/);
+  assert.match(html, /id="zoomToggle"/);
+  assert.match(html, /id="recipientPicker"/);
+  assert.match(html, /navigator\.canShare\(\{ files:\[file\] \}\)/);
+  assert.match(html, /track\('share_image'/);
+  assert.match(html, /track\('save_image'/);
+  // 舊的寫死 zoom 比例不能回來（會讓手機預覽縮到 0.23 倍看不清）
+  assert.doesNotMatch(html, /zoom:\s*\.(23|32|36|46|48)\b/);
+});
+
 test('keeps existing persistence and analytics identifiers', () => {
   assert.match(html, /G-YSC1Q52B7G/);
   assert.match(html, /devLetterTool\.agent\.v4/);

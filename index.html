@@ -615,26 +615,23 @@
   body:not([data-property-output="dm"]) .property-dm-only{display:none!important}
 
   /* === 手機 / 平板 響應式預覽（不影響列印） === */
+  /* 縮放比例由 fitPreview() 依預覽框實際寬度算出（填滿寬度，不再寫死 0.23～0.6） */
   @media (max-width: 1023px){
     #previewBox{padding:8px}
-    #previewBox .letter,#previewBox .flyer{
-      zoom:.6;
-      box-shadow:0 4px 14px rgba(0,0,0,.08)
-    }
-    #previewBox .property-a4{zoom:.62}
-    #previewBox .property-social{zoom:.46}
-  }
-  @media (max-width: 768px){
-    #previewBox .letter,#previewBox .flyer{zoom:.48}
-    #previewBox .property-a4{zoom:.48}
-    #previewBox .property-social{zoom:.36}
+    #previewBox .letter,#previewBox .flyer{box-shadow:0 4px 14px rgba(0,0,0,.08)}
   }
   @media (max-width: 480px){
-    #previewBox .letter,#previewBox .flyer{zoom:.36}
-    #previewBox .property-a4{zoom:.32}
-    #previewBox .property-social{zoom:.23}
     .letter,.flyer{margin-bottom:8px}
   }
+  /* 手機改用統一的「存成圖片」按鈕，舊的兩顆下載鈕只留桌機 */
+  @media (max-width: 768px){
+    #downloadFlyerImage,#downloadPropertyImage{display:none!important}
+  }
+  #recipientPicker{max-width:150px;min-height:44px;font-size:14px}
+  .image-sheet{position:fixed;inset:0;z-index:120;background:rgba(30,20,12,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px}
+  .image-sheet img{max-width:100%;max-height:70vh;border-radius:8px;background:#fff;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+  .image-sheet p{color:#fff;font-size:14px;text-align:center;line-height:1.7}
+  .image-sheet button{min-height:44px;padding:0 24px;border-radius:10px;background:#fff;color:#4a3527;font-weight:700}
   /* 手機讓表單 input 字級加大、避免 iOS 自動放大 */
   @media (max-width: 640px){
     input[type=text],textarea{font-size:16px!important}
@@ -790,8 +787,22 @@
     .workflow-step-number{width:21px;height:21px}
     .workflow-step-label{display:none}
     .workflow-mobile-hint{display:block}
-    .preview-actions{position:sticky;bottom:8px;z-index:20;width:100%;padding:8px;border-radius:12px;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(61,43,31,.18);backdrop-filter:blur(8px)}
-    .preview-actions .preview-divider{display:none}
+  }
+  /* 手機：操作列固定貼底、單排、除「存成圖片」外只留圖示；導覽（上下封／屋主）留在預覽上方 */
+  @media (max-width:640px){
+    .preview-nav{width:100%}
+    .preview-nav #recipientPicker{flex:1;max-width:none}
+    .preview-controls .preview-divider{display:none}
+    .preview-actions{
+      position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:20;
+      display:flex;flex-wrap:nowrap;gap:6px;padding:8px;border-radius:12px;
+      background:rgba(255,255,255,.96);box-shadow:0 8px 24px rgba(61,43,31,.22);
+      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)
+    }
+    .preview-actions button{min-height:44px;padding:0 10px;white-space:nowrap}
+    .preview-actions #shareImageBtn{flex:1}
+    .preview-actions .btn-label{display:none}
+    #workflowPreview{padding-bottom:84px}
   }
 </style>
 </head>
@@ -1231,15 +1242,22 @@
         📄 預覽
         <span id="previewMeta" class="text-xs font-normal text-slate-500"></span>
       </h2>
-      <div class="preview-actions flex items-center gap-2 flex-wrap">
+      <div class="preview-controls flex items-center gap-2 flex-wrap">
+      <div class="preview-nav flex items-center gap-2">
         <button id="prevPreview" aria-label="預覽上一封" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">←</button>
         <span class="text-sm text-slate-600"><b id="previewIndex">1</b> / <span id="previewTotal">1</span></span>
         <button id="nextPreview" aria-label="預覽下一封" class="px-2.5 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50">→</button>
-        <div class="preview-divider w-px h-6 bg-stone-300 mx-1"></div>
-        <button id="copyBtn" class="px-3 py-1.5 text-sm bg-stone-100 hover:bg-stone-200 rounded-md">📋 複製此封</button>
+        <select id="recipientPicker" data-mode-letter aria-label="選擇屋主" class="px-2 border border-stone-300 rounded-md bg-white text-slate-700"></select>
+      </div>
+      <div class="preview-divider w-px h-6 bg-stone-300 mx-1"></div>
+      <div class="preview-actions flex items-center gap-2 flex-wrap">
+        <button id="zoomToggle" type="button" aria-label="放大或縮小預覽" class="px-3 py-1.5 text-sm border border-stone-300 rounded-md hover:bg-stone-50"><span>🔍</span><span class="btn-label" id="zoomLabel"> 放大看</span></button>
+        <button id="shareImageBtn" type="button" class="px-3 py-1.5 text-sm text-white rounded-md" style="background:#C4783A">📲 存成圖片／傳 LINE</button>
+        <button id="copyBtn" aria-label="複製此封" class="px-3 py-1.5 text-sm bg-stone-100 hover:bg-stone-200 rounded-md"><span>📋</span><span class="btn-label"> 複製此封</span></button>
         <button id="downloadPropertyImage" data-mode-property class="px-3 py-1.5 text-sm text-white rounded-md" style="background:#C4783A">下載 16:9 PNG</button>
         <button id="downloadFlyerImage" data-mode-flyer class="px-3 py-1.5 text-sm text-white rounded-md" style="background:#C4783A">下載快報 PNG（LINE 可傳）</button>
-        <button id="printBtn" class="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-900 rounded-md">🖨️ 列印 / 存成 PDF</button>
+        <button id="printBtn" aria-label="列印或存成 PDF" class="px-3 py-1.5 text-sm bg-slate-800 text-white hover:bg-slate-900 rounded-md"><span>🖨️</span><span class="btn-label"> 列印 / 存成 PDF</span></button>
+      </div>
       </div>
     </div>
     <div id="previewBox" class="bg-stone-100 rounded-lg p-4 overflow-auto scroll-thin" style="max-height:80vh"></div>
@@ -2225,6 +2243,51 @@ function buildScriptPanelsHTML(){
 }
 
 function renderPreview(){
+  renderPreviewCore();
+  updatePreviewChrome();
+  fitPreview();
+}
+
+/* 預覽縮放：手機／平板依預覽框實際寬度填滿，不再寫死比例 */
+let previewZoomFull = false;
+function fitPreview(){
+  const box = document.getElementById('previewBox');
+  if(!box) return;
+  const els = box.querySelectorAll('.letter,.flyer,.property-a4,.property-social');
+  const small = window.matchMedia('(max-width: 1023px)').matches;
+  els.forEach(el=>{ el.style.zoom = ''; });
+  const zoomBtn = document.getElementById('zoomToggle');
+  if(zoomBtn) zoomBtn.style.display = small ? '' : 'none';
+  if(!small) return;
+  const style = getComputedStyle(box);
+  const avail = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+  if(avail <= 0) return;
+  els.forEach(el=>{
+    const natural = el.offsetWidth;
+    if(!natural) return;
+    const fit = Math.min(1, avail / natural);
+    el.style.zoom = String(previewZoomFull ? Math.min(1, fit * 2) : fit);
+  });
+  const zoomLabel = document.getElementById('zoomLabel');
+  if(zoomLabel) zoomLabel.textContent = previewZoomFull ? ' 縮小看全貌' : ' 放大看';
+}
+
+/* 預覽列：屋主選單、存圖鈕的顯示狀態 */
+function updatePreviewChrome(){
+  const picker = document.getElementById('recipientPicker');
+  if(picker && state.viewMode === 'letter'){
+    const recips = getRecipientsForRender();
+    picker.innerHTML = recips.map((r,i)=>`<option value="${i}">${i+1}. ${(r.title||'屋主').replace(/[<>&"]/g,'')}${r.road?'・'+r.road.replace(/[<>&"]/g,''):''}</option>`).join('');
+    picker.value = String(Math.min(state.previewIndex, recips.length-1));
+    picker.style.display = recips.length > 1 ? '' : 'none';
+  }
+  const shareBtn = document.getElementById('shareImageBtn');
+  if(shareBtn){
+    shareBtn.style.display = (state.viewMode==='property' && propertyState.outputType==='copy') ? 'none' : '';
+  }
+}
+
+function renderPreviewCore(){
   if(state.viewMode === 'property'){
     const copy = propertyState.generatedCopy;
     const hasCopy = Object.values(copy).some(Boolean);
@@ -2313,6 +2376,8 @@ function setWorkflowStep(step){
     main.classList.toggle('max-w-7xl', workflowStep === 4);
     main.classList.toggle('max-w-5xl', workflowStep !== 4);
   }
+  // 預覽框在其他步驟是隱藏的（寬度 0），切到第 4 步後要重算縮放
+  if(typeof fitPreview === 'function') fitPreview();
 }
 
 function bindWorkflow(){
@@ -2461,6 +2526,97 @@ function bindModeAndLayout(){
   });
 }
 
+/* === 手機輸出：選屋主、放大、存成圖片／分享 === */
+const isTouchDevice = ()=> window.matchMedia('(pointer: coarse)').matches;
+
+function showImageSheet(url, filename){
+  const old = document.getElementById('imageSheet');
+  if(old) old.remove();
+  const sheet = document.createElement('div');
+  sheet.id = 'imageSheet';
+  sheet.className = 'image-sheet no-print';
+  const tip = isTouchDevice()
+    ? '長按圖片 → 選「加入照片」或「分享」，就能存到手機或傳 LINE'
+    : '圖片已產生，可在圖片上按右鍵另存';
+  sheet.innerHTML = `<p>${tip}</p><img alt="${filename}" src="${url}"><button type="button">關閉</button>`;
+  sheet.addEventListener('click', e=>{ if(e.target === sheet || e.target.tagName === 'BUTTON') sheet.remove(); });
+  document.body.appendChild(sheet);
+}
+
+function getShareTarget(){
+  if(state.viewMode === 'property'){
+    if(propertyState.outputType === 'copy'){ flash('文案腳本請用各平台的「複製」按鈕'); return null; }
+    const validation = PropertySales.validateProperty(propertyState.property);
+    if(!validation.valid){ flash('請先補齊物件必要資料'); return null; }
+    const sel = propertyState.outputSize === 'social' ? '.property-social' : '.property-a4';
+    return { el: document.querySelector('#previewBox ' + sel), name: `${propertyState.property.title||'房屋銷售'}`, scale: propertyState.outputSize === 'social' ? 1 : 2 };
+  }
+  if(!validateAgent()) return null;
+  if(state.viewMode === 'flyer'){
+    if(state.deals.length === 0){ flash('請先輸入至少 1 筆成交資料'); return null; }
+    return { el: document.querySelector('#previewBox .flyer'), name: `成交快報-${state.agent.serviceRegion||'本區'}`, scale: 2 };
+  }
+  const r = getRecipientsForRender()[state.previewIndex] || {};
+  return { el: document.querySelector('#previewBox .letter'), name: `開發信-${r.title||'屋主'}`, scale: 2 };
+}
+
+async function shareCurrentImage(){
+  const target = getShareTarget();
+  if(!target) return;
+  if(!target.el){ flash('預覽尚未產生，請稍候再試'); return; }
+  if(typeof html2canvas !== 'function'){ flash('圖片工具載入失敗，請重新整理後再試'); return; }
+  const btn = document.getElementById('shareImageBtn');
+  const label = btn.textContent;
+  btn.disabled = true; btn.textContent = '圖片製作中...';
+  const previousZoom = target.el.style.zoom;
+  target.el.style.zoom = '1';
+  try{
+    const canvas = await html2canvas(target.el, { scale: target.scale, useCORS: true, backgroundColor: null, logging: false });
+    const blob = await new Promise(res=>canvas.toBlob(res, 'image/png'));
+    if(!blob) throw new Error('toBlob failed');
+    const filename = `${target.name}.png`;
+    const file = new File([blob], filename, { type: 'image/png' });
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      try{
+        await navigator.share({ files:[file], title: target.name });
+        track('share_image', { mode: state.viewMode, method: 'share' });
+        return;
+      }catch(err){
+        if(err && err.name === 'AbortError') return; // 使用者自己關掉分享面板
+        // iOS 有時等圖片產完手勢就過期：退回「長按存圖」
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    if(isTouchDevice()){
+      showImageSheet(url, filename);
+    }else{
+      const link = document.createElement('a');
+      link.download = filename; link.href = url; link.click();
+      flash('圖片已下載');
+    }
+    track('save_image', { mode: state.viewMode, method: isTouchDevice() ? 'sheet' : 'download' });
+  }catch(e){
+    flash('圖片輸出失敗，請換一張較小的照片再試');
+  }finally{
+    target.el.style.zoom = previousZoom;
+    btn.disabled = false; btn.textContent = label;
+  }
+}
+
+function bindPhoneOutput(){
+  document.getElementById('shareImageBtn').addEventListener('click', shareCurrentImage);
+  document.getElementById('zoomToggle').addEventListener('click', ()=>{
+    previewZoomFull = !previewZoomFull;
+    fitPreview();
+  });
+  document.getElementById('recipientPicker').addEventListener('change', e=>{
+    state.previewIndex = Number(e.target.value) || 0;
+    renderPreview();
+  });
+  let resizeTimer;
+  window.addEventListener('resize', ()=>{ clearTimeout(resizeTimer); resizeTimer = setTimeout(fitPreview, 120); });
+}
+
 function bindNavigation(){
   document.getElementById('prevPreview').addEventListener('click', ()=>{
     const recips = getRecipientsForRender();
@@ -2553,6 +2709,7 @@ function bindActions(){
       if(!validation.valid){ flash('請先補齊物件必要資料'); return; }
       document.getElementById('printArea').innerHTML=PropertySales.buildA4HTML({ ...propertyState,agent:state.agent,theme:state.theme });
       track('property_print',{ size:propertyState.outputSize,tone:propertyState.tone });
+      flash(isTouchDevice() ? '手機建議改按「存成圖片」更穩；要印的話，在列印畫面選「儲存為 PDF」或你的印表機' : '列印對話框：目的地選「另存為 PDF」、邊界選「無」、勾選「背景圖形」、橫向');
       setTimeout(()=>window.print(),600);
       return;
     }
@@ -2915,6 +3072,7 @@ document.getElementById('flyerMessage').value = state.flyerMessage;
 document.getElementById('flyerFooter').value = state.flyerFooter;
 bindAgentInputs();
 bindNavigation();
+bindPhoneOutput();
 bindTheme();
 bindActions();
 bindHelpModal();
